@@ -1,4 +1,5 @@
-﻿function ragsimage() {
+﻿
+function ragsimage() {
     this.TheName = "";
     this.curfilename = "";
     this.GroupName = "";

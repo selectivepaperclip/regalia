@@ -1,4 +1,5 @@
-﻿function character() {
+﻿
+function character() {
     this.Charname = "";
     this.CharnameOverride = "";
     this.Inventory = new Array();
@@ -12,7 +13,7 @@
     this.bAllowInventoryInteraction = false;
     this.CustomProperties = new Array();
 
-    this.ToString = function () {
+    this.ToString = function() {
 
     };
 }

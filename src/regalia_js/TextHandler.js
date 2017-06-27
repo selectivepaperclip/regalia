@@ -1,4 +1,5 @@
-﻿function PerformTextReplacements(text, loopobject, newvalue) {
+﻿
+function PerformTextReplacements(text, loopobject, newvalue) {
     var bChangedSomething = true;
     while (bChangedSomething) {
         bChangedSomething = false;
@@ -216,14 +217,14 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                         if (bReplacement) {
                             try {
                                 tempvar.dtDateTime = replacementvalue;
-                            } catch (err) { }
+                            } catch (err) {}
                         }
                     } else {
                         newval = tempvar.dtDateTime.toString();
                         if (bReplacement) {
                             try {
                                 tempvar.dtDateTime = replacementvalue;
-                            } catch (err) { }
+                            } catch (err) {}
                         }
                     }
                 }
@@ -278,7 +279,8 @@ function ReplaceProperty(property, text, tempindex, replacementvalue) {
                 tempobj = TheGame.Player;
                 partmatch = parts[0].trim();
             } else
-                partmatch = parts[1].trim(); if (parts.length > 1) {
+                partmatch = parts[1].trim();
+            if (parts.length > 1) {
                 if (property == "rp") {
                     tempobj = GetRoom(parts[0]);
                 } else if (property == "ip") {
@@ -725,7 +727,8 @@ function ReplaceAttribute(AttType, text, tempindex, replacementvalue) {
                                 if (tempobject.CurrentRoom != null)
                                     text = text.slice(0, tempindex) + tempobject.CurrentRoom + text.slice(tempindex);
                                 else
-                                    text = text.slice(0, tempindex) + "<Null>" + text.slice(tempindex); if (bReplacement) {
+                                    text = text.slice(0, tempindex) + "<Null>" + text.slice(tempindex);
+                                if (bReplacement) {
                                     TheGame.Player.CurrentRoom = replacementvalue;
                                 }
                                 break;
@@ -891,7 +894,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
             case "Female":
                 {
                     text = text.slice(0, tempindex) + "female" + text.slice(tempindex);
-                    
+
                     break;
                 }
             case "Male":

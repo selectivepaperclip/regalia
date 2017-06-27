@@ -1,4 +1,5 @@
-﻿var filename = "";
+﻿
+var filename = "";
 var images = new Array();
 var loadedimages = 0;
 var numimages = 0;
@@ -14,11 +15,11 @@ var AdditionalData = "";
 var MovingDirection = "";
 var bMasterTimer = false;
 
-$(function () {
-    if (window.File && window.FileReader && window.FileList && window.Blob) { } else {
+$(function() {
+    if (window.File && window.FileReader && window.FileList && window.Blob) {} else {
         alert('The File APIs are not fully supported in this browser.');
     }
-    $(document).keydown(function (e) {
+    $(document).keydown(function(e) {
         switch (e.keyCode) {
             case 32:
                 {
@@ -37,15 +38,15 @@ $(function () {
                 }
         }
     });
-    $(document).mousemove(function (e) {
+    $(document).mousemove(function(e) {
         window.x = e.pageX;
         window.y = e.pageY;
     });
-    $(window).resize(function () {
+    $(window).resize(function() {
         ResizeWindow();
     });
     ResizeWindow();
-    $("#Actionchoices").change(function (e) {
+    $("#Actionchoices").change(function(e) {
         var selectionchoice = $("#Actionchoices").val();
         if (selectionchoice != null) {
             $("#MainText").append('</br><b>' + selectionchoice + "</b>");
@@ -65,9 +66,9 @@ $(function () {
 
         }
     });
-    $("#Continue").click(function (e) {
+    $("#Continue").click(function(e) {
         var bgcolor = $("#Continue").css('background-color');
-        if (bgcolor == "rgb(128, 128, 128)") { } else {
+        if (bgcolor == "rgb(128, 128, 128)") {} else {
             $("#RoomThumb").css("visibility", "visible");
             $("#PlayerPortrait").css("visibility", "visible");
 
@@ -82,23 +83,23 @@ $(function () {
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
     });
-    $("#PlayerPortrait").click(function (e) {
+    $("#PlayerPortrait").click(function(e) {
         TheObj = TheGame.Player;
         DisplayActions(TheGame.Player.Actions);
     });
-    $("#RoomThumb").click(function (e) {
+    $("#RoomThumb").click(function(e) {
         TheObj = GetRoom(TheGame.Player.CurrentRoom);
         DisplayActions(TheObj.Actions);
     });
-    $("#PlayerImg").click(function (e) {
+    $("#PlayerImg").click(function(e) {
         TheObj = TheGame.Player;
         DisplayActions(TheGame.Player.Actions);
     });
-    $("#RoomThumbImg").click(function (e) {
+    $("#RoomThumbImg").click(function(e) {
         TheObj = GetRoom(TheGame.Player.CurrentRoom);
         DisplayActions(TheObj.Actions);
     });
-    $("#textbutton").click(function (e) {
+    $("#textbutton").click(function(e) {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
             $("#RoomThumb").css("visibility", "visible");
@@ -115,7 +116,7 @@ $(function () {
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
     });
-    $("#playernamebutton").click(function (e) {
+    $("#playernamebutton").click(function(e) {
         AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");
         $("#RoomThumb").css("visibility", "visible");
@@ -143,11 +144,11 @@ $(function () {
             StartGame();
         }
     });
-    $("#load").click(function (e) {
+    $("#load").click(function(e) {
         $("#loadinputchoices option").remove();
         var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-        db.transaction(function (tx) {
-            tx.executeSql('SELECT * FROM RagsSave4 order by date desc', [], function (tx, results) {
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM RagsSave4 order by date desc', [], function(tx, results) {
                 var len = results.rows.length,
                     i;
                 for (i = 0; i < len; i++) {
@@ -165,11 +166,11 @@ $(function () {
         $("#savemenu").css("visibility", "hidden");
         $("#loadinputchoices").focus();
     });
-    $("#save").click(function (e) {
+    $("#save").click(function(e) {
         $("#saveinputchoices option").remove();
         var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-        db.transaction(function (tx) {
-            tx.executeSql('SELECT * FROM RagsSave4 order by date desc', [], function (tx, results) {
+        db.transaction(function(tx) {
+            tx.executeSql('SELECT * FROM RagsSave4 order by date desc', [], function(tx, results) {
                 var len = results.rows.length,
                     i;
                 for (i = 0; i < len; i++) {
@@ -189,7 +190,7 @@ $(function () {
         $("#loadmenu").css("visibility", "hidden");
         $("#saveinputchoices").focus();
     });
-    $("div.genderchoiceSelect").click(function () {
+    $("div.genderchoiceSelect").click(function() {
         selectedobj = $(this).val();
         if (selectedobj != null) {
             $("#RoomThumb").css("visibility", "visible");
@@ -204,7 +205,7 @@ $(function () {
             StartGame();
         }
     });
-    $("#saveinputchoices").change(function (e) {
+    $("#saveinputchoices").change(function(e) {
         selectedobj = $("#saveinputchoices").val();
         if (selectedobj != null) {
             $("#RoomThumb").css("visibility", "visible");
@@ -223,7 +224,7 @@ $(function () {
             }
         }
     });
-    $("#loadinputchoices").change(function (e) {
+    $("#loadinputchoices").change(function(e) {
         selectedobj = $("#loadinputchoices").val();
         if (selectedobj != null) {
             $("#RoomThumb").css("visibility", "visible");
@@ -239,7 +240,7 @@ $(function () {
             handleFileSelect(false, selectedobj);
         }
     });
-    $("#inputchoices").change(function (e) {
+    $("#inputchoices").change(function(e) {
         selectedobj = $("#inputchoices").val();
         if (selectedobj != null) {
             AdditionalData = selectedobj;
@@ -263,7 +264,7 @@ $(function () {
             }
         }
     });
-    $("#textactionbutton").click(function (e) {
+    $("#textactionbutton").click(function(e) {
         selectedobj = $("#textactioninput").val();
         if (selectedobj != null) {
             AdditionalData = selectedobj;
@@ -283,7 +284,7 @@ $(function () {
             }
         }
     });
-    $("#cmdinputchoices").change(function (e) {
+    $("#cmdinputchoices").change(function(e) {
         selectedobj = $("#cmdinputchoices").val();
         if (selectedobj != null) {
             $("#RoomThumb").css("visibility", "visible");
@@ -300,7 +301,7 @@ $(function () {
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
     });
-    $("#cmdCancelInput").click(function (e) {
+    $("#cmdCancelInput").click(function(e) {
         AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");
         $("#RoomThumb").css("visibility", "visible");
@@ -314,7 +315,7 @@ $(function () {
         SetExits();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });
-    $("#Inventory").change(function (e) {
+    $("#Inventory").change(function(e) {
         selectedobj = GetObject($("#Inventory").val());
         if (selectedobj != null) {
             TheObj = selectedobj;
@@ -322,7 +323,7 @@ $(function () {
             DisplayActions(selectedobj.Actions);
         }
     });
-    $("#VisibleCharacters").change(function (e) {
+    $("#VisibleCharacters").change(function(e) {
         selectedobj = GetCharacter($("#VisibleCharacters").val());
         if (selectedobj != null) {
             TheObj = selectedobj;
@@ -342,16 +343,16 @@ $(function () {
     }
     });
     */
-    $("#selectionmenu").focusout(function () {
+    $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
     });
-    $("#loadmenu").focusout(function () {
+    $("#loadmenu").focusout(function() {
         $("#loadmenu").css("visibility", "hidden");
     });
-    $("#savemenu").focusout(function () {
+    $("#savemenu").focusout(function() {
         $("#savemenu").css("visibility", "hidden");
     });
-    $("#RoomObjects").change(function (e) {
+    $("#RoomObjects").change(function(e) {
         selectedobj = GetObject($("#RoomObjects").val());
         if (selectedobj != null) {
             TheObj = selectedobj;
@@ -359,7 +360,7 @@ $(function () {
             DisplayActions(selectedobj.Actions);
         }
     });
-    setInterval(function () {
+    setInterval(function() {
         for (var _i = 0; _i < TheGame.Timers.length; _i++) {
             var curtimer = TheGame.Timers[_i];
             if (curtimer.Active && curtimer.LiveTimer) {
@@ -375,148 +376,148 @@ $(function () {
         }
     }, 1000);
 
-    $("#bUp").click(function () {
+    $("#bUp").click(function() {
         UpClicked();
     });
-    $("#bUP").hover(function () {
+    $("#bUP").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("Up"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bDown").click(function () {
+    $("#bDown").click(function() {
         DownClicked();
     });
-    $("#bDown").hover(function () {
+    $("#bDown").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("Down"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bNorth").hover(function () {
+    $("#bNorth").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("North"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bNorth").click(function () {
+    $("#bNorth").click(function() {
         NorthClicked();
     });
-    $("#bSouth").click(function () {
+    $("#bSouth").click(function() {
         SouthClicked();
     });
-    $("#bSouth").hover(function () {
+    $("#bSouth").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("South"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bWest").click(function () {
+    $("#bWest").click(function() {
         WestClicked();
     });
-    $("#bWest").hover(function () {
+    $("#bWest").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("West"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bEast").click(function () {
+    $("#bEast").click(function() {
         EastClicked();
     });
-    $("#bEast").hover(function () {
+    $("#bEast").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("East"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bNorthwest").click(function () {
+    $("#bNorthwest").click(function() {
         NorthwestClicked();
     });
-    $("#bNorthwest").hover(function () {
+    $("#bNorthwest").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("NorthWest"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bNortheast").click(function () {
+    $("#bNortheast").click(function() {
         NortheastClicked();
     });
-    $("#bNortheast").hover(function () {
+    $("#bNortheast").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("NorthEast"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bSouthwest").click(function () {
+    $("#bSouthwest").click(function() {
         SouthwestClicked();
     });
-    $("#Southwest").hover(function () {
+    $("#Southwest").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("SouthWest"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bSoutheast").click(function () {
+    $("#bSoutheast").click(function() {
         SoutheastClicked();
     });
-    $("#bSoutheast").hover(function () {
+    $("#bSoutheast").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("SouthEast"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bIn").click(function () {
+    $("#bIn").click(function() {
         InClicked();
     });
-    $("#bIn").hover(function () {
+    $("#bIn").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("In"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
-    $("#bOut").click(function () {
+    $("#bOut").click(function() {
         OutClicked();
     });
-    $("#bOut").hover(function () {
+    $("#bOut").hover(function() {
         var destroom = GetRoom(GetDestinationRoomName("Out"));
         $("#tooltip").text(destroom.Name);
         $("#tooltip").css("left", (window.x + 10) + "px");
         $("#tooltip").css("top", window.y + "px");
         $("#tooltip").css("visibility", "visible");
-    }, function () {
+    }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
     receivedText();
@@ -675,7 +676,7 @@ function ResetLoopObjects() {
     MasterLoopObject = null;
 }
 
-function onError(tx, error) { }
+function onError(tx, error) {}
 
 function handleFileSave(bQuick, bNew, CurID) {
     var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
@@ -683,12 +684,12 @@ function handleFileSave(bQuick, bNew, CurID) {
     var curindex = 1;
     if (bQuick)
         curindex = 0;
-    db.transaction(function (tx) {
+    db.transaction(function(tx) {
         tx.executeSql('CREATE TABLE IF NOT EXISTS RagsSave4 (id unique, date,Title,GameData)');
     });
-    db.transaction(function (tx) {
+    db.transaction(function(tx) {
         if (bQuick) {
-            tx.executeSql('SELECT * FROM RagsSave4 where id=0', [], function (tx, results) {
+            tx.executeSql('SELECT * FROM RagsSave4 where id=0', [], function(tx, results) {
                 var len = results.rows.length,
                     i;
                 if (len == 0) {
@@ -703,7 +704,7 @@ function handleFileSave(bQuick, bNew, CurID) {
             });
         } else {
             if (bNew) {
-                tx.executeSql('SELECT id FROM RagsSave4', [], function (tx, results) {
+                tx.executeSql('SELECT id FROM RagsSave4', [], function(tx, results) {
                     var len = results.rows.length,
                         i;
                     for (i = 0; i < len; i++) {
@@ -725,9 +726,9 @@ function handleFileSave(bQuick, bNew, CurID) {
 
 function handleFileSelect(bQuick, CurID) {
     var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-    db.transaction(function (tx) {
+    db.transaction(function(tx) {
         if (bQuick) {
-            tx.executeSql("select * from RagsSave4 where id=0", [], function (tx, results) {
+            tx.executeSql("select * from RagsSave4 where id=0", [], function(tx, results) {
                 TheGame = JSON.parse(results.rows.item(0).GameData);
                 RoomChange(false, false);
                 UpdateStatusBars();
@@ -751,7 +752,7 @@ function handleFileSelect(bQuick, CurID) {
                 alert("Quick Loaded");
             });
         } else {
-            tx.executeSql("select * from RagsSave4 where id=" + CurID, [], function (tx, results) {
+            tx.executeSql("select * from RagsSave4 where id=" + CurID, [], function(tx, results) {
                 TheGame = JSON.parse(results.rows.item(0).GameData);
                 RoomChange(false, false);
                 UpdateStatusBars();
@@ -900,7 +901,7 @@ function GetImageMimeType(lastthree) {
     return "";
 }
 
-function FileLoaded(theFile) { }
+function FileLoaded(theFile) {}
 
 function ResizeWindow() {
     var height = $(window).height();

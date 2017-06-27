@@ -1,4 +1,5 @@
-﻿var SelfObjectGuid = "00000000-0000-0000-0000-000000000004";
+﻿
+var SelfObjectGuid = "00000000-0000-0000-0000-000000000004";
 
 function ragsobject() {
     this.locationtype = "LT_NULL";

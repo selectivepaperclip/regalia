@@ -57,7 +57,7 @@ function SetRoomThumb(ImageName) {
         return;
     $("#RoomImageLayers").empty();
     var tempimage = new Image();
-    tempimage.onload = function () {
+    tempimage.onload = function() {
         var width = parseInt(tempimage.width);
         var height = parseInt(tempimage.height);
         var scalefactor = calculateRoomThumbScale(tempimage);
@@ -80,7 +80,7 @@ function SetRoomThumb(ImageName) {
                         top: $("#RoomThumbImg").position().top,
                         left: $("#RoomThumbImg").position().left
                     });
-                    img.click(function (e) {
+                    img.click(function(e) {
                         TheObj = GetRoom(TheGame.Player.CurrentRoom);
                         DisplayActions(TheObj.Actions);
                     });
@@ -106,7 +106,7 @@ function GetImage(ImageName) {
     $("#MainImageLayers").empty();
     CurrentImage = ImageName;
     var tempimage = new Image();
-    tempimage.onload = function () {
+    tempimage.onload = function() {
         var width = parseInt(tempimage.width);
         var height = parseInt(tempimage.height);
         var scalefactor = calculateScale(tempimage);
@@ -157,7 +157,7 @@ function SetPortrait(ImageName) {
         return;
     $("#PortraitImageLayers").empty();
     var tempimage = new Image();
-    tempimage.onload = function () {
+    tempimage.onload = function() {
         var width = parseInt(tempimage.width);
         var height = parseInt(tempimage.height);
         var scalefactor = calculatePortraitScale(tempimage);
@@ -186,7 +186,7 @@ function SetPortrait(ImageName) {
                         top: $("#PlayerImg").offset().top,
                         left: $("#PlayerImg").offset().left
                     });
-                    img.click(function (e) {
+                    img.click(function(e) {
                         TheObj = TheGame.Player;
                         DisplayActions(TheGame.Player.Actions);
                     });
@@ -234,7 +234,7 @@ function RefreshInventory() {
                 value: obj.UniqueIdentifier
             });
 
-            $div.click(function () {
+            $div.click(function() {
                 selectedobj = GetObject($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
@@ -244,7 +244,7 @@ function RefreshInventory() {
             });
             $("#Inventory").append($div);
             if (obj.bContainer) {
-                if ((obj.bOpenable) && (!obj.bOpen)) { } else {
+                if ((obj.bOpenable) && (!obj.bOpen)) {} else {
                     AddOpenedObjects(obj, $("#Inventory"), selectedobj);
                 }
             }
@@ -264,7 +264,7 @@ function RefreshRoomObjects() {
                 value: obj.UniqueIdentifier
             });
 
-            $div.click(function () {
+            $div.click(function() {
                 selectedobj = GetObject($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
@@ -274,7 +274,7 @@ function RefreshRoomObjects() {
             });
             $("#RoomObjects").append($div);
             if (obj.bContainer) {
-                if ((obj.bOpenable) && (!obj.bOpen)) { } else {
+                if ((obj.bOpenable) && (!obj.bOpen)) {} else {
                     AddOpenedObjects(obj, $("#RoomObjects"), selectedobj);
                 }
             }
@@ -295,7 +295,7 @@ function RefreshRoomObjects() {
                                 value: tempobj.UniqueIdentifier
                             });
 
-                            $div.click(function () {
+                            $div.click(function() {
                                 selectedobj = GetObject($(this).val());
                                 if (selectedobj != null) {
                                     TheObj = selectedobj;
@@ -305,7 +305,7 @@ function RefreshRoomObjects() {
                             });
                             $("#RoomObjects").append($div);
                             if (tempobj.bContainer) {
-                                if ((tempobj.bOpenable) && (!tempobj.bOpen)) { } else
+                                if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
                                     AddOpenedObjects(tempobj, $("#RoomObjects"), selectedobj);
                             }
                         }
@@ -354,7 +354,7 @@ function AddOpenedObjects(tempobj, thelistbox, selitem) {
                 value: tempobj2.UniqueIdentifier
             });
 
-            $div.click(function () {
+            $div.click(function() {
                 selectedobj = GetObject($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
@@ -385,7 +385,7 @@ function RefreshCharacters() {
                 value: obj.Charname
             });
 
-            $div.click(function () {
+            $div.click(function() {
                 selectedobj = GetCharacter($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
@@ -433,7 +433,7 @@ function AddChildAction(Actions, Indent, ActionName) {
             });
 
 
-            $div.click(function () {
+            $div.click(function() {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
                     $("#MainText").append('</br><b>' + selectionchoice + "</b>");
@@ -476,7 +476,7 @@ function DisplayActions(Actions) {
             });
 
 
-            $div.click(function () {
+            $div.click(function() {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
                     $("#MainText").append('</br><b>' + selectionchoice + "</b>");
@@ -530,9 +530,9 @@ function ProcessAction(Action, bTimer) {
                 actionname = selectedobj.name + ": " + act.name;
             else if (curclass == "character" || "Charname" in selectedobj)
                 actionname = selectedobj.Charname + ": " + act.name;
-        } catch (err) { }
+        } catch (err) {}
     }
-    if (!bTimer) { }
+    if (!bTimer) {}
     if (act.InputType != "None") {
         InputDataObject = act;
         if (act.InputType == "Custom") {
@@ -545,7 +545,7 @@ function ProcessAction(Action, bTimer) {
                 });
 
 
-                $div.click(function () {
+                $div.click(function() {
                     selectedobj = $(this).val();
                     if (selectedobj != null) {
                         AdditionalData = selectedobj;
@@ -585,7 +585,7 @@ function ProcessAction(Action, bTimer) {
                         value: TheGame.Characters[_i].Charname
                     });
 
-                    $div.click(function () {
+                    $div.click(function() {
                         selectedobj = $(this).val();
                         if (selectedobj != null) {
                             AdditionalData = selectedobj;
@@ -627,7 +627,7 @@ function ProcessAction(Action, bTimer) {
                         value: obj.UniqueIdentifier
                     });
 
-                    $div.click(function () {
+                    $div.click(function() {
                         selectedobj = $(this).val();
                         if (selectedobj != null) {
                             AdditionalData = selectedobj;
@@ -671,7 +671,7 @@ function ProcessAction(Action, bTimer) {
                                         value: tempobj.UniqueIdentifier
                                     });
 
-                                    $div.click(function () {
+                                    $div.click(function() {
                                         selectedobj = $(this).val();
                                         if (selectedobj != null) {
                                             AdditionalData = selectedobj;
@@ -699,7 +699,7 @@ function ProcessAction(Action, bTimer) {
                                     $("#inputchoices").append($div);
 
                                     if (tempobj.bContainer) {
-                                        if ((tempobj.bOpenable) && (!tempobj.bOpen)) { } else
+                                        if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
                                             AddOpenedObjects(tempobj, $("#inputchoices"), selectedobj);
                                     }
                                 }
@@ -721,7 +721,7 @@ function ProcessAction(Action, bTimer) {
                         value: obj.UniqueIdentifier
                     });
 
-                    $div.click(function () {
+                    $div.click(function() {
                         selectedobj = $(this).val();
                         if (selectedobj != null) {
                             AdditionalData = selectedobj;
@@ -762,7 +762,7 @@ function ProcessAction(Action, bTimer) {
                         value: obj.UniqueIdentifier
                     });
 
-                    $div.click(function () {
+                    $div.click(function() {
                         selectedobj = $(this).val();
                         if (selectedobj != null) {
                             AdditionalData = selectedobj;
@@ -805,7 +805,7 @@ function ProcessAction(Action, bTimer) {
                                         value: tempobj.UniqueIdentifier
                                     });
 
-                                    $div.click(function () {
+                                    $div.click(function() {
                                         selectedobj = $(this).val();
                                         if (selectedobj != null) {
                                             AdditionalData = selectedobj;
@@ -832,7 +832,7 @@ function ProcessAction(Action, bTimer) {
 
                                     $("#inputchoices").append($div);
                                     if (tempobj.bContainer) {
-                                        if ((tempobj.bOpenable) && (!tempobj.bOpen)) { } else
+                                        if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
                                             AddOpenedObjects(tempobj, $("#inputchoices"), selectedobj);
                                     }
                                 }
@@ -849,7 +849,7 @@ function ProcessAction(Action, bTimer) {
                         value: TheGame.Characters[_i].Charname
                     });
 
-                    $div.click(function () {
+                    $div.click(function() {
                         selectedobj = $(this).val();
                         if (selectedobj != null) {
                             AdditionalData = selectedobj;
@@ -885,7 +885,7 @@ function ProcessAction(Action, bTimer) {
             $("#textactionchoice").css("visibility", "visible");
         }
         var AdditionalInputData = "";
-        if (act.InputType != "Text") { }
+        if (act.InputType != "Text") {}
         $("#RoomThumb").css("visibility", "hidden");
         $("#PlayerImg").css("visibility", "hidden");
 
@@ -910,7 +910,7 @@ function ExecuteAction(act, bTimer, AdditionalInputData) {
         for (var _i = 0; _i < act.Conditions.length; _i++) {
             var tempcond = act.Conditions[_i];
             if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, null)) {
-                if (tempcond.Checks.length == 1 && tempcond.Checks[0].CondType == "CT_Loop_While" || tempcond.Checks[0].CondType == "CT_Loop_Rooms" || tempcond.Checks[0].CondType == "CT_Loop_Characters" || tempcond.Checks[0].CondType == "CT_Loop_Items" || tempcond.Checks[0].CondType == "CT_Loop_Exits" || tempcond.Checks[0].CondType == "CT_Loop_Item_Char_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Container" || tempcond.Checks[0].CondType == "CT_Loop_Item_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Room" || tempcond.Checks[0].CondType == "CT_Loop_Item_Group") { } else {
+                if (tempcond.Checks.length == 1 && tempcond.Checks[0].CondType == "CT_Loop_While" || tempcond.Checks[0].CondType == "CT_Loop_Rooms" || tempcond.Checks[0].CondType == "CT_Loop_Characters" || tempcond.Checks[0].CondType == "CT_Loop_Items" || tempcond.Checks[0].CondType == "CT_Loop_Exits" || tempcond.Checks[0].CondType == "CT_Loop_Item_Char_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Container" || tempcond.Checks[0].CondType == "CT_Loop_Item_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Room" || tempcond.Checks[0].CondType == "CT_Loop_Item_Group") {} else {
                     if (bTimer)
                         InsertToMaster(tempcond.PassCommands, AdditionalInputData);
                     else {
@@ -1397,7 +1397,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_CHARACTER" &&
-                                tempitem.locationname == step2) {
+                                    tempitem.locationname == step2) {
                                     temparray.length = temparray.length + 1;
                                     temparray[temparray.length - 1] = tempitem;
                                 }
@@ -1425,7 +1425,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_IN_OBJECT" &&
-                                tempitem.locationname == step2) {
+                                    tempitem.locationname == step2) {
                                     temparray.length = temparray.length + 1;
                                     temparray[temparray.length - 1] = tempitem;
                                 }
@@ -1480,7 +1480,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_ROOM" &&
-                                tempitem.locationname == step2) {
+                                    tempitem.locationname == step2) {
                                     temparray.length = temparray.length + 1;
                                     temparray[temparray.length - 1] = tempitem;
                                 }
@@ -1817,7 +1817,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
         MasterCommandList.splice(0, 1);
         if (tempcond != null) {
             if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, LoopObj)) {
-                if (tempcond.Checks.length == 1 && tempcond.Checks[0].CondType == "CT_Loop_While" || tempcond.Checks[0].CondType == "CT_Loop_Rooms" || tempcond.Checks[0].CondType == "CT_Loop_Characters" || tempcond.Checks[0].CondType == "CT_Loop_Items" || tempcond.Checks[0].CondType == "CT_Loop_Exits" || tempcond.Checks[0].CondType == "CT_Loop_Item_Char_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Container" || tempcond.Checks[0].CondType == "CT_Loop_Item_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Room" || tempcond.Checks[0].CondType == "CT_Loop_Item_Group") { } else {
+                if (tempcond.Checks.length == 1 && tempcond.Checks[0].CondType == "CT_Loop_While" || tempcond.Checks[0].CondType == "CT_Loop_Rooms" || tempcond.Checks[0].CondType == "CT_Loop_Characters" || tempcond.Checks[0].CondType == "CT_Loop_Items" || tempcond.Checks[0].CondType == "CT_Loop_Exits" || tempcond.Checks[0].CondType == "CT_Loop_Item_Char_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Container" || tempcond.Checks[0].CondType == "CT_Loop_Item_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Room" || tempcond.Checks[0].CondType == "CT_Loop_Item_Group") {} else {
                     InsertToMaster(tempcond.PassCommands);
                 }
             } else {
@@ -2363,7 +2363,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 if (TheObj != null) {
                                     var locationnameref = "";
                                     try {
-                                        locationnameref = part3; ;
+                                        locationnameref = part3;;
                                     } catch (err) {
                                         var locationobj = GetObject(part3);
                                         if (locationobj != null)
@@ -2563,18 +2563,18 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     if (varindex == -1)
                                         tempvar.sString = ValueToSet;
                                     else
-                                        if (varindex1a != -1)
-                                            tempvar.VarArray[varindex][varindex1a] = ValueToSet;
-                                        else
-                                            tempvar.VarArray[varindex] = ValueToSet;
+                                    if (varindex1a != -1)
+                                        tempvar.VarArray[varindex][varindex1a] = ValueToSet;
+                                    else
+                                        tempvar.VarArray[varindex] = ValueToSet;
                                 } else if (tempvar.vartype == "VT_NUMBER" || tempvar.vartype == "VT_NUMBERARRAY") {
                                     if (varindex == -1)
                                         tempvar.dNumType = ValueToSet;
                                     else
-                                        if (varindex1a != -1)
-                                            tempvar.VarArray[varindex][varindex1a] = ValueToSet;
-                                        else
-                                            tempvar.VarArray[varindex] = ValueToSet;
+                                    if (varindex1a != -1)
+                                        tempvar.VarArray[varindex][varindex1a] = ValueToSet;
+                                    else
+                                        tempvar.VarArray[varindex] = ValueToSet;
                                 }
                             }
                             break;
@@ -2936,7 +2936,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var varindex = GetArrayIndex(part2);
                             var varindex2a = GetArrayIndex2(part2);
                             if (tempvar != null) {
-                                if (tempvar.vartype == "VT_DATETIMEARRAY") { } else if (tempvar.vartype == "VT_NUMBER") {
+                                if (tempvar.vartype == "VT_DATETIMEARRAY") {} else if (tempvar.vartype == "VT_NUMBER") {
                                     AddTextToRTF(tempvar.dNumType.toString() + "\r\n", "Black", "Regular");
                                 } else if (tempvar.vartype == "VT_STRINGARRAY") {
                                     if (varindex != -1) {
@@ -3289,7 +3289,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: tempcommand.CustomChoices[_i]
                                     });
 
-                                    $div.click(function () {
+                                    $div.click(function() {
                                         selectedobj = $(this).val();
                                         if (selectedobj != null) {
                                             $("#RoomThumb").css("visibility", "visible");
@@ -3314,7 +3314,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             } else if (acttype == "Text") {
                                 $("#textMenuTitle").text(part4);
                                 $("#textchoice").css("visibility", "visible");
-                            } else { }
+                            } else {}
                             $("#RoomThumb").css("visibility", "hidden");
                             $("#PlayerImg").css("visibility", "hidden");
 
@@ -3341,7 +3341,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: tempcommand.CustomChoices[_i]
                                     });
 
-                                    $div.click(function () {
+                                    $div.click(function() {
                                         selectedobj = $(this).val();
                                         if (selectedobj != null) {
                                             $("#RoomThumb").css("visibility", "visible");
@@ -3372,7 +3372,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: TheGame.Character[_i].Charname
                                     });
 
-                                    $div.click(function () {
+                                    $div.click(function() {
                                         selectedobj = $(this).val();
                                         if (selectedobj != null) {
                                             $("#RoomThumb").css("visibility", "visible");
@@ -3405,7 +3405,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             value: obj.UniqueIdentifier
                                         });
 
-                                        $div.click(function () {
+                                        $div.click(function() {
                                             selectedobj = $(this).val();
                                             if (selectedobj != null) {
                                                 $("#RoomThumb").css("visibility", "visible");
@@ -3439,7 +3439,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             value: obj.UniqueIdentifier
                                         });
 
-                                        $div.click(function () {
+                                        $div.click(function() {
                                             selectedobj = $(this).val();
                                             if (selectedobj != null) {
                                                 $("#RoomThumb").css("visibility", "visible");
@@ -3473,7 +3473,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             value: obj.UniqueIdentifier
                                         });
 
-                                        $div.click(function () {
+                                        $div.click(function() {
                                             selectedobj = $(this).val();
                                             if (selectedobj != null) {
                                                 $("#RoomThumb").css("visibility", "visible");
@@ -3501,7 +3501,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: TheGame.Character[_i].Charname
                                     });
 
-                                    $div.click(function () {
+                                    $div.click(function() {
                                         selectedobj = $(this).val();
                                         if (selectedobj != null) {
                                             $("#RoomThumb").css("visibility", "visible");
@@ -3527,7 +3527,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             } else if (acttype == "Text") {
                                 $("#textMenuTitle").text(part4);
                                 $("#textchoice").css("visibility", "visible");
-                            } else { }
+                            } else {}
                             VariableGettingSet = tempcommand;
                             $("#RoomThumb").css("visibility", "hidden");
                             $("#PlayerImg").css("visibility", "hidden");
@@ -3754,9 +3754,9 @@ function CheckItemInInventory(tempobj) {
 }
 
 function sleep(milliseconds) {
-    setTimeout(function () {
+    setTimeout(function() {
         var start = new Date().getTime();
-        while ((new Date().getTime() - start) < milliseconds) { }
+        while ((new Date().getTime() - start) < milliseconds) {}
     }, 0);
 }
 
@@ -3871,7 +3871,7 @@ function SetArrayData(tempvar, resultval) {
 }
 
 function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, replacedstring, cmdtxt, part3) {
-    if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") { } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
+    if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {} else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
         if (part3 == "Equals") {
             if (bArraySet) {
                 SetArrayData(tempvar, jsresult);
@@ -3894,7 +3894,7 @@ function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, repl
                         parseFloat(replacedstring)).toString();
                 else
                     tempvar.VarArray[varindex] = parseFloat(tempvar.VarArray[varindex]) +
-                        parseFloat(replacedstring);
+                    parseFloat(replacedstring);
             }
         } else if (part3 == "Subtract") {
             if (varindex == -1)
@@ -3905,7 +3905,7 @@ function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, repl
                         parseFloat(replacedstring)).toString();
                 else
                     tempvar.VarArray[varindex] = parseFloat(tempvar.VarArray[varindex]) -
-                        parseFloat(replacedstring);
+                    parseFloat(replacedstring);
             }
         } else if (part3 == "Multiply") {
             if (varindex == -1)
@@ -3959,10 +3959,10 @@ function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, repl
             if (varindex == -1)
                 tempvar.sString = cmdtxt;
             else
-                if (varindex1a != -1)
-                    tempvar.VarArray[varindex][varindex1a] = cmdtxt;
-                else
-                    tempvar.VarArray[varindex] = cmdtxt;
+            if (varindex1a != -1)
+                tempvar.VarArray[varindex][varindex1a] = cmdtxt;
+            else
+                tempvar.VarArray[varindex] = cmdtxt;
         }
     }
 }
@@ -4085,7 +4085,7 @@ function TestVariable(step2, step3, step4) {
         var varindex = GetArrayIndex(step2);
         var varindex2 = GetArrayIndex2(step2);
         var replacedstring = PerformTextReplacements(step4, null);
-        if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") { } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
+        if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {} else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
             if (varindex != -1) {
                 if (varindex2 != -1) {
                     tempvar.dNumType = parseFloat(tempvar.VarArray[varindex][varindex2]);
@@ -4172,7 +4172,7 @@ function RunEvents(EventType) {
                     }
                 }
                 if (tempobj.bContainer) {
-                    if ((tempobj.bOpenable) && (!tempobj.bOpen)) { } else {
+                    if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else {
                         for (var j = 0; j < TheGame.Objects.length; j++) {
                             var tempobj2 = TheGame.Objects[j];
                             if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == tempobj.UniqueIdentifier)) {

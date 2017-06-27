@@ -1,4 +1,5 @@
-﻿function command() {
+﻿
+function command() {
     this.cmdtype = "CT_UNINITIALIZED";
     this.CommandName = "";
     this.CommandText = "";

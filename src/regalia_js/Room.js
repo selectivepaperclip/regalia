@@ -1,4 +1,5 @@
-﻿var CurrentRoomGuid = "00000000-0000-0000-0000-000000000001";
+﻿
+var CurrentRoomGuid = "00000000-0000-0000-0000-000000000001";
 var VoidRoomGuid = "00000000-0000-0000-0000-000000000002";
 
 function room() {
@@ -63,14 +64,14 @@ function LoadRoom(GameData) {
     TheRoom.UniqueID = GameData.find('UniqueID').text();
     var numimages = 0;
     var exittest = GameData.find('Exit');
-    exittest.each(function () {
+    exittest.each(function() {
         TheRoom.Exits.length = numimages + 1;
         TheRoom.Exits[numimages] = SetupExitData($(this));
         numimages++;
     });
     numimages = 0;
     var test = GameData.find('Action');
-    test.each(function () {
+    test.each(function() {
         TheRoom.Actions.length = numimages + 1;
         TheRoom.Actions[numimages] = SetupActionData($(this));
         numimages++;

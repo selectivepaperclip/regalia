@@ -1,4 +1,5 @@
-﻿function ragscondition() {
+﻿
+function ragscondition() {
     this.conditionname = "";
     this.PassCommands = new Array();
     this.FailCommands = new Array();

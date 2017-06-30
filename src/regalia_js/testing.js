@@ -144,7 +144,7 @@ $(function() {
         $("#loadinputchoices option").remove();
         var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
         db.transaction(function(tx) {
-            tx.executeSql('SELECT * FROM RagsSave4 order by date desc', [], function(tx, results) {
+            tx.executeSql('SELECT id, date FROM RagsSave4 order by id desc', [], function(tx, results) {
                 var len = results.rows.length,
                     i;
                 for (i = 0; i < len; i++) {
@@ -166,7 +166,7 @@ $(function() {
         $("#saveinputchoices option").remove();
         var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
         db.transaction(function(tx) {
-            tx.executeSql('SELECT * FROM RagsSave4 order by date desc', [], function(tx, results) {
+            tx.executeSql('SELECT id, date FROM RagsSave4 order by id desc', [], function(tx, results) {
                 var len = results.rows.length,
                     i;
                 for (i = 0; i < len; i++) {

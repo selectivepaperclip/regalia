@@ -225,17 +225,13 @@ function SetPortrait(ImageName) {
 }
 
 function SetupStatusBars() {
-    var statbar = "";
-    var counter = 0;
+    var visibleItems = [];
     for (var _i = 0; _i < TheGame.StatusBarItems.length; _i++) {
         if (TheGame.StatusBarItems[_i].bVisible) {
-            counter++;
-            if (counter > 0)
-                statbar += " | ";
-            statbar += TheGame.StatusBarItems[_i].Text;
+            visibleItems.push(TheGame.StatusBarItems[_i].Text);
         }
     }
-    statbar = PerformTextReplacements(statbar, null);
+    var statbar = PerformTextReplacements(visibleItems.join(' | '), null);
     $("#statusbartext").empty().append(statbar);
 }
 

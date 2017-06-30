@@ -1,0 +1,347 @@
+* {
+    box-sizing: border-box;
+}
+
+/* main page layout */
+
+body {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0 8px 8px 8px;
+}
+
+#menu {
+    position: static;
+    margin-bottom: 5px;
+    flex: 0 0 auto;
+}
+
+.mainrow {
+    position: static;
+    flex: 1 1 auto;
+    margin-bottom: 5px;
+    display: flex;
+}
+
+#PlayerRow {
+    display: flex;
+    height: 30%;
+    flex: 0 0 auto;
+    margin: 0 0 2px 0;
+    position: static;
+}
+
+#statusbar {
+    flex: 0 0 auto;
+    position: static;
+}
+
+/* mainrow */
+
+#roompanel {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    position: static;
+}
+
+#MainText {
+    flex: 1 1 auto;
+    border: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#RoomBar {
+    display: flex;
+    align-items: center;
+    border: 0;
+    border-top: 1px solid grey;
+}
+
+#Continue {
+    margin-top: 0;
+}
+
+/* other stuff */
+
+#RoomThumb, #RoomThumbImg {
+    border: 2px solid transparent;
+}
+
+#RoomThumbImg {
+    margin: 0;
+}
+
+#RoomThumbHolder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#RoomTitle {
+    width: auto;
+    flex: 1 1 auto;
+    padding-left: 10px;
+    text-align: left;
+    align-items: center;
+    margin: 0;
+    display: flex;
+    border: 0;
+}
+
+#RoomThumbImg.has-actions {
+    border: 2px solid green;
+    cursor: pointer;
+}
+
+#MainImg {
+    top: 0;
+    left: 0;
+    position: static;
+    width: auto !important;
+    max-height: 100% !important;
+}
+
+#inputmenu {
+    display: flex;
+    flex-direction: column;
+}
+
+#inputmenu {
+    position: static;
+    width: 100%;
+    height: auto;
+}
+
+#inputchoices {
+    height: auto;
+}
+
+.picpanel {
+    width: 60%;
+    text-align: center;
+    position: relative;
+}
+
+.inputmenuholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#cmdinputmenu {
+    display: flex;
+    flex-direction: column;
+    position: static;
+    width: 100%;
+    height: auto;
+    text-align: left;
+}
+
+#cmdinputchoices {
+    height: auto;
+}
+
+#cmdInputMenuTitle {
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px;
+}
+
+#cmdinputchoices .cmdinputchoices {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 3px;
+}
+
+#cmdinputchoices .cmdinputchoices:empty {
+    padding: 0;
+    margin: 0;
+}
+
+#cmdinputchoices .cmdinputchoices:hover {
+    background-color: #b5b5b5;
+    color: black;
+}
+
+#InputMenuTitle {
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px;
+}
+
+#inputmenu {
+    text-align: left;
+}
+
+#inputchoices .inputchoices {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 3px;
+}
+
+#inputchoices .inputchoices:empty {
+    padding: 0;
+    margin: 0;
+}
+
+#inputchoices .inputchoices:hover {
+    background-color: #b5b5b5;
+    color: black;
+}
+
+#RoomObjects .RoomObjects:hover,
+#Inventory .RoomObjects:hover,
+#VisibleCharacters .VisibleCharacters:hover,
+#Actionchoices .ActionChoices:hover
+{
+    cursor: pointer;
+    background-color: #b5b5b5;
+}
+
+.compass-up-down, .compass-rose {
+    position: relative;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.compass-up-down {
+    min-width: 52px;
+}
+
+.compass-rose {
+    min-width: 280px;
+}
+
+.portrait-holder {
+    position: relative;
+    text-align: center;
+    width: 24%;
+}
+
+#UDCompass, #Compass {
+    width: auto;
+    height: 100%;
+}
+
+#PlayerImg {
+    position: static;
+    width: auto !important;
+    height: 100% !important;
+}
+
+#RoomObjectsPanel, #VisibleCharactersPanel, #InventoryPanel {
+    border: 0;
+    width: 19%;
+}
+
+#RoomThumbImg,
+#UDCompass, #Compass,
+#roompanel, #menu, #statusbar,
+#RoomObjects,
+#VisibleCharacters,
+#Inventory,
+#selectionmenu,
+#PlayerRow,
+#inputmenu, #cmdinputmenu
+{
+    border: 1px solid grey;
+}
+
+#bUp
+{
+    top:4.5%;
+    left: calc(50% - 10px);
+}
+#bDown
+{
+    top: auto;
+    bottom:4.5%;
+    left: calc(50% - 10px);
+}
+#bNorth
+{
+    top:4.5%;
+    left: calc(50% - 10px);
+}
+#bSouth
+{
+    top: auto;
+    bottom:4.5%;
+    left: calc(50% - 10px);
+}
+#bWest
+{
+    top: calc(50% - 10px);
+    left:7%;
+}
+#bEast
+{
+    top: calc(50% - 10px);
+    left: auto;
+    right: 7%;
+}
+#bNorthwest
+{
+    top:20%;
+    left:10%;
+}
+#bNortheast
+{
+    top:20%;
+    left: auto;
+    right:21%;
+}
+#bSouthwest
+{
+    top: auto;
+    bottom:30%;
+    left:10%;
+}
+#bSoutheast
+{
+    top: auto;
+    bottom:30%;
+    left: auto;
+    right:21%;
+}
+#bIn
+{
+    opacity:0.7;
+    filter:alpha(opacity=70);
+    top:4.5%;
+    left: auto;
+    right:5%;
+    width:30px;
+
+}
+#bOut
+{
+    top:88%;
+    left: auto;
+    right:5%;
+    opacity:0.7;
+    filter:alpha(opacity=70);
+    width:30px;
+
+}
+
+.compass-rose .Direction, .compass-up-down .Direction {
+    cursor: pointer;
+    border: 1px solid grey;
+}
+
+.compass-rose .Direction:hover, .compass-up-down .Direction:hover {
+    border: 1px solid green;
+}

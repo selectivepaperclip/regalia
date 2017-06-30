@@ -9,6 +9,7 @@
 
     <!-- !CSS -->
     <link href="regalia_css/style.css" rel="stylesheet" />
+    <link href="regalia_css/custom.css" rel="stylesheet" />
     <script type="text/javascript" src="js_vendor/modernizr-2.0.6.js"></script>
     <script type="text/javascript" src="js_vendor/jquery-1.7.1.min.js"></script>
     <script src="regalia_js/testing.js" type="text/javascript"></script>
@@ -51,34 +52,68 @@
 </tr>
 </table>
 </header>
-    <div id="roompanel">
-    <div id="MainText"></div>
-    <img id="RoomThumbImg"></img>
-    <canvas id="RoomThumb"></canvas><div id="RoomTitle">Test Title</div><button id="Continue">Continue...</button>
+    <div class="mainrow">
+        <div id="roompanel">
+            <div id="MainText"></div>
+            <div id="RoomBar">
+                <div id="RoomThumbHolder">
+                    <img id="RoomThumbImg">
+                    <canvas id="RoomThumb"></canvas>
+                </div>
+                <div id="RoomTitle">Test Title</div>
+                <button id="Continue">Continue...</button>
+            </div>
+        </div>
 
+        <div class="picpanel">
+            <img id="MainImg">
+            <canvas id="MainPic"></canvas>
+            <video id="MainVid" autoplay>
+                <source id="MainVidSrc" src=""/>
+            </video>
+
+            <div class="inputmenuholder">
+                <div id="inputmenu" >
+                    <div id="InputMenuTitle">Test</div>
+                    <div id="inputchoices" ></div>
+                    <button id="CancelInput">Cancel</button>
+                </div>
+
+                <div id="cmdinputmenu">
+                    <div id="cmdInputMenuTitle">Test</div>
+                    <div id="cmdinputchoices" ></div>
+                    <button id="cmdCancelInput">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <img id="MainImg"></img>
-    <canvas id="MainPic"></canvas>
- <video id="MainVid" autoplay>
-		<source id="MainVidSrc" src=""/>
-	</video>
 
     <div id="PlayerRow">
-    <img class="Direction" id="bUp" src="images/North.png"></img>
-    <img class="Direction" id="bDown" src="images/South.png"></img>
-    <img id="UDCompass" src="images/300px-Compass_Rose_UD.png"></img>
-    <img id="Compass" src="images/300px-Compass_Rose_English_North.png"></img>
-    <img class="Direction" id="bNorth" src="images/North.png"></img>
-    <img class="Direction" id="bSouth" src="images/South.png"></img>
-    <img class="Direction" id="bWest" src="images/West.png"></img>
-    <img class="Direction" id="bEast" src="images/East.png"></img>
-    <img class="Direction" id="bNorthwest" src="images/Northwest.png"></img>
-    <img class="Direction" id="bNortheast" src="images/NorthEast.png"></img>
-    <img class="Direction" id="bSouthwest" src="images/SouthWest.png"></img>
-    <img class="Direction" id="bSoutheast" src="images/SouthEast.png"></img>
-    <button class="Direction" id="bIn" style="background-color:green;" >In</button>
-    <button class="Direction" id="bOut" style="background-color:green;">Out</button>
-    <img id="PlayerImg"></img><canvas id="PlayerPortrait"></canvas>
+        <div class="compass-up-down">
+            <img class="Direction" id="bUp" src="images/North.png">
+            <img class="Direction" id="bDown" src="images/South.png">
+            <img id="UDCompass" src="images/300px-Compass_Rose_UD.png">
+        </div>
+
+        <div class="compass-rose">
+            <img id="Compass" src="images/300px-Compass_Rose_English_North.png">
+            <img class="Direction" id="bNorth" src="images/North.png">
+            <img class="Direction" id="bSouth" src="images/South.png">
+            <img class="Direction" id="bWest" src="images/West.png">
+            <img class="Direction" id="bEast" src="images/East.png">
+            <img class="Direction" id="bNorthwest" src="images/Northwest.png">
+            <img class="Direction" id="bNortheast" src="images/NorthEast.png">
+            <img class="Direction" id="bSouthwest" src="images/SouthWest.png">
+            <img class="Direction" id="bSoutheast" src="images/SouthEast.png">
+
+            <button class="Direction" id="bIn" style="background-color:green;" >In</button>
+            <button class="Direction" id="bOut" style="background-color:green;">Out</button>
+        </div>
+
+        <div class="portrait-holder">
+            <img id="PlayerImg"><canvas id="PlayerPortrait"></canvas>
+        </div>
+
        <div id="RoomObjectsPanel">
             <div id="RoomObjectsTitle">Room Objects:</div>
             <div id="RoomObjects">
@@ -112,30 +147,6 @@
 <div id="selectionmenu" >
 	<div id="Actionchoices"></div>
 	</div>
-<div id="inputmenu" >
-	<table id="inputtable">
-		<tr><td height=10% id="InputMenuTitle">Test</td></tr>
-		<tr><td>
-	<div id="inputchoices" ></div>
-	</td>
-	</tr>
-<tr>
-<td height=10%> <button id="CancelInput">Cancel</button>
-	</div>
-	</table>
-</div>
-<div id="cmdinputmenu" >
-	<table id="cmdinputtable">
-		<tr><td height=10% id="cmdInputMenuTitle">Test</td></tr>
-		<tr><td>
-	<div id="cmdinputchoices" ></div>
-	</td>
-	</tr>
-<tr>
-<td> <button height=10% id="cmdCancelInput">Cancel</button></td></tr>
-	</div>
-	</table>
-</div>
 
 <div id="playernamechoice" >
 	<table id="playernametable">

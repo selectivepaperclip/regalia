@@ -42,10 +42,6 @@ $(function() {
         window.x = e.pageX;
         window.y = e.pageY;
     });
-    $(window).resize(function() {
-        ResizeWindow();
-    });
-    ResizeWindow();
     $("#Actionchoices").change(function(e) {
         var selectionchoice = $("#Actionchoices").val();
         if (selectionchoice != null) {
@@ -902,54 +898,3 @@ function GetImageMimeType(lastthree) {
 }
 
 function FileLoaded(theFile) {}
-
-function ResizeWindow() {
-    var height = $(window).height();
-    var width = $(window).width();
-    $("#statusbar").css("top", height - 50);
-    var newheight = height / 2 + 80;
-    $("#roompanel").height(newheight);
-    var roompanelwidth = $("#roompanel").width();
-    $("#MainText").height(newheight - 75);
-    $("#MainPic").height(newheight);
-    $("#MainPic").css("left", roompanelwidth + 10);
-    $("#MainPic").width(width - roompanelwidth - 20);
-    $("#MainImg").height(newheight);
-    $("#MainImg").css("left", roompanelwidth + 12);
-    $("#MainImg").width(width - roompanelwidth - 20);
-    $("#MainVid").height(newheight);
-    $("#MainVid").css("left", roompanelwidth + 12);
-    $("#MainVid").width(width - roompanelwidth - 20);
-    $("#PlayerImg").css("left", $("#PlayerPortrait").position().left + 2);
-    $("#PlayerImg").height($("#PlayerPortrait").height());
-    $("#PlayerImg").width($("#PlayerPortrait").width());
-    $("#RoomThumbImg").css("left", $("#RoomThumb").position().left);
-    $("#RoomThumbImg").height($("#RoomThumb").height());
-    $("#RoomThumbImg").width($("#RoomThumb").width());
-    $("#PlayerRow").css("top", newheight + 50);
-    $("#PlayerRow").height(height - (newheight + 110));
-    $("#inputmenu").css("left", roompanelwidth + 10);
-    $("#inputmenu").height(newheight);
-    $("#inputmenu").width(width - roompanelwidth - 20);
-    $("#cmdinputmenu").css("left", roompanelwidth + 10);
-    $("#cmdinputmenu").height(newheight);
-    $("#cmdinputmenu").width(width - roompanelwidth - 20);
-    $("#playernamechoice").css("left", roompanelwidth + 10);
-    $("#playernamechoice").height(newheight);
-    $("#playernamechoice").width(width - roompanelwidth - 20);
-    $("#genderchoice").css("left", roompanelwidth + 10);
-    $("#genderchoice").height(newheight);
-    $("#genderchoice").width(width - roompanelwidth - 20);
-    $("#textchoice").css("left", roompanelwidth + 10);
-    $("#textchoice").height(newheight);
-    $("#textchoice").width(width - roompanelwidth - 20);
-    $("#textactionchoice").css("left", roompanelwidth + 10);
-    $("#textactionchoice").height(newheight);
-    $("#textactionchoice").width(width - roompanelwidth - 20);
-    if (TheGame) {
-        SetPortrait(TheGame.Player.PlayerPortrait);
-        if (CurrentImage != "") {
-            GetImage(CurrentImage);
-        }
-    }
-}

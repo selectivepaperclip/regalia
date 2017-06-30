@@ -11,6 +11,39 @@ var MasterLoopObject = null;
 var MasterIdx = 0;
 var MasterLoopArray = null;
 
+function custom__setInputMenuTitle(act) {
+    $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
+    $("#inputmenu").css("visibility", "visible");
+}
+
+function custom__clearCmdInputChoices() {
+    $("#cmdinputchoices div").empty();
+}
+
+function custom__addCmdInputChoice($div) {
+    $div.click(function () {
+        selectedobj = $(this).val();
+        if (selectedobj != null) {
+            $("#cmdinputmenu").hide();
+            $("#RoomThumb").css("visibility", "visible");
+            $("#PlayerPortrait").css("visibility", "visible");
+
+            $("#RoomThumbImg").css("visibility", "visible");
+            $("#PlayerImg").css("visibility", "visible");
+            $("#RoomObjectsPanel").css("visibility", "visible");
+            $("#VisibleCharactersPanel").css("visibility", "visible");
+            $("#InventoryPanel").css("visibility", "visible");
+            SetExits();
+            $("#cmdinputmenu").css("visibility", "hidden");
+            SetCommandInput(VariableGettingSet, selectedobj);
+            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+        }
+    });
+
+    $("#cmdinputchoices").append($div);
+    $("#cmdinputmenu").show();
+}
+
 function AddToMaster(commands, addinputdata) {
     for (var _i = 0; _i < commands.length; _i++) {
         commands[_i].AdditionalInputData = addinputdata;
@@ -28,11 +61,9 @@ function InsertToMaster(commands, addinputdata) {
 function SetBorders() {
     if (GetActionCount(GetRoom(TheGame.Player.CurrentRoom).Actions) > 0) {
         //set green border on room thumb
-        $("#RoomThumb").css("border-color", "green");
-        $("#RoomThumbImg").css("border-color", "green");
+        $("#RoomThumb, #RoomThumbImg").addClass('has-actions');
     } else {
-        $("#RoomThumb").css("border-color", "red");
-        $("#RoomThumbImg").css("border-color", "red");
+        $("#RoomThumb, #RoomThumbImg").removeClass('has-actions');
     }
     if (GetActionCount(TheGame.Player.Actions) > 0) {
         $("#PlayerImg").css("border-color", "green");
@@ -80,9 +111,9 @@ function SetRoomThumb(ImageName) {
                         top: $("#RoomThumbImg").position().top,
                         left: $("#RoomThumbImg").position().left
                     });
-                    img.click(function(e) {
+                    img.click(function(clickEvent) {
                         TheObj = GetRoom(TheGame.Player.CurrentRoom);
-                        DisplayActions(TheObj.Actions);
+                        DisplayActions(TheObj.Actions, clickEvent);
                     });
                     img.appendTo('#RoomImageLayers');
                 }
@@ -107,19 +138,7 @@ function GetImage(ImageName) {
     CurrentImage = ImageName;
     var tempimage = new Image();
     tempimage.onload = function() {
-        var width = parseInt(tempimage.width);
-        var height = parseInt(tempimage.height);
-        var scalefactor = calculateScale(tempimage);
-        var newwidth = (width * scalefactor + 0.5) | 0;
-        var newheight = (height * scalefactor + 0.5) | 0;
-        if (newwidth >= $("#MainPic").width())
-            newwidth = $("#MainPic").width() - 2;
-        if (newheight >= $("#MainPic").height())
-            newheight = $("#MainPic").height() - 2;
-
         $("#MainImg").attr("src", "images/" + ImageName);
-        $("#MainImg").width(width * scalefactor);
-        $("#MainImg").height(height * scalefactor);
 
         var checkimg = GetGameImage(ImageName);
         if (checkimg != null) {
@@ -130,8 +149,6 @@ function GetImage(ImageName) {
                 for (var _i = 0; _i < thelayers.length; _i++) {
                     var img = $('<img class="MainLayeredImage">');
                     img.attr('src', "images/" + thelayers[_i]);
-                    img.width($("#MainImg").width());
-                    img.height($("#MainImg").height());
                     img.css({
                         top: $("#MainImg").position().top,
                         left: $("#MainImg").position().left
@@ -186,9 +203,9 @@ function SetPortrait(ImageName) {
                         top: $("#PlayerImg").offset().top,
                         left: $("#PlayerImg").offset().left
                     });
-                    img.click(function(e) {
+                    img.click(function(clickEvent) {
                         TheObj = TheGame.Player;
-                        DisplayActions(TheGame.Player.Actions);
+                        DisplayActions(TheGame.Player.Actions, clickEvent);
                     });
                     img.appendTo('#PortraitImageLayers');
                 }
@@ -234,12 +251,12 @@ function RefreshInventory() {
                 value: obj.UniqueIdentifier
             });
 
-            $div.click(function() {
+            $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
                     $(this).val([]);
-                    DisplayActions(selectedobj.Actions);
+                    DisplayActions(selectedobj.Actions, clickEvent);
                 }
             });
             $("#Inventory").append($div);
@@ -264,12 +281,12 @@ function RefreshRoomObjects() {
                 value: obj.UniqueIdentifier
             });
 
-            $div.click(function() {
+            $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
                     $("#RoomObjects").val([]);
-                    DisplayActions(selectedobj.Actions);
+                    DisplayActions(selectedobj.Actions, clickEvent);
                 }
             });
             $("#RoomObjects").append($div);
@@ -295,12 +312,12 @@ function RefreshRoomObjects() {
                                 value: tempobj.UniqueIdentifier
                             });
 
-                            $div.click(function() {
+                            $div.click(function(clickEvent) {
                                 selectedobj = GetObject($(this).val());
                                 if (selectedobj != null) {
                                     TheObj = selectedobj;
                                     $("#RoomObjects").val([]);
-                                    DisplayActions(selectedobj.Actions);
+                                    DisplayActions(selectedobj.Actions, clickEvent);
                                 }
                             });
                             $("#RoomObjects").append($div);
@@ -354,12 +371,12 @@ function AddOpenedObjects(tempobj, thelistbox, selitem) {
                 value: tempobj2.UniqueIdentifier
             });
 
-            $div.click(function() {
+            $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
                     $(this).val([]);
-                    DisplayActions(selectedobj.Actions);
+                    DisplayActions(selectedobj.Actions, clickEvent);
                 }
             });
 
@@ -385,11 +402,11 @@ function RefreshCharacters() {
                 value: obj.Charname
             });
 
-            $div.click(function() {
+            $div.click(function(clickEvent) {
                 selectedobj = GetCharacter($(this).val());
                 if (selectedobj != null) {
                     TheObj = selectedobj;
-                    DisplayActions(selectedobj.Actions);
+                    DisplayActions(selectedobj.Actions, clickEvent);
                 }
             });
 
@@ -464,7 +481,7 @@ function AddChildAction(Actions, Indent, ActionName) {
     }
 }
 
-function DisplayActions(Actions) {
+function DisplayActions(Actions, clickEvent) {
     $("#Actionchoices div").empty();
     CurActions = Actions;
     for (_i = 0; _i < Actions.length; _i++) {
@@ -475,8 +492,7 @@ function DisplayActions(Actions) {
                 value: Actions[_i].name
             });
 
-
-            $div.click(function() {
+            $div.click(function(e) {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
                     $("#MainText").append('</br><b>' + selectionchoice + "</b>");
@@ -500,10 +516,30 @@ function DisplayActions(Actions) {
             AddChildAction(Actions, "--", Actions[_i].name);
         }
     }
-    $("#selectionmenu").css("top", window.y - 50 + "px");
-    var leftposition = window.x;
-    if (window.x + $("#selectionmenu").width() > $(window).width())
-        leftposition = $(window).width() - $("#selectionmenu").width();
+
+    $("#selectionmenu").click(function (e) {
+      e.stopPropagation();
+    });
+
+    $('body').off('click.selectionmenu');
+    setTimeout(function () {
+        $('body').on('click.selectionmenu', function (e) {
+            $("#selectionmenu").css("visibility", "hidden");
+        });
+    });
+
+    var leftposition, topposition;
+    if (clickEvent) {
+        leftposition = clickEvent.clientX;
+        topposition = clickEvent.clientY;
+    } else {
+        topposition = window.y - 50;
+        leftposition = window.x;
+        if (window.x + $("#selectionmenu").width() > $(window).width())
+            leftposition = $(window).width() - $("#selectionmenu").width();
+    }
+
+    $("#selectionmenu").css("top", topposition + "px");
     $("#selectionmenu").css("left", leftposition + "px");
     $("#selectionmenu").css("visibility", "visible");
     $("#Actionchoices").focus();
@@ -573,8 +609,7 @@ function ProcessAction(Action, bTimer) {
                 $("#inputchoices").append($div);
 
             }
-            $("#InputMenuTitle").text(act.CustomChoiceTitle);
-            $("#inputmenu").css("visibility", "visible");
+            custom__setInputMenuTitle(act);
         } else if (act.InputType == "Character") {
             $("#inputchoices div").empty();
             for (_i = 0; _i < TheGame.Characters.length; _i++) {
@@ -614,8 +649,7 @@ function ProcessAction(Action, bTimer) {
 
                 }
             }
-            $("#InputMenuTitle").text(act.CustomChoiceTitle);
-            $("#inputmenu").css("visibility", "visible");
+            custom__setInputMenuTitle(act);
         } else if (act.InputType == "Object") {
             $("#inputchoices div").empty();
             for (_i = 0; _i < TheGame.Objects.length; _i++) {
@@ -708,8 +742,7 @@ function ProcessAction(Action, bTimer) {
                     }
                 }
             }
-            $("#InputMenuTitle").text(act.CustomChoiceTitle);
-            $("#inputmenu").css("visibility", "visible");
+            custom__setInputMenuTitle(act);
         } else if (act.InputType == "Inventory") {
             $("#inputchoices div").empty();
             for (_i = 0; _i < TheGame.Objects.length; _i++) {
@@ -749,8 +782,7 @@ function ProcessAction(Action, bTimer) {
                     $("#inputchoices").append($div);
                 }
             }
-            $("#InputMenuTitle").text(act.CustomChoiceTitle);
-            $("#inputmenu").css("visibility", "visible");
+            custom__setInputMenuTitle(act);
         } else if (act.InputType == "ObjectOrCharacter") {
             $("#inputchoices div").empty();
             for (_i = 0; _i < TheGame.Objects.length; _i++) {
@@ -877,8 +909,7 @@ function ProcessAction(Action, bTimer) {
                     $("#inputchoices").append($div);
 
                 }
-                $("#InputMenuTitle").text(act.CustomChoiceTitle);
-                $("#inputmenu").css("visibility", "visible");
+                custom__setInputMenuTitle(act);
             }
         } else if (act.InputType == "Text") {
             $("#textactionMenuTitle").text(act.CustomChoiceTitle);
@@ -3281,7 +3312,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var acttype = part2;
                             var bTransparentChoice = false;
                             if (acttype == "Custom") {
-                                $("#cmdinputchoices div").empty();
+                                custom__clearCmdInputChoices();
                                 for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
@@ -3289,25 +3320,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: tempcommand.CustomChoices[_i]
                                     });
 
-                                    $div.click(function() {
-                                        selectedobj = $(this).val();
-                                        if (selectedobj != null) {
-                                            $("#RoomThumb").css("visibility", "visible");
-                                            $("#PlayerPortrait").css("visibility", "visible");
-
-                                            $("#RoomThumbImg").css("visibility", "visible");
-                                            $("#PlayerImg").css("visibility", "visible");
-                                            $("#RoomObjectsPanel").css("visibility", "visible");
-                                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                                            $("#InventoryPanel").css("visibility", "visible");
-                                            SetExits();
-                                            $("#cmdinputmenu").css("visibility", "hidden");
-                                            SetCommandInput(VariableGettingSet, selectedobj);
-                                            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                        }
-                                    });
-
-                                    $("#cmdinputchoices").append($div);
+                                    custom__addCmdInputChoice($div)
                                 }
                                 $("#cmdInputMenuTitle").text(act.CustomChoiceTitle)
                                 $("#cmdinputmenu").css("visibility", "visible");
@@ -3333,7 +3346,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var acttype = part2;
                             var bTransparentChoice = false;
                             if (acttype == "Custom") {
-                                $("#cmdinputchoices div").empty();
+                                custom__clearCmdInputChoices()
                                 for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
@@ -3341,30 +3354,12 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: tempcommand.CustomChoices[_i]
                                     });
 
-                                    $div.click(function() {
-                                        selectedobj = $(this).val();
-                                        if (selectedobj != null) {
-                                            $("#RoomThumb").css("visibility", "visible");
-                                            $("#PlayerPortrait").css("visibility", "visible");
-
-                                            $("#RoomThumbImg").css("visibility", "visible");
-                                            $("#PlayerImg").css("visibility", "visible");
-                                            $("#RoomObjectsPanel").css("visibility", "visible");
-                                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                                            $("#InventoryPanel").css("visibility", "visible");
-                                            SetExits();
-                                            $("#cmdinputmenu").css("visibility", "hidden");
-                                            SetCommandInput(VariableGettingSet, selectedobj);
-                                            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                        }
-                                    });
-
-                                    $("#cmdinputchoices").append($div);
+                                    custom__addCmdInputChoice($div);
                                 }
                                 $("#cmdInputMenuTitle").text(part4);
                                 $("#cmdinputmenu").css("visibility", "visible");
                             } else if (acttype == "Character") {
-                                $("#cmdinputchoices div").empty();
+                                custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Characters.length; _i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
@@ -3372,30 +3367,12 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: TheGame.Character[_i].Charname
                                     });
 
-                                    $div.click(function() {
-                                        selectedobj = $(this).val();
-                                        if (selectedobj != null) {
-                                            $("#RoomThumb").css("visibility", "visible");
-                                            $("#PlayerPortrait").css("visibility", "visible");
-
-                                            $("#RoomThumbImg").css("visibility", "visible");
-                                            $("#PlayerImg").css("visibility", "visible");
-                                            $("#RoomObjectsPanel").css("visibility", "visible");
-                                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                                            $("#InventoryPanel").css("visibility", "visible");
-                                            SetExits();
-                                            $("#cmdinputmenu").css("visibility", "hidden");
-                                            SetCommandInput(VariableGettingSet, selectedobj);
-                                            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                        }
-                                    });
-
-                                    $("#cmdinputchoices").append($div);
+                                    custom__addCmdInputChoice($div)
                                 }
                                 $("#cmdInputMenuTitle").text(part4);
                                 $("#cmdinputmenu").css("visibility", "visible");
                             } else if (acttype == "Object") {
-                                $("#cmdinputchoices div").empty();
+                                custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
                                     var obj = TheGame.Objects[_i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
@@ -3405,31 +3382,13 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             value: obj.UniqueIdentifier
                                         });
 
-                                        $div.click(function() {
-                                            selectedobj = $(this).val();
-                                            if (selectedobj != null) {
-                                                $("#RoomThumb").css("visibility", "visible");
-                                                $("#PlayerPortrait").css("visibility", "visible");
-
-                                                $("#RoomThumbImg").css("visibility", "visible");
-                                                $("#PlayerImg").css("visibility", "visible");
-                                                $("#RoomObjectsPanel").css("visibility", "visible");
-                                                $("#VisibleCharactersPanel").css("visibility", "visible");
-                                                $("#InventoryPanel").css("visibility", "visible");
-                                                SetExits();
-                                                $("#cmdinputmenu").css("visibility", "hidden");
-                                                SetCommandInput(VariableGettingSet, selectedobj);
-                                                RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                            }
-                                        });
-
-                                        $("#cmdinputchoices").append($div);
+                                        custom__addCmdInputChoice($div)
                                     }
                                 }
                                 $("#cmdInputMenuTitle").text(part4);
                                 $("#cmdinputmenu").css("visibility", "visible");
                             } else if (acttype == "Inventory") {
-                                $("#cmdinputchoices div").empty();
+                                custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
                                     var obj = TheGame.Objects[_i];
                                     if (obj.locationtype == "LT_PLAYER") {
@@ -3439,31 +3398,13 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             value: obj.UniqueIdentifier
                                         });
 
-                                        $div.click(function() {
-                                            selectedobj = $(this).val();
-                                            if (selectedobj != null) {
-                                                $("#RoomThumb").css("visibility", "visible");
-                                                $("#PlayerPortrait").css("visibility", "visible");
-
-                                                $("#RoomThumbImg").css("visibility", "visible");
-                                                $("#PlayerImg").css("visibility", "visible");
-                                                $("#RoomObjectsPanel").css("visibility", "visible");
-                                                $("#VisibleCharactersPanel").css("visibility", "visible");
-                                                $("#InventoryPanel").css("visibility", "visible");
-                                                SetExits();
-                                                $("#cmdinputmenu").css("visibility", "hidden");
-                                                SetCommandInput(VariableGettingSet, selectedobj);
-                                                RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                            }
-                                        });
-
-                                        $("#cmdinputchoices").append($div);
+                                        custom__addCmdInputChoice($div)
                                     }
                                 }
                                 $("#cmdInputMenuTitle").text(part4);
                                 $("#cmdinputmenu").css("visibility", "visible");
                             } else if (acttype == "ObjectOrCharacter") {
-                                $("#cmdinputchoices div").empty();
+                                custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
                                     var obj = TheGame.Objects[_i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
@@ -3473,25 +3414,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             value: obj.UniqueIdentifier
                                         });
 
-                                        $div.click(function() {
-                                            selectedobj = $(this).val();
-                                            if (selectedobj != null) {
-                                                $("#RoomThumb").css("visibility", "visible");
-                                                $("#PlayerPortrait").css("visibility", "visible");
-
-                                                $("#RoomThumbImg").css("visibility", "visible");
-                                                $("#PlayerImg").css("visibility", "visible");
-                                                $("#RoomObjectsPanel").css("visibility", "visible");
-                                                $("#VisibleCharactersPanel").css("visibility", "visible");
-                                                $("#InventoryPanel").css("visibility", "visible");
-                                                SetExits();
-                                                $("#cmdinputmenu").css("visibility", "hidden");
-                                                SetCommandInput(VariableGettingSet, selectedobj);
-                                                RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                            }
-                                        });
-
-                                        $("#cmdinputchoices").append($div);
+                                        custom__addCmdInputChoice($div)
                                     }
                                 }
                                 for (_i = 0; _i < TheGame.Characters.length; _i++) {
@@ -3501,25 +3424,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         value: TheGame.Character[_i].Charname
                                     });
 
-                                    $div.click(function() {
-                                        selectedobj = $(this).val();
-                                        if (selectedobj != null) {
-                                            $("#RoomThumb").css("visibility", "visible");
-                                            $("#PlayerPortrait").css("visibility", "visible");
-
-                                            $("#RoomThumbImg").css("visibility", "visible");
-                                            $("#PlayerImg").css("visibility", "visible");
-                                            $("#RoomObjectsPanel").css("visibility", "visible");
-                                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                                            $("#InventoryPanel").css("visibility", "visible");
-                                            SetExits();
-                                            $("#cmdinputmenu").css("visibility", "hidden");
-                                            SetCommandInput(VariableGettingSet, selectedobj);
-                                            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                        }
-                                    });
-
-                                    $("#cmdinputchoices").append($div);
+                                    custom__addCmdInputChoice($div)
 
                                 }
                                 $("#cmdInputMenuTitle").text(part4);
@@ -3569,7 +3474,7 @@ function AddTextToRTF(text, clr, fontst) {
             var endindex = text.indexOf("]", tempindex);
             tempindex += 2;
             var colortype = text.substring(tempindex, endindex).trim();
-            var colorinserter = "<div style=\"color:";
+            var colorinserter = "<span style=\"color:";
             if (colortype.indexOf(",") > -1) {
                 colorinserter += "rgb(" + colortype + ");\">";
             } else {

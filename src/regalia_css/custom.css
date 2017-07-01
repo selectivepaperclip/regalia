@@ -68,6 +68,18 @@ body {
     margin-top: 0;
 }
 
+/* menu row */
+
+#menu {
+    display: flex;
+    align-items: center;
+}
+
+.menuitem {
+    padding: 0 20px;
+    flex: 1 1 auto;
+}
+
 /* other stuff */
 
 #RoomThumb, #RoomThumbImg {
@@ -344,4 +356,62 @@ body {
 
 .compass-rose .Direction:hover, .compass-up-down .Direction:hover {
     border: 1px solid green;
+}
+
+.hidden {
+    display: none;
+}
+
+.cheat-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.cheat-menu-content {
+    font-family: sans-serif;
+    padding: 15px;
+    position: fixed;
+    top: 15%;
+    right: 20%;
+    left: 20%;
+    bottom: 15%;
+    border: 1px solid grey;
+    background: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.cheat-menu-variables {
+    flex: 1 1 auto;
+}
+
+.cheat-menu-variables th, .cheat-menu-variables td {
+    text-align: left;
+    vertical-align: top;
+}
+
+.cheat-menu-variables-body td {
+    padding: 5px 2px;
+}
+
+.cheat-menu-variables-body .desc-cell {
+    max-width: 200px;
+    font-size: 13px;
+}
+
+.cheat-menu-actions {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.cheat-menu-content h1 {
+    margin: 0;
+}
+
+.freeze-button.frozen {
+    background-color: #00e7ff;
 }

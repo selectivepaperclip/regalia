@@ -31,26 +31,26 @@
     <script src="regalia_js/StatusBarItem.js" type="text/javascript"></script>
     <script src="regalia_js/Utilities.js" type="text/javascript"></script>
     <script src="regalia_js/TextHandler.js" type="text/javascript"></script>
+    <script src="regalia_js/Cheat.js" type="text/javascript"></script>
 </head>
 
 <body>
 <header id="menu">
-    <table>
-        <tr>
-            <td width=25%>
-                <b>GAME_TITLE_HERE</b>
-            </td>
-            <td width=25%>
-                <button id="load">Load</button>
-            </td>
-            <td width=25%>
-                <button id="save">Save</button>
-            </td>
-            <td>
-                <b>Version: 0.25</b>
-            </td>
-        </tr>
-    </table>
+    <div class="menuitem">
+        <b>GAME_TITLE_HERE</b>
+    </div>
+    <div class="menuitem">
+        <button id="load">Load</button>
+    </div>
+    <div class="menuitem">
+        <button id="save">Save</button>
+    </div>
+    <div class="menuitem">
+        <button id="cheat_button">Cheat</button>
+    </div>
+    <div class="menuitem">
+        <b>Version: 0.25</b>
+    </div>
 </header>
 
 <div class="mainrow">
@@ -256,6 +256,33 @@
             </td>
         </tr>
     </table>
+</div>
+
+<div class="cheat-menu hidden">
+    <div class="cheat-menu-content">
+        <div class="cheat-menu-title">
+            <h1>Cheat Menu</h1>
+        </div>
+        <div class="cheat-menu-variables">
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th>Desc</th>
+                    <th>Freeze</th>
+                </tr>
+
+                </thead>
+                <tbody class="cheat-menu-variables-body">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="cheat-menu-actions">
+            <button>Finish</button>
+        </div>
+    </div>
 </div>
 
 <div id="tooltip">

@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title></title>
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <meta name="author" content=""/>
 
     <!-- !CSS -->
     <link href="regalia_css/style.css" rel="stylesheet" />
@@ -34,197 +34,228 @@
 </head>
 
 <body>
-    <header id="menu">
-<table>
-    		<tr>
-    			<td width=25%>
-    <b>GAME_TITLE_HERE</b>
-    		</td>
-    		<td width=25%>
- <button id="load">Load</button>
-</td>
-<td width=25%>
-<button id="save">Save</button>
-</td>
-<td>
-<b>Version: 0.25</b>
-</td>
-</tr>
-</table>
+<header id="menu">
+    <table>
+        <tr>
+            <td width=25%>
+                <b>GAME_TITLE_HERE</b>
+            </td>
+            <td width=25%>
+                <button id="load">Load</button>
+            </td>
+            <td width=25%>
+                <button id="save">Save</button>
+            </td>
+            <td>
+                <b>Version: 0.25</b>
+            </td>
+        </tr>
+    </table>
 </header>
-    <div class="mainrow">
-        <div id="roompanel">
-            <div id="MainText"></div>
-            <div id="RoomBar">
-                <div id="RoomThumbHolder">
-                    <img id="RoomThumbImg">
-                    <canvas id="RoomThumb"></canvas>
-                </div>
-                <div id="RoomTitle">Test Title</div>
-                <button id="Continue">Continue...</button>
+
+<div class="mainrow">
+    <div id="roompanel">
+        <div id="MainText"></div>
+        <div id="RoomBar">
+            <div id="RoomThumbHolder">
+                <img id="RoomThumbImg">
+                <canvas id="RoomThumb"></canvas>
             </div>
-        </div>
-
-        <div class="picpanel">
-            <img id="MainImg">
-            <canvas id="MainPic"></canvas>
-            <video id="MainVid" autoplay>
-                <source id="MainVidSrc" src=""/>
-            </video>
-
-            <div class="inputmenuholder">
-                <div id="inputmenu" >
-                    <div id="InputMenuTitle">Test</div>
-                    <div id="inputchoices" ></div>
-                    <button id="CancelInput">Cancel</button>
-                </div>
-
-                <div id="cmdinputmenu">
-                    <div id="cmdInputMenuTitle">Test</div>
-                    <div id="cmdinputchoices" ></div>
-                    <button id="cmdCancelInput">Cancel</button>
-                </div>
-            </div>
+            <div id="RoomTitle">Test Title</div>
+            <button id="Continue">Continue...</button>
         </div>
     </div>
 
-    <div id="PlayerRow">
-        <div class="compass-up-down">
-            <img class="Direction" id="bUp" src="images/North.png">
-            <img class="Direction" id="bDown" src="images/South.png">
-            <img id="UDCompass" src="images/300px-Compass_Rose_UD.png">
-        </div>
+    <div class="picpanel">
+        <img id="MainImg">
+        <canvas id="MainPic"></canvas>
+        <video id="MainVid" autoplay>
+            <source id="MainVidSrc" src=""/>
+        </video>
 
-        <div class="compass-rose">
-            <img id="Compass" src="images/300px-Compass_Rose_English_North.png">
-            <img class="Direction" id="bNorth" src="images/North.png">
-            <img class="Direction" id="bSouth" src="images/South.png">
-            <img class="Direction" id="bWest" src="images/West.png">
-            <img class="Direction" id="bEast" src="images/East.png">
-            <img class="Direction" id="bNorthwest" src="images/Northwest.png">
-            <img class="Direction" id="bNortheast" src="images/NorthEast.png">
-            <img class="Direction" id="bSouthwest" src="images/SouthWest.png">
-            <img class="Direction" id="bSoutheast" src="images/SouthEast.png">
+        <div class="inputmenuholder">
+            <div id="inputmenu">
+                <div id="InputMenuTitle">Test</div>
+                <div id="inputchoices"></div>
+                <button id="CancelInput">Cancel</button>
+            </div>
 
-            <button class="Direction" id="bIn" style="background-color:green;" >In</button>
-            <button class="Direction" id="bOut" style="background-color:green;">Out</button>
-        </div>
-
-        <div class="portrait-holder">
-            <img id="PlayerImg"><canvas id="PlayerPortrait"></canvas>
-        </div>
-
-       <div id="RoomObjectsPanel">
-            <div id="RoomObjectsTitle">Room Objects:</div>
-            <div id="RoomObjects">
-            <div value="1">test1</div>
-            <div value="2">test2</div>
+            <div id="cmdinputmenu">
+                <div id="cmdInputMenuTitle">Test</div>
+                <div id="cmdinputchoices"></div>
+                <button id="cmdCancelInput">Cancel</button>
             </div>
         </div>
-        <div id="VisibleCharactersPanel">
-            <div id="VisibleCharactersTitle">Visible Characters:</div>
-            <div id="VisibleCharacters" multiple="multiple">
+    </div>
+</div>
+
+<div id="PlayerRow">
+    <div class="compass-up-down">
+        <img class="Direction" id="bUp" src="images/North.png">
+        <img class="Direction" id="bDown" src="images/South.png">
+        <img id="UDCompass" src="images/300px-Compass_Rose_UD.png">
+    </div>
+
+    <div class="compass-rose">
+        <img id="Compass" src="images/300px-Compass_Rose_English_North.png">
+        <img class="Direction" id="bNorth" src="images/North.png">
+        <img class="Direction" id="bSouth" src="images/South.png">
+        <img class="Direction" id="bWest" src="images/West.png">
+        <img class="Direction" id="bEast" src="images/East.png">
+        <img class="Direction" id="bNorthwest" src="images/Northwest.png">
+        <img class="Direction" id="bNortheast" src="images/NorthEast.png">
+        <img class="Direction" id="bSouthwest" src="images/SouthWest.png">
+        <img class="Direction" id="bSoutheast" src="images/SouthEast.png">
+
+        <button class="Direction" id="bIn" style="background-color:green;">In</button>
+        <button class="Direction" id="bOut" style="background-color:green;">Out</button>
+    </div>
+
+    <div class="portrait-holder">
+        <img id="PlayerImg">
+        <canvas id="PlayerPortrait"></canvas>
+    </div>
+
+    <div id="RoomObjectsPanel">
+        <div id="RoomObjectsTitle">Room Objects:</div>
+        <div id="RoomObjects">
+            <div value="1">test1</div>
+            <div value="2">test2</div>
+        </div>
+    </div>
+    <div id="VisibleCharactersPanel">
+        <div id="VisibleCharactersTitle">Visible Characters:</div>
+        <div id="VisibleCharacters" multiple="multiple">
             <div class="VisibleCharacters" value="1">test1</div>
             <div class="VisibleCharacters" value="2">test2</div>
-            </div>
-        </div>
-        <div id="InventoryPanel">
-            <div id="InventoryTitle">Inventory:</div>
-            <div id="Inventory">
-            <div value="1">test1</div>
-            <div value="2">test2</div>
-            </div>
         </div>
     </div>
+    <div id="InventoryPanel">
+        <div id="InventoryTitle">Inventory:</div>
+        <div id="Inventory">
+            <div value="1">test1</div>
+            <div value="2">test2</div>
+        </div>
+    </div>
+</div>
 
-    <div id="MainImageLayers">
+<div id="MainImageLayers">
 </div>
 <div id="PortraitImageLayers">
 </div>
 <div id="RoomImageLayers">
 </div>
-    <footer id="statusbar"><div id="statusbartext"></div></footer>
-<div id="selectionmenu" >
-	<div id="Actionchoices"></div>
-	</div>
-
-<div id="playernamechoice" >
-	<table id="playernametable">
-		<tr><td height=10% id="playernameMenuTitle">Please Enter Your Player's Name</td></tr>
-		<tr><td>
-	<input type="text" id="playernametext"> </input>
-	</td>
-	</tr>
-<tr>
-<td> <button id="playernamebutton">Submit</button></td></tr>
-	</div>
-	</table>
+<footer id="statusbar">
+    <div id="statusbartext"></div>
+</footer>
+<div id="selectionmenu">
+    <div id="Actionchoices"></div>
 </div>
 
-<div id="genderchoice" >
-	<table id="gendertable">
-		<tr><td height=10% id="genderMenuTitle">Please Select Your Player's Gender</td></tr>
-		<tr><td>
-	<div id="genderchoiceSelect" >
-            <div value="Male" class="genderchoiceSelect">Male</div>
-            <div value="Female" class="genderchoiceSelect">Female</div>
-						<div value="Other" class="genderchoiceSelect">Other</div>
-            </div>
-	</td>
-	</tr>
-
-	</table>
-</div>
-<div id="textchoice" >
-	<table id="texttable">
-		<tr><td height=10% id="textMenuTitle">Please Enter Your Player's Name</td></tr>
-		<tr><td>
-	<input type="text" id="textinput"> </input>
-	</td>
-	</tr>
-<tr>
-<td> <button id="textbutton">Submit</button></td></tr>
-	</div>
-	</table>
+<div id="playernamechoice">
+    <table id="playernametable">
+        <tr>
+            <td height=10% id="playernameMenuTitle">Please Enter Your Player's Name</td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="playernametext"> </input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="playernamebutton">Submit</button>
+            </td>
+        </tr>
+    </table>
 </div>
 
-<div id="textactionchoice" >
-	<table id="textactiontable">
-		<tr><td height=10% id="textactionMenuTitle">Please Enter Your Player's Name</td></tr>
-		<tr><td>
-	<input type="text" id="textactioninput"> </input>
-	</td>
-	</tr>
-<tr>
-<td> <button id="textactionbutton">Submit</button></td></tr>
-	</div>
-	</table>
-</div>
-<audio id="BGMusic" autoplay >
-	<source id="bgmusicsource" src="" />
-	</audio>
-<audio id="SoundEffect" autoplay >
-	<source id="semusicsource" src=""  />
-	</audio>
+<div id="genderchoice">
+    <table id="gendertable">
+        <tr>
+            <td height=10% id="genderMenuTitle">Please Select Your Player's Gender</td>
+        </tr>
+        <tr>
+            <td>
+                <div id="genderchoiceSelect">
+                    <div value="Male" class="genderchoiceSelect">Male</div>
+                    <div value="Female" class="genderchoiceSelect">Female</div>
+                    <div value="Other" class="genderchoiceSelect">Other</div>
+                </div>
+            </td>
+        </tr>
 
-<div id="savemenu" >
-	<table id="savetable" height=100% width=100%>
-		<tr><td height=10% id="SaveMenuTitle">Save Game</td></tr>
-		<tr ><td height=90%>
-	<select id="saveinputchoices" multiple="multiple" style="height:100%;"></select>
-	</td>
-	</tr>
-	</table>
+    </table>
 </div>
 
-<div id="loadmenu" >
-	<table id="loadtable" height=100% width=100%>
-		<tr><td height=10% id="LoadMenuTitle">Load Game</td></tr>
-		<tr><td height=90%>
-	<select id="loadinputchoices" multiple="multiple" style="height:100%;"></select>
-	</td>
-	</tr>
-	</table>
+<div id="textchoice">
+    <table id="texttable">
+        <tr>
+            <td height=10% id="textMenuTitle">Please Enter Your Player's Name</td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="textinput"> </input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="textbutton">Submit</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="textactionchoice">
+    <table id="textactiontable">
+        <tr>
+            <td height=10% id="textactionMenuTitle">Please Enter Your Player's Name</td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="textactioninput"> </input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="textactionbutton">Submit</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<audio id="BGMusic" autoplay>
+    <source id="bgmusicsource" src=""/>
+</audio>
+
+<audio id="SoundEffect" autoplay>
+    <source id="semusicsource" src=""/>
+</audio>
+
+<div id="savemenu">
+    <table id="savetable" height=100% width=100%>
+        <tr>
+            <td height=10% id="SaveMenuTitle">Save Game</td>
+        </tr>
+        <tr>
+            <td height=90%>
+                <select id="saveinputchoices" multiple="multiple" style="height:100%;"></select>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="loadmenu">
+    <table id="loadtable" height=100% width=100%>
+        <tr>
+            <td height=10% id="LoadMenuTitle">Load Game</td>
+        </tr>
+        <tr>
+            <td height=90%>
+                <select id="loadinputchoices" multiple="multiple" style="height:100%;"></select>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div id="tooltip">

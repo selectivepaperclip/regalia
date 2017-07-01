@@ -3461,97 +3461,49 @@ function AddTextToRTF(text, clr, fontst) {
         origtext = text;
         text = PerformTextReplacements(text, null);
     }
+
     var replacedtext = text;
     if (fontst == "Regular" && clr == "Black") {
-        var ColorFormats = new Array();
-        text = ColorsOnly(text);
-        var tempindex = text.indexOf("[c", 0);
-        while (tempindex >= 0) {
-            var endindex = text.indexOf("]", tempindex);
-            tempindex += 2;
-            var colortype = text.substring(tempindex, endindex).trim();
-            var colorinserter = "<span style=\"color:";
+        // [c Green]green text[/c]
+        replacedtext = replacedtext.replace(/\[c\s*([^\]]+)]/g, function (match, colortype) {
+            var colorinserter = "<span style='color:";
             if (colortype.indexOf(",") > -1) {
-                colorinserter += "rgb(" + colortype + ");\">";
+                colorinserter += "rgb(" + colortype + ");'>";
             } else {
-                colorinserter += colortype + ";\">";
+                colorinserter += colortype + ";'>";
             }
-            tempindex -= 2;
-            text = text.slice(0, tempindex) + text.slice(endindex + 1);
-            endindex = text.indexOf("[/c]", tempindex);
-            if (endindex >= 0) {
-                text = text.slice(0, endindex) + text.slice(endindex + 4);
-                ColorFormats.length = ColorFormats.length + 1;
-                ColorFormats[ColorFormats.length - 1] = new Array(2);
-                ColorFormats[ColorFormats.length - 1][0] = text.substring(tempindex, endindex)
-                ColorFormats[ColorFormats.length - 1][1] = colorinserter;
-            }
-            tempindex = text.indexOf("[c", 0);
-        }
-        var styleformats = new Array();
-        text = FontsOnly(replacedtext);
-        tempindex = text.indexOf("[f", 0);
-        while (tempindex >= 0) {
-            var endindex = text.indexOf("]", tempindex);
-            tempindex += 2;
-            var fonttype = text.substring(tempindex, endindex).trim();
+            return colorinserter;
+        });
+
+        // [f Arial,16]special font[/f]
+        replacedtext = replacedtext.replace(/\[f\s*([^\]]+)]/g, function (match, fonttype) {
             var fontdata = fonttype.split(",");
-            tempindex -= 2;
-            text = text.slice(0, tempindex) + text.slice(endindex + 1);
-            var insertfontdata = "<div style=\"font-family:" + fontdata[0] + ";font-size:" +
-                fontdata[1] + "px;\">";
-            endindex = text.indexOf("[/f]", tempindex);
-            if (endindex >= 0) {
-                text = text.slice(0, endindex) + text.slice(endindex + 4);
-                styleformats.length = styleformats.length + 1;
-                styleformats[styleformats.length - 1] = new Array(2);
-                styleformats[styleformats.length - 1][0] = text.substring(tempindex, endindex)
-                styleformats[styleformats.length - 1][1] = insertfontdata;
-            }
-            tempindex = text.indexOf("[f", 0);
-        }
-        text = BoldsOnly(replacedtext);
-        tempindex = text.indexOf("[b]", 0);
-        while (tempindex >= 0) {
-            text = text.slice(0, tempindex) + text.slice(tempindex + 3);
-            var endindex = text.indexOf("[/b]", tempindex);
-            if (endindex >= 0) {
-                text = text.slice(0, endindex) + text.slice(endindex + 4);
-                styleformats.length = styleformats.length + 1;
-                styleformats[styleformats.length - 1] = new Array(2);
-                styleformats[styleformats.length - 1][0] = text.substring(tempindex, endindex)
-                styleformats[styleformats.length - 1][1] = "<div style=\"font-weight:bold;\">";
-            }
-            tempindex = text.indexOf("[b]", 0);
-        }
-        text = ItalicsOnly(replacedtext);
-        tempindex = text.indexOf("[i]", 0);
-        while (tempindex >= 0) {
-            text = text.slice(0, tempindex) + text.slice(tempindex + 3);
-            var endindex = text.indexOf("[/i]", tempindex);
-            if (endindex >= 0) {
-                text = text.slice(0, endindex) + text.slice(endindex + 4);
-                styleformats.length = styleformats.length + 1;
-                styleformats[styleformats.length - 1] = new Array(2);
-                styleformats[styleformats.length - 1][0] = text.substring(tempindex, endindex)
-                styleformats[styleformats.length - 1][1] = "<div style=\"font-style:italic;\">";
-            }
-            tempindex = text.indexOf("[i]", 0);
-        }
-        text = UnderlinesOnly(replacedtext);
-        tempindex = text.indexOf("[u]", 0);
-        while (tempindex >= 0) {
-            text = text.slice(0, tempindex) + text.slice(tempindex + 3);
-            var endindex = text.indexOf("[/u]", tempindex);
-            if (endindex >= 0) {
-                text = text.slice(0, endindex) + text.slice(endindex + 4);
-                styleformats.length = styleformats.length + 1;
-                styleformats[styleformats.length - 1] = new Array(2);
-                styleformats[styleformats.length - 1][0] = text.substring(tempindex, endindex)
-                styleformats[styleformats.length - 1][1] = "<div style=\"text-decoration:underline;\">";
-            }
-            tempindex = text.indexOf("[u]", 0);
-        }
+            return "<span style='font-family:" + fontdata[0] + ";font-size:" +
+                fontdata[1] + "px;'>";
+        });
+
+        // [b]bold text[/b]
+        replacedtext = replacedtext.replace(/\[b]/g, function (match) {
+            return "<span style='font-weight:bold;'>";
+        });
+
+        // [i]italic text[/i]
+        replacedtext = replacedtext.replace(/\[i]/g, function (match) {
+            return "<span style='font-style:italic;'>";
+        });
+
+        // [u]underlined text[/u]
+        replacedtext = replacedtext.replace(/\[u]/g, function (match) {
+            return "<span style='text-decoration:underline;'>";
+        });
+
+        // closing tags ([/u], [/b]...)
+        replacedtext = replacedtext.replace(/\[\/[fciub]]/g, function (match) {
+            return "</span>";
+        });
+
+        var styleformats = new Array();
+        var tempindex;
         text = MiddlesOnly(replacedtext);
         tempindex = text.indexOf("[middle]", 0);
         while (tempindex >= 0) {
@@ -3567,18 +3519,13 @@ function AddTextToRTF(text, clr, fontst) {
             tempindex = text.indexOf("[middle]", 0);
         }
         text = TextOnly(replacedtext);
-        for (var _i = 0; _i < ColorFormats.length; _i++) {
-            var startindex = text.indexOf(ColorFormats[_i][0]);
-            text = text.slice(0, startindex) + ColorFormats[_i][1] + text.slice(startindex);
-            startindex = text.indexOf(ColorFormats[_i][0]);
-            text = text.slice(0, startindex + ColorFormats[_i][0].length) + "</div>" + text.slice(startindex + ColorFormats[_i][0].length);
-        }
         for (var _i = 0; _i < styleformats.length; _i++) {
             var startindex = text.indexOf(styleformats[_i][0]);
             text = text.slice(0, startindex) + styleformats[_i][1] + text.slice(startindex);
             startindex = text.indexOf(styleformats[_i][0]);
             text = text.slice(0, startindex + styleformats[_i][0].length) + "</div>" + text.slice(startindex + styleformats[_i][0].length);
         }
+
         $("#MainText").append('</br>' + text);
         $("#MainText").animate({
             scrollTop: $("#MainText")[0].scrollHeight

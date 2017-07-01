@@ -1098,57 +1098,12 @@ function StripOut(value, temptext) {
     return temptext;
 }
 
-function ColorsOnly(temptext) {
-    temptext = StripOut("[f", temptext);
-    temptext = StripOut("[B]", temptext);
-    temptext = StripOut("[Middle]", temptext);
-    temptext = StripOut("[i]", temptext);
-    temptext = StripOut("[u]", temptext);
-    return temptext;
-}
-
-function FontsOnly(temptext) {
-    temptext = StripOut("[c", temptext);
-    temptext = StripOut("[B]", temptext);
-    temptext = StripOut("[Middle]", temptext);
-    temptext = StripOut("[i]", temptext);
-    temptext = StripOut("[u]", temptext);
-    return temptext;
-}
-
-function BoldsOnly(temptext) {
-    temptext = StripOut("[f", temptext);
-    temptext = StripOut("[c", temptext);
-    temptext = StripOut("[Middle]", temptext);
-    temptext = StripOut("[i]", temptext);
-    temptext = StripOut("[u]", temptext);
-    return temptext;
-}
-
-function ItalicsOnly(temptext) {
-    temptext = StripOut("[f", temptext);
-    temptext = StripOut("[c", temptext);
-    temptext = StripOut("[B]", temptext);
-    temptext = StripOut("[Middle]", temptext);
-    temptext = StripOut("[u]", temptext);
-    return temptext;
-}
-
 function MiddlesOnly(temptext) {
     temptext = StripOut("[f", temptext);
     temptext = StripOut("[c", temptext);
     temptext = StripOut("[B]", temptext);
     temptext = StripOut("[i]", temptext);
     temptext = StripOut("[u]", temptext);
-    return temptext;
-}
-
-function UnderlinesOnly(temptext) {
-    temptext = StripOut("[f", temptext);
-    temptext = StripOut("[c", temptext);
-    temptext = StripOut("[B]", temptext);
-    temptext = StripOut("[Middle]", temptext);
-    temptext = StripOut("[i]", temptext);
     return temptext;
 }
 

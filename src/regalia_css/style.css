@@ -1,615 +1,537 @@
-﻿
-
-/**** http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain) */
-/*html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video 
-{
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-/*article, aside, details, figcaption, figure,footer, header, hgroup, menu, nav, section 
-{
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}*/
-
-
-body 
-{
+﻿body {
     background-color: white;
-    color:black;
-}
-div
-{
-    overflow:auto;
+    color: black;
 }
 
-article
-{
- width:50%;  
+div {
+    overflow: auto;
 }
-    
-p
-{
-    font-size:larger;
-     border-style: solid;
+
+article {
+    width: 50%;
+}
+
+p {
+    font-size: larger;
+    border-style: solid;
     border-color: Black;
-     border-width: thick;
-     width: 50%;
+    border-width: thick;
+    width: 50%;
 }
 
-#testp
-{
-    font-weight:bold;
-    font-size:2em;
+#testp {
+    font-weight: bold;
+    font-size: 2em;
 }
 
-#statusbar
-{
-    width:98%;
-    height:30px;
-    border:2px solid black;
-    position:fixed;
-    top:500px;
-}
-#menu
-{
-    margin-top:3px;
-    position:fixed;
-    top:0px;
-    height:30px;
-    width:98%;
+#statusbar {
+    width: 98%;
+    height: 30px;
     border: 2px solid black;
-    display:inline-block;
+    position: fixed;
+    top: 500px;
 }
 
-#roompanel
-{
-    position:absolute;
-    width:40%;
-    height:300px;
+#menu {
+    margin-top: 3px;
+    position: fixed;
+    top: 0px;
+    height: 30px;
+    width: 98%;
+    border: 2px solid black;
+    display: inline-block;
+}
+
+#roompanel {
+    position: absolute;
+    width: 40%;
+    height: 300px;
     top: 40px;
-    border:2px solid black;
+    border: 2px solid black;
 }
 
-#MainText
-{
-    margin:3px;
+#MainText {
+    margin: 3px;
     border: 1px solid red;
     height: 270px;
     overflow: scroll;
 }
 
-#Continue
-{
-    float:right;
+#Continue {
+    float: right;
     margin-top: 20px;
-    margin-right:4px;
-    display:inline-block;
-    vertical-align:middle;
-    background-color:Gray;
+    margin-right: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: Gray;
     visibility: hidden;
 }
 
-#RoomThumb
-{
-    display:inline-block;
-    margin:3px;
-    height:60px;
-    width:60px;
-    border:1 px solid red;
+#RoomThumb {
+    display: inline-block;
+    margin: 3px;
+    height: 60px;
+    width: 60px;
+    border: 1px solid red;
 }
 
-
-
-#RoomTitle
-{
-    display:inline-block;
-    width:40%;
-    text-align:center;
+#RoomTitle {
+    display: inline-block;
+    width: 40%;
+    text-align: center;
     font-family: Sans-Serif;
-    font-weight:bold;
-    font-size:large;
-    border:1px solid green;
-    vertical-align:top;
-    margin-top:20px;
-    margin-left:7px;
+    font-weight: bold;
+    font-size: large;
+    border: 1px solid green;
+    vertical-align: top;
+    margin-top: 20px;
+    margin-left: 7px;
 }
 
-
-
-#MainPic
-{
-    position:absolute;
-    width:50%;
-    margin:3px;
-    top:40px;
-    left:300px;
-    height:300px;
+#MainPic {
+    position: absolute;
+    width: 50%;
+    margin: 3px;
+    top: 40px;
+    left: 300px;
+    height: 300px;
 }
-#MainImg
-{
-	position:absolute;
-    width:50%;
+
+#MainImg {
+    position: absolute;
+    width: 50%;
     margin-left: 5px;
-    top:40px;
-    left:300px;
+    top: 40px;
+    left: 300px;
     border: 2px solid black;
     height: 97%;
-    vertical-align:top;
+    vertical-align: top;
 }
 
-#MainVid
-{
-	position:absolute;
-    width:50%;
+#MainVid {
+    position: absolute;
+    width: 50%;
     margin-left: 5px;
-    top:40px;
-    left:300px;
+    top: 40px;
+    left: 300px;
     border: 2px solid black;
     height: 97%;
-    vertical-align:top;
+    vertical-align: top;
     visibility: hidden;
 }
 
-
-.MainLayeredImage
-{
-	position:absolute;
-    width:50%;
+.MainLayeredImage {
+    position: absolute;
+    width: 50%;
     margin-left: 5px;
-    top:40px;
-    left:300px;
+    top: 40px;
+    left: 300px;
     border: 2px solid black;
     height: 97%;
-    vertical-align:top;
+    vertical-align: top;
 }
 
-table
-{
-	width:100%;
-	height:100%
+table {
+    width: 100%;
+    height: 100%
 }
 
-#textchoice
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	width: 200px;
-	height:100px;
-	overflow:auto;
-    top:40px;
-	visibility:hidden;
-	opacity:0.8;
-filter:alpha(opacity=80);
+#textchoice {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    width: 200px;
+    height: 100px;
+    overflow: auto;
+    top: 40px;
+    visibility: hidden;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
 }
 
-#textactionchoice
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	width: 200px;
-	height:100px;
-	overflow:auto;
-    top:40px;
-	visibility:hidden;
-	opacity:0.8;
-filter:alpha(opacity=80);
-}
-#textbutton
-{
-	opacity:0.9;
-filter:alpha(opacity=90);
-}
-#textactionbutton
-{
-	opacity:0.9;
-filter:alpha(opacity=90);
-}
-#playernamebutton
-{
-	opacity:0.9;
-filter:alpha(opacity=90);
-}
-#playernametext
-{
-	opacity:0.9;
-filter:alpha(opacity=90);
-}
-#genderchoiceSelect
-{
-	width:auto;
-	opacity:0.9;
-filter:alpha(opacity=90);
+#textactionchoice {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    width: 200px;
+    height: 100px;
+    overflow: auto;
+    top: 40px;
+    visibility: hidden;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
 }
 
-#playernametext
-{
-	width:100%;
+#textbutton {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
 
-#inputmenu
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	visibility:hidden;
-	top:40px;
-	height:150px;
-	border: 2px solid black;
-	opacity:0.8;
-filter:alpha(opacity=80);
+#textactionbutton {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
 
-#savemenu
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	visibility:hidden;
-	top:40px;
-	height:150px;
-	border: 2px solid black;
+#playernamebutton {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
 
-#loadmenu
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	visibility:hidden;
-	top:40px;
-	height:150px;
-	border: 2px solid black;
+#playernametext {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
 
-
-
-#cmdinputmenu
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	visibility:hidden;
-	top:40px;
-	height:150px;
-	border: 2px solid black;
-	opacity:0.8;
-filter:alpha(opacity=80);
+#genderchoiceSelect {
+    width: auto;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
 
-#playernamechoice
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	visibility:hidden;
-	top:40px;
-	height:150px;
-	border: 2px solid black;
-	opacity:0.8;
-filter:alpha(opacity=80);
-}
-#genderchoice
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	visibility:hidden;
-	top:40px;
-	height:150px;
-	border: 2px solid black;
-	opacity:0.8;
-filter:alpha(opacity=80);
+#playernametext {
+    width: 100%;
 }
 
-select 
-{ 
+#inputmenu {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    visibility: hidden;
+    top: 40px;
+    height: 150px;
+    border: 2px solid black;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
 }
 
-td
-{
-	text-align: center;
-}
-#inputtable
-{
-    width:100%;
-    height:100%;
-}
-#InputMenuTitle
-{
+#savemenu {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    visibility: hidden;
+    top: 40px;
+    height: 150px;
+    border: 2px solid black;
 }
 
-#inputchoices
-{
-	width:auto;
-    height:100%;
-    opacity:0.9;
-filter:alpha(opacity=90);
-}
-#cmdinputtable
-{
-    width:100%;
-    height:100%;
-}
-#cmdInputMenuTitle
-{
+#loadmenu {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    visibility: hidden;
+    top: 40px;
+    height: 150px;
+    border: 2px solid black;
 }
 
-#cmdinputchoices
-{
-	width:auto;
-    height:100%;
-    opacity:0.9;
-filter:alpha(opacity=90);
-}
-#selectionmenu
-{
-	position:absolute;
-	background-color:White;
-	border:2px solid black;
-	width: 200px;
-	height:100px;
-	overflow:auto;
-    top:50px;
-	visibility:hidden;
-	filter:alpha(opacity=60);
+#cmdinputmenu {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    visibility: hidden;
+    top: 40px;
+    height: 150px;
+    border: 2px solid black;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
 }
 
-#Actionchoices
-{
-    width:100%;
-    height:100%;
+#playernamechoice {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    visibility: hidden;
+    top: 40px;
+    height: 150px;
+    border: 2px solid black;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
 }
 
-#PlayerRow
-{
-    position:absolute;
-    width:98%;
-height: 150px;
+#genderchoice {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    visibility: hidden;
+    top: 40px;
+    height: 150px;
+    border: 2px solid black;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+
+select {
+}
+
+td {
+    text-align: center;
+}
+
+#inputtable {
+    width: 100%;
+    height: 100%;
+}
+
+#InputMenuTitle {
+}
+
+#inputchoices {
+    width: auto;
+    height: 100%;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+
+#cmdinputtable {
+    width: 100%;
+    height: 100%;
+}
+
+#cmdInputMenuTitle {
+}
+
+#cmdinputchoices {
+    width: auto;
+    height: 100%;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+
+#selectionmenu {
+    position: absolute;
+    background-color: White;
+    border: 2px solid black;
+    width: 200px;
+    height: 100px;
+    overflow: auto;
+    top: 50px;
+    visibility: hidden;
+    filter: alpha(opacity=60);
+}
+
+#Actionchoices {
+    width: 100%;
+    height: 100%;
+}
+
+#PlayerRow {
+    position: absolute;
+    width: 98%;
+    height: 150px;
     margin: 2px;
     border: 2px solid black;
 }
-#UDCompass
-{
-   display:inline-block;
- width:5%;
-    margin: 2px;
-    border: 2px solid black;
-height: 97%;
- 
-}
-#Compass
-{
-    display:inline-block;
- width:20%;
+
+#UDCompass {
+    display: inline-block;
+    width: 5%;
     margin: 2px;
     border: 2px solid black;
     height: 97%;
 
 }
-#PlayerPortrait
-{
-    width:20%;
+
+#Compass {
+    display: inline-block;
+    width: 20%;
+    margin: 2px;
+    border: 2px solid black;
+    height: 97%;
+
+}
+
+#PlayerPortrait {
+    width: 20%;
     margin: 2px;
     border: 4px solid black;
     height: 97%;
-    vertical-align:top;
+    vertical-align: top;
 
 }
-#PlayerImg
-{
-	position:absolute;
-    width:20%;
+
+#PlayerImg {
+    position: absolute;
+    width: 20%;
     margin: 2px;
     border: 4px solid black;
     height: 97%;
-    vertical-align:top;
-}
-.PortraitLayeredImage
-{
-	position:absolute;
-    width:20%;
-    margin: 2px;
-    height: 97%;
-    vertical-align:top;
+    vertical-align: top;
 }
 
-#RoomThumbImg
-{
-	position:absolute;
-    width:20%;
+.PortraitLayeredImage {
+    position: absolute;
+    width: 20%;
+    margin: 2px;
+    height: 97%;
+    vertical-align: top;
+}
+
+#RoomThumbImg {
+    position: absolute;
+    width: 20%;
     margin: 2px;
     border: 4px solid black;
     height: 97%;
-    vertical-align:top;
+    vertical-align: top;
 }
-.RoomLayeredImage
-{
-	position:absolute;
-    width:20%;
+
+.RoomLayeredImage {
+    position: absolute;
+    width: 20%;
     margin: 2px;
     height: 97%;
-    vertical-align:top;
+    vertical-align: top;
 }
 
-#RoomObjectsPanel
-{
-    display:inline-block;
-    vertical-align:top;
- width:16%;
+#RoomObjectsPanel {
+    display: inline-block;
+    vertical-align: top;
+    width: 16%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;   
+    height: 97%;
 }
-#RoomObjects
-{
-    width:97%;
-    margin: 2px;
-    border: 2px solid black;
-    height: 87%;
-    
 
-}
-#VisibleCharactersPanel
-{
-    display:inline-block;
-    vertical-align:top;
- width:15%;
-    margin: 2px;
-    border: 2px solid black;
-    height: 97%;   
-}
-#VisibleCharacters
-{
-    width:97%;
+#RoomObjects {
+    width: 97%;
     margin: 2px;
     border: 2px solid black;
     height: 87%;
 
 }
-#InventoryPanel
-{
-    display:inline-block;
-    vertical-align:top;
- width:16%;
+
+#VisibleCharactersPanel {
+    display: inline-block;
+    vertical-align: top;
+    width: 15%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;   
+    height: 97%;
 }
-#Inventory
-{
-    width:97%;
+
+#VisibleCharacters {
+    width: 97%;
     margin: 2px;
     border: 2px solid black;
     height: 87%;
-    
 
 }
-#Version
-{
-    float:right;
-    display:inline;
-    margin-right:20px;
-    position:absolute;
-    text-align:center;
-    vertical-align:middle;
-    margin-left:20px;
+
+#InventoryPanel {
+    display: inline-block;
+    vertical-align: top;
+    width: 16%;
+    margin: 2px;
+    border: 2px solid black;
+    height: 97%;
 }
-.Direction
-{
-    position:absolute;
-    width:20px;
-    height:20px;
-    margin:2px;
-    border:2px solid black;
-    font-size:x-small;
-    color:Black;
-    text-align:left;
-    font-weight:bold;
-    visibility:hidden;
-    
+
+#Inventory {
+    width: 97%;
+    margin: 2px;
+    border: 2px solid black;
+    height: 87%;
+
 }
-#tooltip
-{
-	font-weight:bold;
-	position:absolute;
-	width:auto;
-	height:25px;
-	background-color:white;
-	border:2px solid black;
-	visibility:hidden;
+
+#Version {
+    float: right;
+    display: inline;
+    margin-right: 20px;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 20px;
 }
-#bUp
-{
-    top:4.5%;
-    left:1.5%;
+
+.Direction {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    border: 2px solid black;
+    font-size: x-small;
+    color: Black;
+    text-align: left;
+    font-weight: bold;
+    visibility: hidden;
+
 }
-#bDown
-{
-    top:88%;
-    left:1.5%;
+
+#tooltip {
+    font-weight: bold;
+    position: absolute;
+    width: auto;
+    height: 25px;
+    background-color: white;
+    border: 2px solid black;
+    visibility: hidden;
 }
-#bNorth
-{
-    top:4.5%;
-    left:15.5%;
+
+#bUp {
+    top: 4.5%;
+    left: 1.5%;
 }
-#bSouth
-{
-    top:88%;
-    left:15.5%;
+
+#bDown {
+    top: 88%;
+    left: 1.5%;
 }
-#bWest
-{
-    top:43.5%;
-    left:7%;
+
+#bNorth {
+    top: 4.5%;
+    left: 15.5%;
 }
-#bEast
-{
-    top:43.5%;
-    left:24%;
+
+#bSouth {
+    top: 88%;
+    left: 15.5%;
 }
-#bNorthwest
-{
-    top:20%;
-    left:10%;
+
+#bWest {
+    top: 43.5%;
+    left: 7%;
 }
-#bNortheast
-{
-    top:20%;
-    left:21%;
+
+#bEast {
+    top: 43.5%;
+    left: 24%;
 }
-#bSouthwest
-{
-    top:70%;
-    left:10%;
+
+#bNorthwest {
+    top: 20%;
+    left: 10%;
 }
-#bSoutheast
-{
-    top:70%;
-    left:21%;
+
+#bNortheast {
+    top: 20%;
+    left: 21%;
 }
-#bIn
-{
-     opacity:0.7;
-    filter:alpha(opacity=70);
-    top:4.5%;
-    left:23%;
-    width:30px;
-    
+
+#bSouthwest {
+    top: 70%;
+    left: 10%;
 }
-#bOut
-{
-    top:88%;
-    left:23%;
-    opacity:0.7;
-    filter:alpha(opacity=70);
-    width:30px;
-  
+
+#bSoutheast {
+    top: 70%;
+    left: 21%;
+}
+
+#bIn {
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    top: 4.5%;
+    left: 23%;
+    width: 30px;
+
+}
+
+#bOut {
+    top: 88%;
+    left: 23%;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    width: 30px;
+
 }

@@ -24,39 +24,6 @@ p {
     font-size: 2em;
 }
 
-#statusbar {
-    width: 98%;
-    height: 30px;
-    border: 2px solid black;
-    position: fixed;
-    top: 500px;
-}
-
-#menu {
-    margin-top: 3px;
-    position: fixed;
-    top: 0px;
-    height: 30px;
-    width: 98%;
-    border: 2px solid black;
-    display: inline-block;
-}
-
-#roompanel {
-    position: absolute;
-    width: 40%;
-    height: 300px;
-    top: 40px;
-    border: 2px solid black;
-}
-
-#MainText {
-    margin: 3px;
-    border: 1px solid red;
-    height: 270px;
-    overflow: scroll;
-}
-
 #Continue {
     float: right;
     margin-top: 20px;
@@ -104,7 +71,6 @@ p {
     top: 40px;
     left: 300px;
     border: 2px solid black;
-    height: 97%;
     vertical-align: top;
 }
 
@@ -115,7 +81,6 @@ p {
     top: 40px;
     left: 300px;
     border: 2px solid black;
-    height: 97%;
     vertical-align: top;
     visibility: hidden;
 }
@@ -127,7 +92,6 @@ p {
     top: 40px;
     left: 300px;
     border: 2px solid black;
-    height: 97%;
     vertical-align: top;
 }
 
@@ -314,21 +278,11 @@ td {
     height: 100%;
 }
 
-#PlayerRow {
-    position: absolute;
-    width: 98%;
-    height: 150px;
-    margin: 2px;
-    border: 2px solid black;
-}
-
 #UDCompass {
     display: inline-block;
     width: 5%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;
-
 }
 
 #Compass {
@@ -336,17 +290,13 @@ td {
     width: 20%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;
-
 }
 
 #PlayerPortrait {
     width: 20%;
     margin: 2px;
     border: 4px solid black;
-    height: 97%;
     vertical-align: top;
-
 }
 
 #PlayerImg {
@@ -354,7 +304,6 @@ td {
     width: 20%;
     margin: 2px;
     border: 4px solid black;
-    height: 97%;
     vertical-align: top;
 }
 
@@ -362,7 +311,6 @@ td {
     position: absolute;
     width: 20%;
     margin: 2px;
-    height: 97%;
     vertical-align: top;
 }
 
@@ -371,7 +319,6 @@ td {
     width: 20%;
     margin: 2px;
     border: 4px solid black;
-    height: 97%;
     vertical-align: top;
 }
 
@@ -379,7 +326,6 @@ td {
     position: absolute;
     width: 20%;
     margin: 2px;
-    height: 97%;
     vertical-align: top;
 }
 
@@ -389,7 +335,6 @@ td {
     width: 16%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;
 }
 
 #RoomObjects {
@@ -397,7 +342,6 @@ td {
     margin: 2px;
     border: 2px solid black;
     height: 87%;
-
 }
 
 #VisibleCharactersPanel {
@@ -406,7 +350,6 @@ td {
     width: 15%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;
 }
 
 #VisibleCharacters {
@@ -414,7 +357,6 @@ td {
     margin: 2px;
     border: 2px solid black;
     height: 87%;
-
 }
 
 #InventoryPanel {
@@ -423,7 +365,6 @@ td {
     width: 16%;
     margin: 2px;
     border: 2px solid black;
-    height: 97%;
 }
 
 #Inventory {
@@ -431,7 +372,6 @@ td {
     margin: 2px;
     border: 2px solid black;
     height: 87%;
-
 }
 
 #Version {
@@ -483,5 +423,4 @@ td {
     opacity: 0.7;
     filter: alpha(opacity=70);
     width: 30px;
-
 }

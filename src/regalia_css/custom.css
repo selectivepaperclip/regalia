@@ -278,7 +278,6 @@ body {
 }
 #bDown
 {
-    top: auto;
     bottom:4.5%;
     left: calc(50% - 10px);
 }
@@ -289,7 +288,6 @@ body {
 }
 #bSouth
 {
-    top: auto;
     bottom:4.5%;
     left: calc(50% - 10px);
 }
@@ -301,7 +299,6 @@ body {
 #bEast
 {
     top: calc(50% - 10px);
-    left: auto;
     right: 7%;
 }
 #bNorthwest
@@ -312,21 +309,17 @@ body {
 #bNortheast
 {
     top:20%;
-    left: auto;
-    right:21%;
+    right:10%;
 }
 #bSouthwest
 {
-    top: auto;
     bottom:30%;
     left:10%;
 }
 #bSoutheast
 {
-    top: auto;
     bottom:30%;
-    left: auto;
-    right:21%;
+    right:10%;
 }
 #bIn
 {

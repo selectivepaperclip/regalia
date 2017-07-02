@@ -468,56 +468,6 @@ td {
     visibility: hidden;
 }
 
-#bUp {
-    top: 4.5%;
-    left: 1.5%;
-}
-
-#bDown {
-    top: 88%;
-    left: 1.5%;
-}
-
-#bNorth {
-    top: 4.5%;
-    left: 15.5%;
-}
-
-#bSouth {
-    top: 88%;
-    left: 15.5%;
-}
-
-#bWest {
-    top: 43.5%;
-    left: 7%;
-}
-
-#bEast {
-    top: 43.5%;
-    left: 24%;
-}
-
-#bNorthwest {
-    top: 20%;
-    left: 10%;
-}
-
-#bNortheast {
-    top: 20%;
-    left: 21%;
-}
-
-#bSouthwest {
-    top: 70%;
-    left: 10%;
-}
-
-#bSoutheast {
-    top: 70%;
-    left: 21%;
-}
-
 #bIn {
     opacity: 0.7;
     filter: alpha(opacity=70);

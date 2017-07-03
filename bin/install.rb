@@ -37,9 +37,10 @@ FileUtils.rm_rf(File.join(rags_project_dir, 'regalia.html'))
 html_content = File.read(File.join(src_dir, 'regalia.html'))
 File.write(File.join(rags_project_dir, 'regalia.html'), html_content.sub('GAME_TITLE_HERE', game_title))
 
-%w(js_vendor regalia_css regalia_js).each do |folder|
-  FileUtils.rm_rf(File.join(rags_project_dir, folder))
-  FileUtils.copy_entry(File.join(src_dir, folder), File.join(rags_project_dir, folder))
-end
+FileUtils.rm_rf(File.join(rags_project_dir, 'regalia'))
+FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 'regalia'))
+
+puts "Copying Game.js content into Regalia folder..."
+FileUtils.mkdir_p(File.join(rags_project_dir, 'regalia', 'game'))
 
 puts "Done!"

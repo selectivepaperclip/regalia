@@ -100,32 +100,6 @@ table {
     height: 100%
 }
 
-#textchoice {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    width: 200px;
-    height: 100px;
-    overflow: auto;
-    top: 40px;
-    visibility: hidden;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-}
-
-#textactionchoice {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    width: 200px;
-    height: 100px;
-    overflow: auto;
-    top: 40px;
-    visibility: hidden;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-}
-
 #textbutton {
     opacity: 0.9;
     filter: alpha(opacity=90);
@@ -156,18 +130,6 @@ table {
     width: 100%;
 }
 
-#inputmenu {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    visibility: hidden;
-    top: 40px;
-    height: 150px;
-    border: 2px solid black;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-}
-
 #savemenu {
     position: absolute;
     background-color: White;
@@ -186,42 +148,6 @@ table {
     top: 40px;
     height: 150px;
     border: 2px solid black;
-}
-
-#cmdinputmenu {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    visibility: hidden;
-    top: 40px;
-    height: 150px;
-    border: 2px solid black;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-}
-
-#playernamechoice {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    visibility: hidden;
-    top: 40px;
-    height: 150px;
-    border: 2px solid black;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-}
-
-#genderchoice {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    visibility: hidden;
-    top: 40px;
-    height: 150px;
-    border: 2px solid black;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
 }
 
 select {

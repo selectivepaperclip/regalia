@@ -132,15 +132,16 @@ body {
     max-height: 100% !important;
 }
 
-#inputmenu {
-    display: flex;
-    flex-direction: column;
-}
-
-#inputmenu {
-    position: static;
-    width: 100%;
-    height: auto;
+#inputmenu, #cmdinputmenu, #playernamechoice, #genderchoice, #textchoice, #textactionchoice {
+    position: absolute;
+    background-color: white;
+    border: 1px solid grey;
+    visibility: hidden;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.8;
+    text-align: left;
 }
 
 #inputchoices {
@@ -162,15 +163,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-}
-
-#cmdinputmenu {
-    display: flex;
-    flex-direction: column;
-    position: static;
-    width: 100%;
-    height: auto;
-    text-align: left;
 }
 
 #cmdinputchoices {
@@ -203,10 +195,6 @@ body {
     font-weight: bold;
     font-size: 18px;
     padding: 10px;
-}
-
-#inputmenu {
-    text-align: left;
 }
 
 #inputchoices .inputchoices {
@@ -278,7 +266,7 @@ body {
 #Inventory,
 #selectionmenu,
 #PlayerRow,
-#inputmenu, #cmdinputmenu
+#cmdinputmenu
 {
     border: 1px solid grey;
 }

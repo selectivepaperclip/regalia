@@ -43,4 +43,13 @@ FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 
 puts "Copying Game.js content into Regalia folder..."
 FileUtils.mkdir_p(File.join(rags_project_dir, 'regalia', 'game'))
 
+game_js_content = File.read(File.join(rags_project_dir, 'js', 'Game.js'))
+if (game_js_content.match(%r(\\")))
+  # replace double-backslashes followed by a double quote in Game.js text with triple-backslashes
+  puts 'Found some suspicious escape sequences (\\\\") in Game.js'
+  puts '  attempting to replace with (\\\\\\")'
+  game_js_content.gsub!(%r(\\\\"), '\\\\\\\\\\\\"')
+end
+File.write(File.join(rags_project_dir, 'regalia', 'game', 'Game.js'), game_js_content)
+
 puts "Done!"

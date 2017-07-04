@@ -14,6 +14,36 @@ var MasterLoopArray = null;
 function custom__setInputMenuTitle(act) {
     $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
     $("#inputmenu").css("visibility", "visible");
+    $("#inputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
+}
+
+function custom__addInputChoice($div) {
+    $div.click(function() {
+        selectedobj = $(this).val();
+        if (selectedobj != null) {
+            AdditionalData = selectedobj;
+            $("#RoomThumb").css("visibility", "visible");
+            $("#PlayerPortrait").css("visibility", "visible");
+
+            $("#RoomThumbImg").css("visibility", "visible");
+            $("#PlayerImg").css("visibility", "visible");
+            $("#RoomObjectsPanel").css("visibility", "visible");
+            $("#VisibleCharactersPanel").css("visibility", "visible");
+            $("#InventoryPanel").css("visibility", "visible");
+            SetExits();
+            $("#inputmenu").css("visibility", "hidden");
+            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
+
+                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
+                if (bMasterTimer)
+                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                else
+                    RunCommands(TheObj, selectedobj, InputDataObject, null);
+            }
+        }
+    });
+
+    $("#inputchoices").append($div);
 }
 
 function custom__clearCmdInputChoices() {
@@ -582,34 +612,7 @@ function ProcessAction(Action, bTimer) {
                     value: PerformTextReplacements(act.CustomChoices[_i])
                 });
 
-
-                $div.click(function() {
-                    selectedobj = $(this).val();
-                    if (selectedobj != null) {
-                        AdditionalData = selectedobj;
-                        $("#RoomThumb").css("visibility", "visible");
-                        $("#PlayerPortrait").css("visibility", "visible");
-
-                        $("#RoomThumbImg").css("visibility", "visible");
-                        $("#PlayerImg").css("visibility", "visible");
-                        $("#RoomObjectsPanel").css("visibility", "visible");
-                        $("#VisibleCharactersPanel").css("visibility", "visible");
-                        $("#InventoryPanel").css("visibility", "visible");
-                        SetExits();
-                        $("#inputmenu").css("visibility", "hidden");
-                        if (getObjectClass(InputDataObject) == "action" || InputDataObject.actionparent != null) {
-
-                            ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                            if (bMasterTimer)
-                                RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                            else
-                                RunCommands(TheObj, selectedobj, InputDataObject, null);
-                        }
-                    }
-                });
-
-                $("#inputchoices").append($div);
-
+                custom__addInputChoice($div);
             }
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Character") {
@@ -622,33 +625,7 @@ function ProcessAction(Action, bTimer) {
                         value: TheGame.Characters[_i].Charname
                     });
 
-                    $div.click(function() {
-                        selectedobj = $(this).val();
-                        if (selectedobj != null) {
-                            AdditionalData = selectedobj;
-                            $("#RoomThumb").css("visibility", "visible");
-                            $("#PlayerPortrait").css("visibility", "visible");
-
-                            $("#RoomThumbImg").css("visibility", "visible");
-                            $("#PlayerImg").css("visibility", "visible");
-                            $("#RoomObjectsPanel").css("visibility", "visible");
-                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                            $("#InventoryPanel").css("visibility", "visible");
-                            SetExits();
-                            $("#inputmenu").css("visibility", "hidden");
-                            if (getObjectClass(InputDataObject) == "action" || InputDataObject.actionparent != null) {
-
-                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                if (bMasterTimer)
-                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                else
-                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                            }
-                        }
-                    });
-
-                    $("#inputchoices").append($div);
-
+                    custom__addInputChoice($div);
                 }
             }
             custom__setInputMenuTitle(act);
@@ -663,33 +640,7 @@ function ProcessAction(Action, bTimer) {
                         value: obj.UniqueIdentifier
                     });
 
-                    $div.click(function() {
-                        selectedobj = $(this).val();
-                        if (selectedobj != null) {
-                            AdditionalData = selectedobj;
-                            $("#RoomThumb").css("visibility", "visible");
-                            $("#PlayerPortrait").css("visibility", "visible");
-
-                            $("#RoomThumbImg").css("visibility", "visible");
-                            $("#PlayerImg").css("visibility", "visible");
-                            $("#RoomObjectsPanel").css("visibility", "visible");
-                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                            $("#InventoryPanel").css("visibility", "visible");
-                            SetExits();
-                            $("#inputmenu").css("visibility", "hidden");
-                            if (getObjectClass(InputDataObject) == "action" || InputDataObject.actionparent != null) {
-
-                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                if (bMasterTimer)
-                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                else
-                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                            }
-                        }
-                    });
-
-                    $("#inputchoices").append($div);
-
+                    custom__addInputChoice($div);
                 }
             }
             if (TheGame.Player.CurrentRoom != null) {
@@ -707,32 +658,7 @@ function ProcessAction(Action, bTimer) {
                                         value: tempobj.UniqueIdentifier
                                     });
 
-                                    $div.click(function() {
-                                        selectedobj = $(this).val();
-                                        if (selectedobj != null) {
-                                            AdditionalData = selectedobj;
-                                            $("#RoomThumb").css("visibility", "visible");
-                                            $("#PlayerPortrait").css("visibility", "visible");
-
-                                            $("#RoomThumbImg").css("visibility", "visible");
-                                            $("#PlayerImg").css("visibility", "visible");
-                                            $("#RoomObjectsPanel").css("visibility", "visible");
-                                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                                            $("#InventoryPanel").css("visibility", "visible");
-                                            SetExits();
-                                            $("#inputmenu").css("visibility", "hidden");
-                                            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                                if (bMasterTimer)
-                                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                                else
-                                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                                            }
-                                        }
-                                    });
-
-                                    $("#inputchoices").append($div);
+                                    custom__addInputChoice($div);
 
                                     if (tempobj.bContainer) {
                                         if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
@@ -756,32 +682,7 @@ function ProcessAction(Action, bTimer) {
                         value: obj.UniqueIdentifier
                     });
 
-                    $div.click(function() {
-                        selectedobj = $(this).val();
-                        if (selectedobj != null) {
-                            AdditionalData = selectedobj;
-                            $("#RoomThumb").css("visibility", "visible");
-                            $("#PlayerPortrait").css("visibility", "visible");
-
-                            $("#RoomThumbImg").css("visibility", "visible");
-                            $("#PlayerImg").css("visibility", "visible");
-                            $("#RoomObjectsPanel").css("visibility", "visible");
-                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                            $("#InventoryPanel").css("visibility", "visible");
-                            SetExits();
-                            $("#inputmenu").css("visibility", "hidden");
-                            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                if (bMasterTimer)
-                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                else
-                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                            }
-                        }
-                    });
-
-                    $("#inputchoices").append($div);
+                    custom__addInputChoice($div);
                 }
             }
             custom__setInputMenuTitle(act);
@@ -796,32 +697,7 @@ function ProcessAction(Action, bTimer) {
                         value: obj.UniqueIdentifier
                     });
 
-                    $div.click(function() {
-                        selectedobj = $(this).val();
-                        if (selectedobj != null) {
-                            AdditionalData = selectedobj;
-                            $("#RoomThumb").css("visibility", "visible");
-                            $("#PlayerPortrait").css("visibility", "visible");
-
-                            $("#RoomThumbImg").css("visibility", "visible");
-                            $("#PlayerImg").css("visibility", "visible");
-                            $("#RoomObjectsPanel").css("visibility", "visible");
-                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                            $("#InventoryPanel").css("visibility", "visible");
-                            SetExits();
-                            $("#inputmenu").css("visibility", "hidden");
-                            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                if (bMasterTimer)
-                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                else
-                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                            }
-                        }
-                    });
-
-                    $("#inputchoices").append($div);
+                    custom__addInputChoice($div);
                 }
             }
             if (TheGame.Player.CurrentRoom != null) {
@@ -839,32 +715,8 @@ function ProcessAction(Action, bTimer) {
                                         value: tempobj.UniqueIdentifier
                                     });
 
-                                    $div.click(function() {
-                                        selectedobj = $(this).val();
-                                        if (selectedobj != null) {
-                                            AdditionalData = selectedobj;
-                                            $("#RoomThumb").css("visibility", "visible");
-                                            $("#PlayerPortrait").css("visibility", "visible");
+                                    custom__addInputChoice($div);
 
-                                            $("#RoomThumbImg").css("visibility", "visible");
-                                            $("#PlayerImg").css("visibility", "visible");
-                                            $("#RoomObjectsPanel").css("visibility", "visible");
-                                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                                            $("#InventoryPanel").css("visibility", "visible");
-                                            SetExits();
-                                            $("#inputmenu").css("visibility", "hidden");
-                                            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                                if (bMasterTimer)
-                                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                                else
-                                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                                            }
-                                        }
-                                    });
-
-                                    $("#inputchoices").append($div);
                                     if (tempobj.bContainer) {
                                         if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
                                             AddOpenedObjects(tempobj, $("#inputchoices"), selectedobj);
@@ -883,36 +735,10 @@ function ProcessAction(Action, bTimer) {
                         value: TheGame.Characters[_i].Charname
                     });
 
-                    $div.click(function() {
-                        selectedobj = $(this).val();
-                        if (selectedobj != null) {
-                            AdditionalData = selectedobj;
-                            $("#RoomThumb").css("visibility", "visible");
-                            $("#PlayerPortrait").css("visibility", "visible");
-
-                            $("#RoomThumbImg").css("visibility", "visible");
-                            $("#PlayerImg").css("visibility", "visible");
-                            $("#RoomObjectsPanel").css("visibility", "visible");
-                            $("#VisibleCharactersPanel").css("visibility", "visible");
-                            $("#InventoryPanel").css("visibility", "visible");
-                            SetExits();
-                            $("#inputmenu").css("visibility", "hidden");
-                            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                                if (bMasterTimer)
-                                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                                else
-                                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-                            }
-                        }
-                    });
-
-                    $("#inputchoices").append($div);
-
+                    custom__addInputChoice($div);
                 }
-                custom__setInputMenuTitle(act);
             }
+            custom__setInputMenuTitle(act);
         } else if (act.InputType == "Text") {
             $("#textactionMenuTitle").text(act.CustomChoiceTitle);
             $("#textactionchoice").css("visibility", "visible");

@@ -145,6 +145,10 @@ body {
     text-align: left;
 }
 
+#inputmenu:not(.cancellable) #CancelInput {
+    display: none;
+}
+
 #textchoice {
     padding: 10px;
 }
@@ -205,6 +209,11 @@ body {
     font-weight: bold;
     font-size: 18px;
     padding: 10px;
+}
+
+#CancelInput {
+    margin: 10px;
+    width: 100px;
 }
 
 #inputchoices .inputchoices {

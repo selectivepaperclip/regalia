@@ -297,6 +297,20 @@ $(function() {
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
     });
+    $("#CancelInput").click(function () {
+        $("#inputmenu").css("visibility", "hidden");
+
+        $("#RoomThumb").css("visibility", "visible");
+        $("#PlayerPortrait").css("visibility", "visible");
+
+        $("#RoomThumbImg").css("visibility", "visible");
+        $("#PlayerImg").css("visibility", "visible");
+        $("#RoomObjectsPanel").css("visibility", "visible");
+        $("#VisibleCharactersPanel").css("visibility", "visible");
+        $("#InventoryPanel").css("visibility", "visible");
+        SetExits();
+        RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+    });
     $("#cmdCancelInput").click(function(e) {
         AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");

@@ -337,21 +337,21 @@ function GetAction(Actions, Name) {
     }
 }
 
-function GetTimer(Name) {
-    Name = Name.trim();
+function GetTimer(timerName) {
+    timerName = timerName.trim();
     for (var _i = 0; _i < TheGame.Timers.length; _i++) {
-        if (TheGame.Timers[_i].Name == Name)
+        if (TheGame.Timers[_i].Name == timerName)
             return TheGame.Timers[_i];
     }
 }
 
-function GetVariable(Name) {
-    Name = Name.trim();
-    if (Name.indexOf("(") > -1) {
-        Name = Name.substring(0, Name.indexOf("("));
+function GetVariable(variableName) {
+    variableName = variableName.trim();
+    if (variableName.indexOf("(") > -1) {
+        variableName = variableName.substring(0, variableName.indexOf("("));
     }
     for (var _i = 0; _i < TheGame.Variables.length; _i++) {
-        if (TheGame.Variables[_i].varname.toLowerCase() == Name.toLowerCase()) {
+        if (TheGame.Variables[_i].varname.toLowerCase() == variableName.toLowerCase()) {
             return TheGame.Variables[_i];
         }
     }
@@ -412,15 +412,16 @@ function RefreshCharacters() {
 }
 
 function GetObject(uid) {
+    if (uid == null) {
+        return null;
+    }
+    uid = uid.trim();
+
     for (var _i = 0; _i < TheGame.Objects.length; _i++) {
         if (TheGame.Objects[_i].UniqueIdentifier == uid) {
             return TheGame.Objects[_i];
         }
     }
-    if (uid == null) {
-        return null;
-    }
-    uid = uid.trim();
     for (var _i = 0; _i < TheGame.Objects.length; _i++) {
         if (TheGame.Objects[_i].name == uid) {
             return TheGame.Objects[_i];
@@ -428,9 +429,14 @@ function GetObject(uid) {
     }
 }
 
-function GetCharacter(charname) {
+function GetCharacter(characterName) {
+    if (characterName == null) {
+        return null;
+    }
+
+    characterName = characterName.trim();
     for (var _i = 0; _i < TheGame.Characters.length; _i++) {
-        if (TheGame.Characters[_i].Charname == charname) {
+        if (TheGame.Characters[_i].Charname == characterName) {
             return TheGame.Characters[_i];
         }
     }

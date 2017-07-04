@@ -519,15 +519,20 @@ $(function() {
     receivedText();
 });
 
-function GetRoom(RoomName) {
+function GetRoom(roomName) {
+    if (roomName == null) {
+        return null;
+    }
+
+    roomName = roomName.trim();
     for (var i = 0; i < TheGame.Rooms.length; i++) {
-        if (TheGame.Rooms[i].UniqueID == RoomName) {
+        if (TheGame.Rooms[i].UniqueID == roomName) {
             return TheGame.Rooms[i];
         }
     }
     //check by name if we get here
     for (var i = 0; i < TheGame.Rooms.length; i++) {
-        if (TheGame.Rooms[i].Name == RoomName) {
+        if (TheGame.Rooms[i].Name == roomName) {
             return TheGame.Rooms[i];
         }
     }

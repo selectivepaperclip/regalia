@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var frozenVariables = {};
+    var frozenPlayerProperties = {};
 
     function variableScalar(variable) {
         if (variable.vartype === "VT_NUMBER") {
@@ -39,21 +40,69 @@ $(document).ready(function () {
         }
     }
 
-    function isFrozen(variable) {
+    function findCustomProperty(obj, name) {
+        return obj.CustomProperties.filter(function (property) {
+            return property.Name === name;
+        })[0];
+    }
+
+    function isFrozenVariable(variable) {
         return !!frozenVariables[variable.varname];
     }
 
-    $("#cheat_button").click(function(e) {
-        $('.cheat-menu').removeClass('hidden');
+    function isFrozenPlayerProperty(property) {
+        return !!frozenPlayerProperties[property.Name];
+    }
 
-        $('.cheat-menu, .cheat-menu-actions button').click(function (e) {
-           $('.cheat-menu').addClass('hidden');
+    function setupPlayerProperties() {
+        $('.cheat-menu-player-properties-body').off();
+        $('.cheat-menu-player-properties-body').empty();
+
+        TheGame.Player.CustomProperties.forEach(function (property) {
+            var $propertyRow = $('<tr></tr>');
+            $propertyRow.append('<td>' + property.Name + '</td>');
+
+            var $valueCell = $('<td></td>');
+            var $propertyInput = $('<input>');
+            $propertyInput.val(property.Value);
+            $propertyInput.data('propertyname', property.Name);
+            $valueCell.append($propertyInput);
+
+            $propertyRow.append($valueCell);
+
+            var $freezeButton = $('<button>Freeze</button>');
+            $freezeButton.addClass('freeze-button');
+            $freezeButton.data('propertyname', property.Name);
+            if (isFrozenPlayerProperty(property)) {
+                $freezeButton.addClass('frozen');
+            }
+            var $freezeButtonCell = $('<td></td>');
+            $freezeButtonCell.append($freezeButton);
+            $propertyRow.append($freezeButtonCell);
+
+            $('.cheat-menu-player-properties-body').append($propertyRow);
         });
 
-        $('.cheat-menu-content').click(function (e) {
-            e.stopPropagation();
+        $('.cheat-menu-player-properties-body').on('keyup', 'input', function (e) {
+            var $propertyInput = $(e.target);
+            var property = findCustomProperty(TheGame.Player, $propertyInput.data('propertyname'));
+            property.Value = $propertyInput.val();
         });
 
+        $('.cheat-menu-player-properties-body').on('click', '.freeze-button', function (e) {
+            var $freezeButton = $(e.target);
+            var propertyToFreeze = findCustomProperty(TheGame.Player, $freezeButton.data('propertyname'));
+            if (isFrozenPlayerProperty(propertyToFreeze)) {
+                delete frozenPlayerProperties[propertyToFreeze.Name];
+                $freezeButton.removeClass('frozen');
+            } else {
+                frozenPlayerProperties[propertyToFreeze.Name] = true;
+                $freezeButton.addClass('frozen');
+            }
+        });
+    }
+
+    function setupGameVariables() {
         $('.cheat-menu-variables-body').off();
         $('.cheat-menu-variables-body').empty();
 
@@ -91,7 +140,7 @@ $(document).ready(function () {
             var $freezeButton = $('<button>Freeze</button>');
             $freezeButton.addClass('freeze-button');
             $freezeButton.data('varname', variable.varname);
-            if (isFrozen(variable)) {
+            if (isFrozenVariable(variable)) {
                 $freezeButton.addClass('frozen');
             }
             var $freezeButtonCell = $('<td></td>');
@@ -110,7 +159,7 @@ $(document).ready(function () {
         $('.cheat-menu-variables-body').on('click', '.freeze-button', function (e) {
             var $freezeButton = $(e.target);
             var variableToFreeze = GetVariable($freezeButton.data('varname'));
-            if (isFrozen(variableToFreeze)) {
+            if (isFrozenVariable(variableToFreeze)) {
                 delete frozenVariables[variableToFreeze.varname];
                 $freezeButton.removeClass('frozen');
             } else {
@@ -118,13 +167,36 @@ $(document).ready(function () {
                 $freezeButton.addClass('frozen');
             }
         });
+    }
+
+    $("#cheat_button").click(function(e) {
+        $('.cheat-menu').removeClass('hidden');
+
+        $('.cheat-menu, .cheat-menu-actions button').click(function (e) {
+           $('.cheat-menu').addClass('hidden');
+        });
+
+        $('.cheat-menu-content').click(function (e) {
+            e.stopPropagation();
+        });
+
+        setupPlayerProperties();
+        setupGameVariables();
     });
 
     var originalSetVariable = SetVariable;
     SetVariable = function (tempvar, bArraySet, bJavascript, varindex, varindex1a, replacedstring, cmdtxt, part3) {
-        if (isFrozen(tempvar)) {
+        if (isFrozenVariable(tempvar)) {
             return;
         }
         return originalSetVariable.apply(this, arguments);
+    };
+
+    var originalSetCustomProperty = SetCustomProperty;
+    SetCustomProperty = function (curprop, part3, replacedstring) {
+        if (isFrozenPlayerProperty(curprop)) {
+            return;
+        }
+        return originalSetCustomProperty.apply(this, arguments);
     };
 });

@@ -78,6 +78,7 @@ body {
 
 #Continue {
     margin-top: 0;
+    font-size: 20px;
 }
 
 /* menu row */
@@ -142,6 +143,15 @@ body {
     bottom: 0;
     opacity: 0.8;
     text-align: left;
+}
+
+#textchoice {
+    padding: 10px;
+}
+
+#textchoice input {
+    margin: 10px 0;
+    font-size: 24px;
 }
 
 #inputchoices {
@@ -352,7 +362,7 @@ body {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .cheat-menu {
@@ -378,16 +388,20 @@ body {
     flex-direction: column;
 }
 
-.cheat-menu-variables {
+.cheat-menu-title, .cheat-menu-subtitle {
+    flex: 0 0 auto;
+}
+
+.cheat-menu-scrollable {
     flex: 1 1 auto;
 }
 
-.cheat-menu-variables th, .cheat-menu-variables td {
+.cheat-menu-scrollable th, .cheat-menu-scrollable td {
     text-align: left;
     vertical-align: top;
 }
 
-.cheat-menu-variables-body td {
+.cheat-menu-scrollable td {
     padding: 5px 2px;
 }
 

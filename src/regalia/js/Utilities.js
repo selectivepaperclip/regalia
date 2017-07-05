@@ -1858,8 +1858,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     }
                                 }
                                 if (!bfound) {
-                                    tempact.CustomChoices.length = tempact.CustomChoices.length + 1;
-                                    tempact.CustomChoices[tempact.CustomChoices.length - 1] = cmdtxt;
+                                    tempact.CustomChoices.push(cmdtxt);
                                 }
                             }
                             break;

@@ -844,6 +844,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
     GetImage(currentroom.RoomPic);
     SetRoomThumb(currentroom.RoomPic);
     TheGame.Player.CurrentRoom = currentroom.UniqueID;
+    $("#MainText").append('</br><b>' + MovingDirection + "</b>");
     if (bRunEvents) {
         if (!currentroom.bEnterFirstTime) {
             currentroom.bEnterFirstTime = true;
@@ -851,11 +852,10 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
         }
         RunEvents("<<On Player Enter>>");
     }
-    $("#MainText").append('</br><b>' + MovingDirection + "</b>");
     $("#MainText").animate({
         scrollTop: $("#MainText")[0].scrollHeight
     });
-    $("#MainText").append('</br>' + currentroom.Description);
+    AddTextToRTF(currentroom.Description, "Black", "Regular");
     $("#MainText").animate({
         scrollTop: $("#MainText")[0].scrollHeight
     }, 0);

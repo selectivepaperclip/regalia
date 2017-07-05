@@ -1510,10 +1510,10 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                     {
                         var tempvar = GetVariable(step2);
                         var checkvar = GetVariable(step4);
-                        var varindex1 = GetArrayIndex(step2);
-                        var varindex1a = GetArrayIndex2(step2);
-                        var varindex2 = GetArrayIndex(step4);
-                        var varindex2a = GetArrayIndex2(step4);
+                        var varindex1 = GetArrayIndex(step2, 0);
+                        var varindex1a = GetArrayIndex(step2, 1);
+                        var varindex2 = GetArrayIndex(step4, 0);
+                        var varindex2a = GetArrayIndex(step4, 1);
                         var compareval = "";
                         if (checkvar.vartype == "VT_NUMBERARRAY" || checkvar.vartype == "VT_NUMBER") {
                             if (varindex2 == -1)
@@ -1806,8 +1806,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var tempvar = GetVariable(part2);
                             if (tempvar != null) {
-                                var index = GetArrayIndex(part2);
-                                var index1a = GetArrayIndex2(part2);
+                                var index = GetArrayIndex(part2, 0);
+                                var index1a = GetArrayIndex(part2, 1);
                                 if (index == -1) {
                                     tempvar.dNumType = Math.floor((Math.random() * (parseInt(tempvar.dMax) - parseInt(tempvar.dMin) + 1) + parseInt(tempvar.dMin)));
                                 } else {
@@ -2415,8 +2415,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         }
                                     }
                                 }
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 var replacedstring = PerformTextReplacements(part4, null);
                                 if (tempvar.vartype == "VT_STRINGARRAY" || tempvar.vartype == "VT_STRING") {
                                     if (varindex == -1)
@@ -2458,8 +2458,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         }
                                     }
                                 }
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 SetVariable(tempvar, false, false, varindex, varindex1a, ValueToSet, ValueToSet, "Equals");
                             }
                             break;
@@ -2484,8 +2484,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         }
                                     }
                                 }
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 SetVariable(tempvar, false, false, varindex, varindex1a, ValueToSet, ValueToSet, "Equals");
                             }
                             break;
@@ -2510,8 +2510,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         }
                                     }
                                 }
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 SetVariable(tempvar, false, false, varindex, varindex1a, ValueToSet, ValueToSet, "Equals");
                             }
                             break;
@@ -2542,8 +2542,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         }
                                     }
                                 }
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 SetVariable(tempvar, false, false, varindex, varindex1a, ValueToSet, ValueToSet, "Equals");
                             }
                             break;
@@ -2560,8 +2560,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         ValueToSet = curprop.Value;
                                     }
                                 }
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 SetVariable(tempvar, false, false, varindex, varindex1a, ValueToSet, ValueToSet, "Equals");
                             }
                             break;
@@ -2750,8 +2750,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             }
                             var tempvar = GetVariable(part2);
                             if (tempvar != null) {
-                                var varindex = GetArrayIndex(part2);
-                                var varindex1a = GetArrayIndex2(part2);
+                                var varindex = GetArrayIndex(part2, 0);
+                                var varindex1a = GetArrayIndex(part2, 1);
                                 var replacedstring = PerformTextReplacements(part4, null);
                                 cmdtxt = PerformTextReplacements(cmdtxt, null);
                                 var jsresult = null;
@@ -2770,8 +2770,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var tempvar = GetVariable(part2);
                             var modifyingvar = GetVariable(part4);
-                            var varindex = GetArrayIndex(part4);
-                            var varindex4a = GetArrayIndex2(part4);
+                            var varindex = GetArrayIndex(part4, 0);
+                            var varindex4a = GetArrayIndex(part4, 1);
                             var modifyval = "";
                             if (varindex == -1) {
                                 modifyval = modifyingvar.dNumType;
@@ -2782,8 +2782,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     modifyval = modifyingvar.VarArray[varindex];
                                 }
                             }
-                            varindex = GetArrayIndex(part2);
-                            var varindex2a = GetArrayIndex2(part2);
+                            varindex = GetArrayIndex(part2, 0);
+                            var varindex2a = GetArrayIndex(part2, 1);
                             if (tempvar != null) {
                                 SetVariable(tempvar, false, false, varindex, varindex2a, modifyval, modifyval, part3);
                             }
@@ -2792,8 +2792,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_DISPLAYVARIABLE":
                         {
                             var tempvar = GetVariable(part2);
-                            var varindex = GetArrayIndex(part2);
-                            var varindex2a = GetArrayIndex2(part2);
+                            var varindex = GetArrayIndex(part2, 0);
+                            var varindex2a = GetArrayIndex(part2, 1);
                             if (tempvar != null) {
                                 if (tempvar.vartype == "VT_DATETIMEARRAY") {} else if (tempvar.vartype == "VT_NUMBER") {
                                     AddTextToRTF(tempvar.dNumType.toString() + "\r\n", "Black", "Regular");
@@ -3370,9 +3370,19 @@ function AddTextToRTF(text, clr, fontst) {
     }
 }
 
-function GetArrayIndex(varname) {
+function nthIndex(str, pat, n){
+    var i = -1;
+    while(n >= 0 && i++ < str.length){
+        i = str.indexOf(pat, i);
+        if (i < 0) break;
+        n--;
+    }
+    return i;
+}
+
+function GetArrayIndex(varname, n) {
     var retval = -1;
-    var index = varname.indexOf("(");
+    var index = nthIndex(varname, "(", n);
     if (index > -1) {
         var endindex = varname.indexOf(")", index);
         if (endindex > -1) {
@@ -3384,22 +3394,20 @@ function GetArrayIndex(varname) {
             }
         }
     }
-    return retval;
-}
 
-function GetArrayIndex2(varname) {
-    var retval = -1;
-    var index = varname.indexOf("(");
-    if (index > -1) {
-        index = varname.indexOf("(", index + 1);
-        if (index > -1) {
-            var endindex = varname.indexOf(")", index);
-            if (endindex > -1) {
-                var indexvalue = varname.substring(index + 1, endindex);
-                retval = indexvalue;
+    if (retval && retval !== -1) {
+        var rangeMatch = retval.match(/(\d+)\.\.(\d+)/);
+        if (rangeMatch) {
+            var rangeStart = parseInt(rangeMatch[1], 10);
+            var rangeEnd = parseInt(rangeMatch[2], 10);
+            if (rangeStart === rangeEnd - 1) {
+                return rangeEnd.toString();
+            } else {
+                throw new Error("Found a range array index in property: '" + varname + "'. This is probably an error, giving up.")
             }
         }
     }
+
     return retval;
 }
 
@@ -3685,8 +3693,8 @@ function SetCommandInput(tempcommand, Value) {
     var part4 = PerformTextReplacements(tempcommand.CommandPart4, null);
     var cmdtxt = PerformTextReplacements(tempcommand.CommandText, null);
     var tempvar = GetVariable(part3);
-    var varindex = GetArrayIndex(part3);
-    var varindex3a = GetArrayIndex2(part3);
+    var varindex = GetArrayIndex(part3, 0);
+    var varindex3a = GetArrayIndex(part3, 1);
     if (tempvar != null) {
         switch (tempcommand.cmdtype) {
             case "CT_SETVARIABLE_NUMERIC_BYINPUT":
@@ -3707,8 +3715,8 @@ function SetCommandInput(tempcommand, Value) {
             case "CT_SETVARIABLEBYINPUT":
                 {
                     var tempvar = GetVariable(part3);
-                    var varindex = GetArrayIndex(part3);
-                    var varindex3a = GetArrayIndex2(part3);
+                    var varindex = GetArrayIndex(part3, 0);
+                    var varindex3a = GetArrayIndex(part3, 1);
                     if (tempvar != null) {
                         if (varindex == -1) {
                             tempvar.sString = Value;
@@ -3762,10 +3770,12 @@ function TestVariable(step2, step3, step4) {
     var bResult = true;
     var tempvar = GetVariable(step2);
     if (tempvar != null) {
-        var varindex = GetArrayIndex(step2);
-        var varindex2 = GetArrayIndex2(step2);
+        var varindex = GetArrayIndex(step2, 0);
+        var varindex2 = GetArrayIndex(step2, 1);
         var replacedstring = PerformTextReplacements(step4, null);
-        if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {} else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
+        if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {
+            // Do Nothing
+        } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
             if (varindex != -1) {
                 if (varindex2 != -1) {
                     tempvar.dNumType = parseFloat(tempvar.VarArray[varindex][varindex2]);

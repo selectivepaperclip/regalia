@@ -50,6 +50,12 @@ function custom__clearCmdInputChoices() {
     $("#cmdinputchoices div").empty();
 }
 
+function custom__setCmdInputMenuTitle(act, title) {
+    $("#cmdInputMenuTitle").text(title);
+    $("#cmdinputmenu").css("visibility", "visible");
+    $("#cmdinputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
+}
+
 function custom__addCmdInputChoice($div) {
     $div.click(function () {
         selectedobj = $(this).val();
@@ -3149,8 +3155,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
 
                                     custom__addCmdInputChoice($div)
                                 }
-                                $("#cmdInputMenuTitle").text(act.CustomChoiceTitle)
-                                $("#cmdinputmenu").css("visibility", "visible");
+                                custom__setCmdInputMenuTitle(act, act.CustomChoiceTitle);
                             } else if (acttype == "Text") {
                                 $("#textMenuTitle").text(part4);
                                 $("#textchoice").css("visibility", "visible");
@@ -3183,8 +3188,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
 
                                     custom__addCmdInputChoice($div);
                                 }
-                                $("#cmdInputMenuTitle").text(part4);
-                                $("#cmdinputmenu").css("visibility", "visible");
+                                custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Character") {
                                 custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Characters.length; _i++) {
@@ -3196,8 +3200,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
 
                                     custom__addCmdInputChoice($div)
                                 }
-                                $("#cmdInputMenuTitle").text(part4);
-                                $("#cmdinputmenu").css("visibility", "visible");
+                                custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Object") {
                                 custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
@@ -3212,8 +3215,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         custom__addCmdInputChoice($div)
                                     }
                                 }
-                                $("#cmdInputMenuTitle").text(part4);
-                                $("#cmdinputmenu").css("visibility", "visible");
+                                custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Inventory") {
                                 custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
@@ -3228,8 +3230,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         custom__addCmdInputChoice($div)
                                     }
                                 }
-                                $("#cmdInputMenuTitle").text(part4);
-                                $("#cmdinputmenu").css("visibility", "visible");
+                                custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "ObjectOrCharacter") {
                                 custom__clearCmdInputChoices()
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
@@ -3254,8 +3255,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     custom__addCmdInputChoice($div)
 
                                 }
-                                $("#cmdInputMenuTitle").text(part4);
-                                $("#cmdinputmenu").css("visibility", "visible");
+                                custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Text") {
                                 $("#textMenuTitle").text(part4);
                                 $("#textchoice").css("visibility", "visible");

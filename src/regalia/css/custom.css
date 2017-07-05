@@ -153,6 +153,10 @@ body {
     display: none;
 }
 
+#cmdinputmenu:not(.cancellable) #cmdCancelInput {
+    display: none;
+}
+
 #textchoice {
     padding: 10px;
 }
@@ -215,7 +219,7 @@ body {
     padding: 10px;
 }
 
-#CancelInput {
+#CancelInput, #cmdCancelInput {
     margin: 10px;
     width: 100px;
 }

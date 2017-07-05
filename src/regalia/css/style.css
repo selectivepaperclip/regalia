@@ -242,10 +242,11 @@ td {
 
 #RoomThumbImg {
     position: absolute;
-    width: 20%;
     margin: 2px;
-    border: 4px solid black;
-    vertical-align: top;
+}
+
+#RoomThumbImg:not([src]) {
+    display: none;
 }
 
 .RoomLayeredImage {

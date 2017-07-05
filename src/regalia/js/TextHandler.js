@@ -836,102 +836,150 @@ function GetActionData(tempact, part3, text, tempindex, replacementvalue) {
 }
 
 function ReplaceStatic(text, tempindex, change, loopobject) {
-    if (tempindex >= 0 && change.indexOf("[PLAYERNAME]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 12);
-        text = text.slice(0, tempindex) + TheGame.Player.Name + text.slice(tempindex);
-        tempindex = text.indexOf("[playername", 0);
+    if (tempindex < 0) {
+        return;
     }
-    if (tempindex >= 0 && change.indexOf("[INPUTDATA]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 11);
-        var datatoinput = AdditionalData;
-        if (loopobject != null && loopobject.AdditionalInputData != null)
-            datatoinput = loopobject.AdditionalInputData;
-        text = text.slice(0, tempindex) + datatoinput + text.slice(tempindex);
-        tempindex = text.indexOf("[inputdata]", 0);
-    }
-    if (tempindex >= 0 && change.indexOf("[MAXCARRY]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 10);
-        text = text.slice(0, tempindex) + TheGame.Player.dWeightLimit + text.slice(tempindex);
-        tempindex = text.indexOf("[maxcarry]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[TURNS]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 7);
-        text = text.slice(0, tempindex) + TurnCount + text.slice(tempindex);
-        tempindex = text.indexOf("[turns]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[CURRENTCARRY]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 14);
-        var totalweight = 0;
-        for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-            var obj = ObjectList[_i];
-            if (obj.locationtype == "LT_PLAYER") {
-                totalweight += GetItemWeight(obj.UniqueIdentifier);
+
+    var staticReplacements = [
+        '[PLAYERNAME]', function () {
+            return TheGame.Player.Name;
+        },
+        '[INPUTDATA]', function () {
+            var datatoinput = AdditionalData;
+            if (loopobject != null && loopobject.AdditionalInputData != null) {
+                datatoinput = loopobject.AdditionalInputData;
+            }
+            return datatoinput;
+        },
+        '[MAXCARRY]', function () {
+            return TheGame.Player.dWeightLimit;
+        },
+        '[TURNS]', function () {
+            return TurnCount;
+        },
+        '[CURRENTCARRY]', function () {
+            var totalweight = 0;
+            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
+                var obj = ObjectList[_i];
+                if (obj.locationtype == "LT_PLAYER") {
+                    totalweight += GetItemWeight(obj.UniqueIdentifier);
+                }
+            }
+            return totalweight;
+        },
+        '[MAN/WOMAN]', function () {
+            switch (TheGame.Player.PlayerGender) {
+                case "Female":
+                {
+                    return "woman";
+                }
+                case "Male":
+                {
+                    return "man";
+                }
+                case "Other":
+                {
+                    return "thing";
+                }
+            }
+        },
+        '[MALE/FEMALE]', function () {
+            return TheGame.Player.PlayerGender.toLowerCase();
+        },
+        '[GIRL/BOY]', function () {
+            switch (TheGame.Player.PlayerGender) {
+                case "Female":
+                {
+                    return "girl";
+                }
+                case "Male":
+                {
+                    return "boy";
+                }
+                case "Other":
+                {
+                    return "thing";
+                }
+            }
+        },
+        '[ROOM.NAME]', function () {
+            var temproom = loopobject;
+            if (temproom != null)
+                return temproom.Name;
+            else {
+                if (TheGame.Player.CurrentRoom != null) {
+                    return GetRoom(TheGame.Player.CurrentRoom).Name;
+                }
+            }
+        },
+        '[ROOM.ID]', function () {
+            var temproom = loopobject;
+            if (temproom != null)
+                return temproom.UniqueID;
+            else {
+                if (TheGame.Player.CurrentRoom != null) {
+                    return GetRoom(TheGame.Player.CurrentRoom).UniqueID;
+                }
+            }
+        },
+        '[EXIT.ACTIVE]', function () {
+            if (loopobject != null) {
+                var result = "N";
+                if (loopobject.bActive)
+                    result = "Y";
+                return result;
+            }
+        },
+        '[EXIT.DIRECTION]', function () {
+            if (loopobject != null) {
+                return loopobject.Direction;
+            }
+        },
+        '[EXIT.DESTNAME]', function () {
+            if (loopobject != null) {
+                return GetRoom(loopobject.DestinationRoom).Name;
+            }
+        },
+        '[EXIT.DESTID]', function () {
+            if (loopobject != null) {
+                return loopobject.DestinationRoom;
+            }
+        },
+        '[ITEM.NAME]', function () {
+            if (loopobject != null)
+                return loopobject.name;
+        },
+        '[ITEM.ID]', function () {
+            if (loopobject != null)
+                return loopobject.UniqueIdentifier;
+        },
+        '[CHAR.NAME]', function () {
+            if (loopobject != null)
+                return loopobject.Charname;
+        },
+        '[A/AN]', function () {
+            var check = text.substring(tempindex).trim();
+            if (check.length >= 1) {
+                if (check[0].toLowerCase() == "a" || check[0].toLowerCase() == "e" || check[0].toLowerCase() == "i" || check[0].toLowerCase() == "o" || check[0].toLowerCase() == "u") {
+                    return "an";
+                } else {
+                    return "a";
+                }
             }
         }
-        text = text.slice(0, tempindex) + totalweight + text.slice(tempindex);
-        tempindex = text.indexOf("[currentcarry]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[MAN/WOMAN]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 11);
-        switch (TheGame.Player.PlayerGender) {
-            case "Female":
-                {
-                    text = text.slice(0, tempindex) + "woman" + text.slice(tempindex);
-                    break;
-                }
-            case "Male":
-                {
-                    text = text.slice(0, tempindex) + "man" + text.slice(tempindex);
-                    break;
-                }
-            case "Other":
-                {
-                    text = text.slice(0, tempindex) + "thing" + text.slice(tempindex);
-                    break;
-                }
-        }
-        tempindex = text.indexOf("[man/woman]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[MALE/FEMALE]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 13);
-        switch (TheGame.Player.PlayerGender) {
-            case "Female":
-                {
-                    text = text.slice(0, tempindex) + "female" + text.slice(tempindex);
+    ];
 
-                    break;
-                }
-            case "Male":
-                {
-                    text = text.slice(0, tempindex) + "male" + text.slice(tempindex);
-                    break;
-                }
-            case "Other":
-                {
-                    text = text.slice(0, tempindex) + "other" + text.slice(tempindex);
-                    break;
-                }
+    for (var i = 0; i < staticReplacements.length; i += 2) {
+        var str = staticReplacements[i];
+        var func = staticReplacements[i + 1];
+        if (change.indexOf(str) > -1) {
+            var replacement = func() || '';
+            return text.slice(0, tempindex) + replacement + text.slice(tempindex + str.length)
         }
-        tempindex = text.indexOf("[male/female]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[BOY/GIRL]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 10);
-        text = text.Remove(tempindex, 10);
-        switch (TheGame.Player.PlayerGender) {
-            case "Female":
-                {
-                    text = text.slice(0, tempindex) + "girl" + text.slice(tempindex);
-                    text = text.Insert(tempindex, "");
-                    break;
-                }
-            case "Male":
-                {
-                    text = text.slice(0, tempindex) + "boy" + text.slice(tempindex);
-                    break;
-                }
-            case "Other":
-                {
-                    text = text.slice(0, tempindex) + "thing" + text.slice(tempindex);
-                    break;
-                }
-        }
-        tempindex = text.indexOf("[boy/girl]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[LEN(") > -1) {
+    }
+
+    // TODO: check this
+    if (tempindex >= 0 && change.indexOf("[LEN(") > -1) {
         tempindex = change.indexOf("[LEN(", 0);
         var tempvar = null;
         var endlenindex = text.indexOf(")]", tempindex);
@@ -960,94 +1008,8 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
             text = text.slice(0, tempindex) + text.slice(tempindex + 5);
         }
         tempindex = text.indexOf("[len(", 0);
-    } else if (tempindex >= 0 && change.indexOf("[ROOM.NAME]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 11);
-        var temproom = loopobject;
-        if (temproom != null)
-            text = text.slice(0, tempindex) + temproom.Name + text.slice(tempindex);
-        else {
-            if (TheGame.Player.CurrentRoom != null) {
-                text = text.slice(0, tempindex) + GetRoom(TheGame.Player.CurrentRoom).Name +
-                    text.slice(tempindex);
-            }
-        }
-        tempindex = text.indexOf("[room.name]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[ROOM.ID]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 9);
-        var temproom = loopobject;
-        if (temproom != null)
-            text = text.slice(0, tempindex) + temproom.UniqueID + text.slice(tempindex);
-        else {
-            if (TheGame.Player.CurrentRoom != null) {
-                text = text.slice(0, tempindex) + GetRoom(TheGame.Player.CurrentRoom).UniqueID +
-                    text.slice(tempindex);
-            }
-        }
-        tempindex = text.indexOf("[room.id]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[EXIT.ACTIVE]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 13);
-        var tempexit = loopobject;
-        if (tempexit != null) {
-            var result = "N";
-            if (tempexit.bActive)
-                result = "Y";
-            text = text.slice(0, tempindex) + result + text.slice(tempindex);
-        }
-        tempindex = text.indexOf("[exit.active]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[EXIT.DIRECTION]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 16);
-        var tempexit = loopobject;
-        if (tempexit != null) {
-            text = text.slice(0, tempindex) + tempexit.Direction + text.slice(tempindex);
-        }
-        tempindex = text.indexOf("[exit.direction]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[EXIT.DESTNAME]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 15);
-        var tempexit = loopobject;
-        if (tempexit != null) {
-            var roomname = "";
-            roomname = GetRoom(tempexit.DestinationRoom).Name;
-            text = text.slice(0, tempindex) + roomname + text.slice(tempindex);
-        }
-        tempindex = text.indexOf("[Exit.DestName]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[EXIT.DESTID]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 13);
-        var tempexit = loopobject;
-        if (tempexit != null) {
-            var guidstring = tempexit.DestinationRoom;
-            text = text.slice(0, tempindex) + guidstring + text.slice(tempindex);
-        }
-        tempindex = text.indexOf("[Exit.DestID]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[ITEM.NAME]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 11);
-        var tempobj = loopobject;
-        if (tempobj != null)
-            text = text.slice(0, tempindex) + tempobj.name + text.slice(tempindex);
-        tempindex = text.indexOf("[item.name]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[ITEM.ID]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 9);
-        var tempobj = loopobject;
-        if (tempobj != null)
-            text = text.slice(0, tempindex) + tempobj.UniqueIdentifier + text.slice(tempindex);
-        tempindex = text.indexOf("[item.id]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[CHAR.NAME]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 11);
-        var tempchar = loopobject;
-        if (tempchar != null)
-            text = text.slice(0, tempindex) + tempchar.Charname + text.slice(tempindex);
-        tempindex = text.indexOf("[char.name]", 0);
-    } else if (tempindex >= 0 && change.indexOf("[A/AN]") > -1) {
-        text = text.slice(0, tempindex) + text.slice(tempindex + 6);
-        var check = text.substring(tempindex).trim();
-        if (check.length >= 1) {
-            if (check[0].toLowerCase() == "a" || check[0].toLowerCase() == "e" || check[0].toLowerCase() == "i" || check[0].toLowerCase() == "o" || check[0].toLowerCase() == "u") {
-                text = text.slice(0, tempindex) + "an" + text.slice(tempindex);
-            } else {
-                text = text.slice(0, tempindex) + "a" + text.slice(tempindex);
-            }
-        }
-        tempindex = text.indexOf("[a/an]", 0);
     }
+
     return text;
 }
 

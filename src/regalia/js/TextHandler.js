@@ -278,8 +278,16 @@ function ReplaceProperty(property, text, tempindex, replacementvalue) {
             if (property == "pp") {
                 tempobj = TheGame.Player;
                 partmatch = parts[0].trim();
-            } else
+            } else {
+                if (parts.length === 1) {
+                    // Property request with no access. Rather than crashing,
+                    // we'll replace it with empty string, which seems to be
+                    // what the .NET client does.
+                    return text;
+                }
+
                 partmatch = parts[1].trim();
+            }
             if (parts.length > 1) {
                 if (property == "rp") {
                     tempobj = GetRoom(parts[0]);

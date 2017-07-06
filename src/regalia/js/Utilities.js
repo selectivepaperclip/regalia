@@ -126,7 +126,7 @@ function GetActionCount(Actions) {
     //CurActions = Actions;
     var ActionCount = 0;
     for (_i = 0; _i < Actions.length; _i++) {
-        if (Actions[_i].name.substring(0, 2) != "<<" && Actions[_i].bActive && Actions[_i].actionparent == "None") {
+        if (actionShouldBeVisible(Actions[_i])) {
             ActionCount++;
         }
     }
@@ -290,12 +290,12 @@ function RefreshInventory() {
     for (var _i = 0; _i < TheGame.Objects.length; _i++) {
         var obj = TheGame.Objects[_i];
         if (obj.locationtype == "LT_PLAYER" && obj.bVisible) {
-            var index = 0;
             var $div = $("<div>", {
                 class: "RoomObjects",
                 text: objecttostring(obj),
                 value: obj.UniqueIdentifier
             });
+            $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
             $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
@@ -320,12 +320,12 @@ function RefreshRoomObjects() {
     for (var _i = 0; _i < TheGame.Objects.length; _i++) {
         var obj = TheGame.Objects[_i];
         if (obj.locationtype == "LT_ROOM" && obj.bVisible && obj.locationname == TheGame.Player.CurrentRoom) {
-            var index = 0;
             var $div = $("<div>", {
                 class: "RoomObjects",
                 text: objecttostring(obj),
                 value: obj.UniqueIdentifier
             });
+            $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
             $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
@@ -357,6 +357,7 @@ function RefreshRoomObjects() {
                                 text: objecttostring(tempobj),
                                 value: tempobj.UniqueIdentifier
                             });
+                            $div.toggleClass('no-actions', GetActionCount(tempobj.Actions) === 0);
 
                             $div.click(function(clickEvent) {
                                 selectedobj = GetObject($(this).val());
@@ -416,6 +417,7 @@ function AddOpenedObjects(tempobj, thelistbox, selitem) {
                 text: "--" + objecttostring(tempobj2),
                 value: tempobj2.UniqueIdentifier
             });
+            $div.toggleClass('no-actions', GetActionCount(tempobj2.Actions) === 0);
 
             $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
@@ -440,13 +442,12 @@ function RefreshCharacters() {
     for (var _i = 0; _i < TheGame.Characters.length; _i++) {
         var obj = TheGame.Characters[_i];
         if (obj.CurrentRoom == TheGame.Player.CurrentRoom) {
-            //var index = 0;
-            //var newopt = new Option(CharToString(obj), obj.Charname);
             var $div = $("<div>", {
                 class: "VisibleCharacters",
                 text: CharToString(obj),
                 value: obj.Charname
             });
+            $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
             $div.click(function(clickEvent) {
                 selectedobj = GetCharacter($(this).val());
@@ -541,11 +542,15 @@ function nameForAction(action) {
     }
 }
 
+function actionShouldBeVisible(action) {
+    return action.name.substring(0, 2) !== "<<" && action.bActive && action.actionparent === "None";
+}
+
 function DisplayActions(Actions, clickEvent) {
     $("#Actionchoices div").empty();
     CurActions = Actions;
     for (_i = 0; _i < Actions.length; _i++) {
-        if (Actions[_i].name.substring(0, 2) != "<<" && Actions[_i].bActive && Actions[_i].actionparent == "None") {
+        if (actionShouldBeVisible(Actions[_i])) {
             var $div = $("<div>", {
                 class: "ActionChoices",
                 text: nameForAction(Actions[_i]),

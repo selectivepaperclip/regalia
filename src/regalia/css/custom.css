@@ -242,13 +242,18 @@ body {
     color: black;
 }
 
-#RoomObjects .RoomObjects:hover,
-#Inventory .RoomObjects:hover,
-#VisibleCharacters .VisibleCharacters:hover,
-#Actionchoices .ActionChoices:hover
+#RoomObjects .RoomObjects:not(.no-actions):hover,
+#Inventory .RoomObjects:not(.no-actions):hover,
+#VisibleCharacters .VisibleCharacters:not(.no-actions):hover,
+#Actionchoices .ActionChoices:not(.no-actions):hover
 {
     cursor: pointer;
     background-color: #b5b5b5;
+}
+
+.no-actions {
+    font-style: italic;
+    color: grey;
 }
 
 .compass-up-down, .compass-rose {

@@ -80,6 +80,20 @@ function custom__addCmdInputChoice($div) {
     $("#cmdinputmenu").show();
 }
 
+function custom__setCmdInputForCustomChoices(title, tempcommand) {
+    custom__clearCmdInputChoices();
+    for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
+        var $div = $("<div>", {
+            class: "cmdinputchoices",
+            text: tempcommand.CustomChoices[_i],
+            value: tempcommand.CustomChoices[_i]
+        });
+
+        custom__addCmdInputChoice($div);
+    }
+    custom__setCmdInputMenuTitle(tempcommand, title);
+}
+
 function AddToMaster(commands, addinputdata) {
     for (var _i = 0; _i < commands.length; _i++) {
         commands[_i].AdditionalInputData = addinputdata;
@@ -3153,17 +3167,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var acttype = part2;
                             var bTransparentChoice = false;
                             if (acttype == "Custom") {
-                                custom__clearCmdInputChoices();
-                                for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
-                                    var $div = $("<div>", {
-                                        class: "cmdinputchoices",
-                                        text: tempcommand.CustomChoices[_i],
-                                        value: tempcommand.CustomChoices[_i]
-                                    });
-
-                                    custom__addCmdInputChoice($div)
-                                }
-                                custom__setCmdInputMenuTitle(act, act.CustomChoiceTitle);
+                                custom__setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Text") {
                                 $("#textMenuTitle").text(part4);
                                 $("#textchoice").css("visibility", "visible");
@@ -3186,19 +3190,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var acttype = part2;
                             var bTransparentChoice = false;
                             if (acttype == "Custom") {
-                                custom__clearCmdInputChoices()
-                                for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
-                                    var $div = $("<div>", {
-                                        class: "cmdinputchoices",
-                                        text: tempcommand.CustomChoices[_i],
-                                        value: tempcommand.CustomChoices[_i]
-                                    });
-
-                                    custom__addCmdInputChoice($div);
-                                }
-                                custom__setCmdInputMenuTitle(act, part4);
+                                custom__setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Character") {
-                                custom__clearCmdInputChoices()
+                                custom__clearCmdInputChoices();
                                 for (_i = 0; _i < TheGame.Characters.length; _i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
@@ -3210,7 +3204,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 }
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Object") {
-                                custom__clearCmdInputChoices()
+                                custom__clearCmdInputChoices();
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
                                     var obj = TheGame.Objects[_i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
@@ -3225,7 +3219,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 }
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Inventory") {
-                                custom__clearCmdInputChoices()
+                                custom__clearCmdInputChoices();
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
                                     var obj = TheGame.Objects[_i];
                                     if (obj.locationtype == "LT_PLAYER") {
@@ -3240,7 +3234,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 }
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "ObjectOrCharacter") {
-                                custom__clearCmdInputChoices()
+                                custom__clearCmdInputChoices();
                                 for (_i = 0; _i < TheGame.Objects.length; _i++) {
                                     var obj = TheGame.Objects[_i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {

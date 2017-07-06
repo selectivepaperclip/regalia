@@ -191,8 +191,9 @@ td {
     position: absolute;
     background-color: White;
     border: 2px solid black;
-    width: 200px;
-    height: 100px;
+    min-width: 200px;
+    max-width: 300px;
+    max-height: 300px;
     overflow: auto;
     top: 50px;
     visibility: hidden;

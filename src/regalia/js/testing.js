@@ -81,19 +81,19 @@ $(function() {
     });
     $("#PlayerPortrait").click(function(e) {
         TheObj = TheGame.Player;
-        DisplayActions(TheGame.Player.Actions);
+        DisplayActions(TheGame.Player.Actions, e);
     });
     $("#RoomThumb").click(function(e) {
         TheObj = GetRoom(TheGame.Player.CurrentRoom);
-        DisplayActions(TheObj.Actions);
+        DisplayActions(TheObj.Actions, e);
     });
     $("#PlayerImg").click(function(e) {
         TheObj = TheGame.Player;
-        DisplayActions(TheGame.Player.Actions);
+        DisplayActions(TheGame.Player.Actions,e );
     });
     $("#RoomThumbImg").click(function(e) {
         TheObj = GetRoom(TheGame.Player.CurrentRoom);
-        DisplayActions(TheObj.Actions);
+        DisplayActions(TheObj.Actions, e);
     });
 
     function setTextInputChoice () {

@@ -519,6 +519,14 @@ function AddChildAction(Actions, Indent, ActionName) {
     }
 }
 
+function nameForAction(action) {
+    if (action.overridename) {
+        return PerformTextReplacements(action.overridename);
+    } else {
+        return action.name;
+    }
+}
+
 function DisplayActions(Actions, clickEvent) {
     $("#Actionchoices div").empty();
     CurActions = Actions;
@@ -526,7 +534,7 @@ function DisplayActions(Actions, clickEvent) {
         if (Actions[_i].name.substring(0, 2) != "<<" && Actions[_i].bActive && Actions[_i].actionparent == "None") {
             var $div = $("<div>", {
                 class: "ActionChoices",
-                text: Actions[_i].name,
+                text: nameForAction(Actions[_i]),
                 value: Actions[_i].name
             });
 

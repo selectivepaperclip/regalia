@@ -94,6 +94,12 @@ function custom__setCmdInputForCustomChoices(title, tempcommand) {
     custom__setCmdInputMenuTitle(tempcommand, title);
 }
 
+function custom__showTextMenuChoice(title) {
+    $("#textMenuTitle").text(title);
+    $("#textchoice").css("visibility", "visible");
+    $("#textchoice input").focus();
+}
+
 function AddToMaster(commands, addinputdata) {
     for (var _i = 0; _i < commands.length; _i++) {
         commands[_i].AdditionalInputData = addinputdata;
@@ -3174,8 +3180,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             if (acttype == "Custom") {
                                 custom__setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Text") {
-                                $("#textMenuTitle").text(part4);
-                                $("#textchoice").css("visibility", "visible");
+                                custom__showTextMenuChoice(part4);
                             } else {}
                             $("#RoomThumb").css("visibility", "hidden");
                             $("#PlayerImg").css("visibility", "hidden");
@@ -3264,8 +3269,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 }
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Text") {
-                                $("#textMenuTitle").text(part4);
-                                $("#textchoice").css("visibility", "visible");
+                                custom__showTextMenuChoice(part4);
                             } else {}
                             VariableGettingSet = tempcommand;
                             $("#RoomThumb").css("visibility", "hidden");

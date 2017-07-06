@@ -95,7 +95,8 @@ $(function() {
         TheObj = GetRoom(TheGame.Player.CurrentRoom);
         DisplayActions(TheObj.Actions);
     });
-    $("#textbutton").click(function(e) {
+
+    function setTextInputChoice () {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
             $("#RoomThumb").css("visibility", "visible");
@@ -111,7 +112,14 @@ $(function() {
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
+    }
+    $("#textbutton").click(setTextInputChoice);
+    $("#textinput").on('keyup', function (e) {
+        if (e.which === 13) { // return key
+            setTextInputChoice();
+        }
     });
+
     $("#playernamebutton").click(function(e) {
         AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");

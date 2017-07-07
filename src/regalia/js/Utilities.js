@@ -801,7 +801,7 @@ function ProcessAction(Action, bTimer) {
         $("#RoomObjectsPanel").css("visibility", "hidden");
         $("#VisibleCharactersPanel").css("visibility", "hidden");
         $("#InventoryPanel").css("visibility", "hidden");
-        $(".Direction").css("visibility", "hidden");
+        $(".compass-direction").css("visibility", "hidden");
     } else {
         ExecuteAction(act, bTimer);
     }
@@ -2079,7 +2079,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             $("#RoomObjectsPanel").css("visibility", "hidden");
                             $("#VisibleCharactersPanel").css("visibility", "hidden");
                             $("#InventoryPanel").css("visibility", "hidden");
-                            $(".Direction").css("visibility", "hidden");
+                            $(".compass-direction").css("visibility", "hidden");
                             break;
                         }
                     case "CT_MOVEITEMTOINV":
@@ -3199,7 +3199,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             $("#RoomObjectsPanel").css("visibility", "hidden");
                             $("#VisibleCharactersPanel").css("visibility", "hidden");
                             $("#InventoryPanel").css("visibility", "hidden");
-                            $(".Direction").css("visibility", "hidden");
+                            $(".compass-direction").css("visibility", "hidden");
                             VariableGettingSet = tempcommand;
                             return;
                             break;
@@ -3289,7 +3289,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             $("#RoomObjectsPanel").css("visibility", "hidden");
                             $("#VisibleCharactersPanel").css("visibility", "hidden");
                             $("#InventoryPanel").css("visibility", "hidden");
-                            $(".Direction").css("visibility", "hidden");
+                            $(".compass-direction").css("visibility", "hidden");
                             return;
                             break;
                         }
@@ -3500,7 +3500,7 @@ function PauseGame() {
     $("#RoomObjectsPanel").css("visibility", "hidden");
     $("#VisibleCharactersPanel").css("visibility", "hidden");
     $("#InventoryPanel").css("visibility", "hidden");
-    $(".Direction").css("visibility", "hidden");
+    $(".compass-direction").css("visibility", "hidden");
     $("#Continue").css('background-color', "rgb(255, 255, 255)");
     $("#Continue").css('visibility', "visible");
 }

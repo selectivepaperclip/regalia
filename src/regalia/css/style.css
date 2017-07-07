@@ -312,7 +312,7 @@ td {
     margin-left: 20px;
 }
 
-.Direction {
+.compass-direction {
     position: absolute;
     width: 20px;
     height: 20px;

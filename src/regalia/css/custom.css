@@ -376,12 +376,12 @@ body {
 
 }
 
-.compass-rose .Direction, .compass-up-down .Direction {
+.compass-rose .compass-direction, .compass-up-down .compass-direction {
     cursor: pointer;
     border: 1px solid grey;
 }
 
-.compass-rose .Direction:hover, .compass-up-down .Direction:hover {
+.compass-rose .compass-direction:hover, .compass-up-down .compass-direction:hover {
     border: 1px solid green;
 }
 

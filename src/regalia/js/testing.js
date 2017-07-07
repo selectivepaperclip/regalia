@@ -143,7 +143,7 @@ $(function() {
             $("#RoomObjectsPanel").css("visibility", "hidden");
             $("#VisibleCharactersPanel").css("visibility", "hidden");
             $("#InventoryPanel").css("visibility", "hidden");
-            $(".Direction").css("visibility", "hidden");
+            $(".compass-direction").css("visibility", "hidden");
         } else {
             StartGame();
         }
@@ -394,147 +394,24 @@ $(function() {
         }
     }, 1000);
 
-    $("#bUp").click(function() {
-        UpClicked();
+    $(".compass-direction").click(function(e) {
+        var direction = $(e.target).data('direction');
+        var newRoom = GetDestinationRoomName(direction);
+        ResetLoopObjects();
+        CheckRoomEvents();
+        if (!bCancelMove) {
+            ChangeRoom(GetRoom(newRoom), true, true);
+        }
     });
-    $("#bUP").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("Up"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bDown").click(function() {
-        DownClicked();
-    });
-    $("#bDown").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("Down"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bNorth").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("North"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bNorth").click(function() {
-        NorthClicked();
-    });
-    $("#bSouth").click(function() {
-        SouthClicked();
-    });
-    $("#bSouth").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("South"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bWest").click(function() {
-        WestClicked();
-    });
-    $("#bWest").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("West"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bEast").click(function() {
-        EastClicked();
-    });
-    $("#bEast").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("East"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bNorthwest").click(function() {
-        NorthwestClicked();
-    });
-    $("#bNorthwest").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("NorthWest"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bNortheast").click(function() {
-        NortheastClicked();
-    });
-    $("#bNortheast").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("NorthEast"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bSouthwest").click(function() {
-        SouthwestClicked();
-    });
-    $("#Southwest").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("SouthWest"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bSoutheast").click(function() {
-        SoutheastClicked();
-    });
-    $("#bSoutheast").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("SouthEast"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bIn").click(function() {
-        InClicked();
-    });
-    $("#bIn").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("In"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
-    }, function() {
-        $("#tooltip").css("visibility", "hidden");
-    });
-    $("#bOut").click(function() {
-        OutClicked();
-    });
-    $("#bOut").hover(function() {
-        var destroom = GetRoom(GetDestinationRoomName("Out"));
-        $("#tooltip").text(destroom.Name);
-        $("#tooltip").css("left", (window.x + 10) + "px");
-        $("#tooltip").css("top", window.y + "px");
-        $("#tooltip").css("visibility", "visible");
+    $(".compass-direction").hover(function(e) {
+        var direction = $(e.target).data('direction');
+        var destRoom = GetRoom(GetDestinationRoomName(direction));
+        $("#tooltip").text(destRoom.Name);
+        $("#tooltip").css({
+            "left": (window.x + 10) + "px",
+            "top": window.y + "px",
+            "visibility": "visible"
+        });
     }, function() {
         $("#tooltip").css("visibility", "hidden");
     });
@@ -594,103 +471,6 @@ function CheckRoomEvents() {
         }
         RunEvents("<<On Player Leave>>");
     }
-}
-
-function UpClicked() {
-    var newroom = GetDestinationRoomName("Up");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function DownClicked() {
-
-    var newroom = GetDestinationRoomName("Down");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function NorthClicked() {
-    var newroom = GetDestinationRoomName("North");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function SouthClicked() {
-    var newroom = GetDestinationRoomName("South");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function WestClicked() {
-    var newroom = GetDestinationRoomName("West");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function EastClicked() {
-    var newroom = GetDestinationRoomName("East");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function NorthwestClicked() {
-    var newroom = GetDestinationRoomName("NorthWest");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function NortheastClicked() {
-    var newroom = GetDestinationRoomName("NorthEast");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function SouthwestClicked() {
-    var newroom = GetDestinationRoomName("SouthWest");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function SoutheastClicked() {
-    var newroom = GetDestinationRoomName("SouthEast");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function InClicked() {
-    var newroom = GetDestinationRoomName("In");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
-}
-
-function OutClicked() {
-    var newroom = GetDestinationRoomName("Out");
-    ResetLoopObjects();
-    CheckRoomEvents();
-    if (!bCancelMove)
-        ChangeRoom(GetRoom(newroom), true, true);
 }
 
 function ResetLoopObjects() {
@@ -820,7 +600,7 @@ function receivedText() {
             $("#RoomObjectsPanel").css("visibility", "hidden");
             $("#VisibleCharactersPanel").css("visibility", "hidden");
             $("#InventoryPanel").css("visibility", "hidden");
-            $(".Direction").css("visibility", "hidden");
+            $(".compass-direction").css("visibility", "hidden");
             return;
         }
         if (TheGame.Player.bPromptForGender) {
@@ -833,7 +613,7 @@ function receivedText() {
             $("#RoomObjectsPanel").css("visibility", "hidden");
             $("#VisibleCharactersPanel").css("visibility", "hidden");
             $("#InventoryPanel").css("visibility", "hidden");
-            $(".Direction").css("visibility", "hidden");
+            $(".compass-direction").css("visibility", "hidden");
             return;
         }
         StartGame();

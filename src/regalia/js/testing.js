@@ -75,6 +75,7 @@ $(function() {
     $("#Continue").click(function(e) {
         var bgcolor = $("#Continue").css('background-color');
         if (bgcolor == "rgb(128, 128, 128)") {} else {
+            gamePaused = false;
             custom__showGameElements();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
@@ -388,10 +389,24 @@ $(function() {
         var direction = $(e.target).data('direction');
         var newRoom = GetDestinationRoomName(direction);
         ResetLoopObjects();
-        CheckRoomEvents();
-        if (!bCancelMove) {
-            ChangeRoom(GetRoom(newRoom), true, true);
+        bCancelMove = false;
+        var curroom = GetRoom(TheGame.Player.CurrentRoom);
+        if (curroom != null) {
+            if (!curroom.bLeaveFirstTime) {
+                curroom.bLeaveFirstTime = true;
+                RunEvents("<<On Player Leave First Time>>");
+            }
         }
+        runAfterPause(function () {
+            if (curroom != null) {
+                RunEvents("<<On Player Leave>>");
+            }
+            runAfterPause(function () {
+                if (!bCancelMove) {
+                    ChangeRoom(GetRoom(newRoom), true, true);
+                }
+            });
+        });
     });
     $(".compass-direction").hover(function(e) {
         var direction = $(e.target).data('direction');
@@ -448,18 +463,6 @@ function GetDestinationRoomName(CurDirection) {
                 break;
             }
         }
-    }
-}
-
-function CheckRoomEvents() {
-    bCancelMove = false;
-    var curroom = GetRoom(TheGame.Player.CurrentRoom);
-    if (curroom != null) {
-        if (!curroom.bLeaveFirstTime) {
-            curroom.bLeaveFirstTime = true;
-            RunEvents("<<On Player Leave First Time>>");
-        }
-        RunEvents("<<On Player Leave>>");
     }
 }
 

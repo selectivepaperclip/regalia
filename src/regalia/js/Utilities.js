@@ -10,6 +10,7 @@ var CurrentImage = "";
 var MasterLoopObject = null;
 var MasterIdx = 0;
 var MasterLoopArray = null;
+var gamePaused = false;
 
 function custom__setInputMenuTitle(act) {
     $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
@@ -807,113 +808,109 @@ function ProcessAction(Action, bTimer) {
     SetBorders();
 }
 
+function addCommands(insertFirst, commands, AdditionalInputData, act) {
+    if (insertFirst) {
+        InsertToMaster(commands, AdditionalInputData);
+    } else {
+        AddToMaster(commands, AdditionalInputData);
+        RunCommands(TheObj, AdditionalInputData, act, null);
+    }
+}
+
+function isLoopCheck(check) {
+    var loopCondTypes = [
+        "CT_Loop_While",
+        "CT_Loop_Rooms",
+        "CT_Loop_Characters",
+        "CT_Loop_Items",
+        "CT_Loop_Exits",
+        "CT_Loop_Item_Char_Inventory",
+        "CT_Loop_Item_Container",
+        "CT_Loop_Item_Inventory",
+        "CT_Loop_Item_Room",
+        "CT_Loop_Item_Group"
+    ];
+    return loopCondTypes.indexOf(check.CondType) > -1;
+}
+
 function ExecuteAction(act, bTimer, AdditionalInputData) {
     var bPassed = true;
-    var bRunCommands = true;
-    if (MasterCommandList.length > 0)
-        bRunCommands = false;
     if (act.bConditionFailOnFirst) {
         for (var _i = 0; _i < act.Conditions.length; _i++) {
             var tempcond = act.Conditions[_i];
             if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, null)) {
-                if (tempcond.Checks.length == 1 && tempcond.Checks[0].CondType == "CT_Loop_While" || tempcond.Checks[0].CondType == "CT_Loop_Rooms" || tempcond.Checks[0].CondType == "CT_Loop_Characters" || tempcond.Checks[0].CondType == "CT_Loop_Items" || tempcond.Checks[0].CondType == "CT_Loop_Exits" || tempcond.Checks[0].CondType == "CT_Loop_Item_Char_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Container" || tempcond.Checks[0].CondType == "CT_Loop_Item_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Room" || tempcond.Checks[0].CondType == "CT_Loop_Item_Group") {} else {
-                    if (bTimer)
-                        InsertToMaster(tempcond.PassCommands, AdditionalInputData);
-                    else {
-                        AddToMaster(tempcond.PassCommands, AdditionalInputData);
-                        //if (bRunCommands)
-                        RunCommands(TheObj, AdditionalInputData, act, null);
-                    }
+                if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
+                    // Do nothing?
+                } else {
+                    addCommands(bTimer, tempcond.PassCommands, AdditionalInputData, act);
                 }
             } else {
                 bPassed = false;
-                if (bTimer)
-                    InsertToMaster(tempcond.FailCommands, AdditionalInputData);
-                else {
-                    AddToMaster(tempcond.FailCommands, AdditionalInputData);
-                    //if (bRunCommands)
-                    RunCommands(TheObj, AdditionalInputData, act, null);
-                }
+                addCommands(bTimer, tempcond.FailCommands, AdditionalInputData, act);
             }
         }
     } else {
-        bPassed = false;
-        if (act.Conditions.length == 0)
-            bPassed = true;
+        bPassed = (act.Conditions.length === 0);
         for (var _i = 0; _i < act.Conditions.length; _i++) {
             var tempcond = act.Conditions[_i];
             var btestresult = TestCondition(tempcond, AdditionalInputData, act.InputType, act, null);
             if (btestresult) {
                 bPassed = btestresult;
-                if (bTimer)
-                    InsertToMaster(tempcond.PassCommands, AdditionalInputData);
-                else {
-                    AddToMaster(tempcond.PassCommands, AdditionalInputData);
-                    //if (bRunCommands)
-                    RunCommands(TheObj, AdditionalInputData, act, null);
-                }
+                addCommands(bTimer, tempcond.PassCommands, AdditionalInputData, act);
             } else {
-                if (bTimer, AdditionalInputData)
-                    InsertToMaster(tempcond.FailCommands);
-                else {
-                    AddToMaster(tempcond.FailCommands, AdditionalInputData);
-                    //if (bRunCommands)
-                    RunCommands(TheObj, AdditionalInputData, act, null);
-                }
+                addCommands(bTimer, tempcond.FailCommands, AdditionalInputData, act);
             }
         }
     }
     if (bPassed) {
-        if (bTimer)
-            InsertToMaster(act.PassCommands, AdditionalInputData);
-        else {
-            AddToMaster(act.PassCommands, AdditionalInputData);
-            //if (bRunCommands)
-            RunCommands(TheObj, AdditionalInputData, act, null);
-        }
+        addCommands(bTimer, act.PassCommands, AdditionalInputData, act);
     } else {
-        if (bTimer)
-            InsertToMaster(act.FailCommands, AdditionalInputData);
-        else {
-            AddToMaster(act.FailCommands, AdditionalInputData);
-            //if (bRunCommands)
-            RunCommands(TheObj, AdditionalInputData, act, null);
-        }
+        addCommands(bTimer, act.FailCommands, AdditionalInputData, act);
     }
+}
 
-
+function runAfterPause(runNextPhase) {
+    if (gamePaused) {
+        MasterCommandList.push(runNextPhase);
+    } else {
+        runNextPhase();
+    }
 }
 
 function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
     if (currentroom == null)
         return;
     $("#RoomTitle").html(currentroom.Name);
-    GetImage(currentroom.RoomPic);
     SetRoomThumb(currentroom.RoomPic);
     TheGame.Player.CurrentRoom = currentroom.UniqueID;
     $("#MainText").append('</br><b>' + MovingDirection + "</b>");
-    if (bRunEvents) {
-        if (!currentroom.bEnterFirstTime) {
-            currentroom.bEnterFirstTime = true;
-            RunEvents("<<On Player Enter First Time>>");
-        }
-        RunEvents("<<On Player Enter>>");
+    if (bRunEvents && !currentroom.bEnterFirstTime) {
+        currentroom.bEnterFirstTime = true;
+        RunEvents("<<On Player Enter First Time>>");
     }
-    $("#MainText").animate({
-        scrollTop: $("#MainText")[0].scrollHeight
+    runAfterPause(function () {
+        if (bRunEvents) {
+            RunEvents("<<On Player Enter>>");
+        }
+        runAfterPause(function () {
+            GetImage(currentroom.RoomPic);
+            $("#MainText").animate({
+                scrollTop: $("#MainText")[0].scrollHeight
+            });
+            AddTextToRTF(currentroom.Description, "Black", "Regular");
+            $("#MainText").animate({
+                scrollTop: $("#MainText")[0].scrollHeight
+            }, 0);
+            if (bRunTimerEvents)
+                RunTimerEvents();
+            RefreshRoomObjects();
+            RefreshCharacters();
+            RefreshInventory();
+            if ($("#RoomThumb").css("visibility") != "hidden")
+                SetExits();
+            SetBorders();
+        });
     });
-    AddTextToRTF(currentroom.Description, "Black", "Regular");
-    $("#MainText").animate({
-        scrollTop: $("#MainText")[0].scrollHeight
-    }, 0);
-    if (bRunTimerEvents)
-        RunTimerEvents();
-    RefreshRoomObjects();
-    RefreshCharacters();
-    RefreshInventory();
-    if ($("#RoomThumb").css("visibility") != "hidden")
-        SetExits();
-    SetBorders();
 }
 
 function RoomChange(bRunTimerEvents, bRunEvents) {
@@ -1708,8 +1705,14 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
     pausecommandargs = arguments;
     var bResult = false;
     var i = 0;
-    //bCancelMove = false;
     while (MasterCommandList.length > 0 && $("#RoomThumb").css("visibility") != "hidden") {
+        if (typeof MasterCommandList[0] === "function") {
+            var callback = MasterCommandList[0];
+            MasterCommandList.splice(0, 1);
+            callback();
+            continue;
+        }
+
         var tempcommand = null;
         var tempcond = null;
         if (MasterLoopObject != null)
@@ -1723,7 +1726,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
         MasterCommandList.splice(0, 1);
         if (tempcond != null) {
             if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, LoopObj)) {
-                if (tempcond.Checks.length == 1 && tempcond.Checks[0].CondType == "CT_Loop_While" || tempcond.Checks[0].CondType == "CT_Loop_Rooms" || tempcond.Checks[0].CondType == "CT_Loop_Characters" || tempcond.Checks[0].CondType == "CT_Loop_Items" || tempcond.Checks[0].CondType == "CT_Loop_Exits" || tempcond.Checks[0].CondType == "CT_Loop_Item_Char_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Container" || tempcond.Checks[0].CondType == "CT_Loop_Item_Inventory" || tempcond.Checks[0].CondType == "CT_Loop_Item_Room" || tempcond.Checks[0].CondType == "CT_Loop_Item_Group") {} else {
+                if (tempcond.Checks.length === 1 && isLoopCheck(tempcond.Checks[0])) {
+                    // Do nothing?
+                } else {
                     InsertToMaster(tempcond.PassCommands);
                 }
             } else {
@@ -1943,7 +1948,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             AddTextToRTF("--------------------------------\r\n", "Black", "Bold");
                             PauseGame();
                             return;
-                            break;
                             break;
                         }
                     case "CT_SETPLAYERNAME":
@@ -3480,6 +3484,7 @@ function GetCustomChoiceAction(type, name, actionname) {
 }
 
 function PauseGame() {
+    gamePaused = true;
     custom__hideGameElements();
     $("#Continue").css('background-color', "rgb(255, 255, 255)");
     $("#Continue").css('visibility', "visible");

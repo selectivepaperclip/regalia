@@ -2793,7 +2793,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var arrayvarindex = part2.indexOf("Array:");
                             if (arrayvarindex > -1) {
                                 bArraySet = true;
-                                part2 = part2.substring(arrayvarindex);
+                                part2 = part2.substring(arrayvarindex + "Array:".length);
                             }
                             var tempvar = GetVariable(part2);
                             if (tempvar != null) {

@@ -2888,6 +2888,13 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             SetPortrait(part2);
                             break;
                         }
+                    case "CT_SETLAYEREDPLAYERPORTRAIT":
+                        {
+                            // TODO: use the layers!
+                            TheGame.Player.PlayerPortrait = part2;
+                            SetPortrait(part2);
+                            break;
+                        }
                     case "CT_DISPLAYLAYEREDPICTURE":
                     case "CT_DISPLAYPICTURE":
                         {
@@ -2914,6 +2921,12 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var mplayer = $("#SoundEffect").attr('src', newmusic)[0];
                             mplayer.load();
                             mplayer.play();
+                            break;
+                        }
+                    case "CT_MM_SET_MAIN_COMPASS":
+                        {
+                            $('#CustomCompass').attr('src', 'images/' + part2);
+                            $('#Compass').hide();
                             break;
                         }
                     case "CT_SETOBJECTACTION":

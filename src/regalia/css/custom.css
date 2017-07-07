@@ -260,6 +260,7 @@ body {
     position: relative;
     overflow: hidden;
     flex: 0 0 auto;
+    height: 100%;
 }
 
 .compass-up-down {
@@ -276,7 +277,7 @@ body {
     width: 24%;
 }
 
-#UDCompass, #Compass {
+#UDCompass, #Compass, #CustomCompass {
     width: auto;
     height: 100%;
 }

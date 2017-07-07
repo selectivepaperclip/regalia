@@ -114,6 +114,15 @@ function InsertToMaster(commands, addinputdata) {
     }
 }
 
+function evalJankyJavascript(str) {
+    return eval(
+        str
+            .replace(new RegExp("</br>", "g"), "")
+            .replace(new RegExp("<br>", "g"), "")
+            .replace(new RegExp("\n", "g"), "")
+    );
+}
+
 function SetBorders() {
     if (GetActionCount(GetRoom(TheGame.Player.CurrentRoom).Actions) > 0) {
         //set green border on room thumb
@@ -2796,7 +2805,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 if (bJavascript) {
                                     if (replacedstring == "")
                                         replacedstring = cmdtxt;
-                                    jsresult = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
+                                    jsresult = evalJankyJavascript(replacedstring);
                                     if (!bArraySet && jsresult != null)
                                         replacedstring = jsresult.toString();
                                 }
@@ -3169,7 +3178,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             cmdtxt = PerformTextReplacements(cmdtxt, null);
                             var jsresult = null;
-                            jsresult = eval(cmdtxt.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
+                            jsresult = evalJankyJavascript(cmdtxt);
                             SetRagsObjectsFromJavascript(jsresult);
                             break;
                         }
@@ -3645,9 +3654,8 @@ function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, repl
             }
         }
     } else if (tempvar.vartype == "VT_STRINGARRAY" || tempvar.vartype == "VT_STRING") {
-        var newval = null;
         if (bJavascript) {
-            jsresult = eval(cmdtxt.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
+            var jsresult = evalJankyJavascript(cmdtxt);
             if (!bArraySet && jsresult != null)
                 cmdtxt = jsresult.toString();
         }
@@ -3669,7 +3677,7 @@ function SetRagsObjectsFromJavascript(resultval) {
     var temparray = resultval;
     if (temparray != null) {
         for (var _i = 0; _i < temparray.length; _i++) {
-            var tempobj = temparray[i];
+            var tempobj = temparray[_i];
             var tempsubarray = tempobj[0];
             if (tempsubarray.length > 0) {
                 var objtomodify = "[" + tempsubarray[0].toString() + "]";

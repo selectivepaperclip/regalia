@@ -46,7 +46,7 @@ p {
     display: inline-block;
     width: 40%;
     text-align: center;
-    font-family: Sans-Serif;
+    font-family: sans-serif;
     font-weight: bold;
     font-size: large;
     border: 1px solid green;
@@ -130,27 +130,76 @@ table {
     width: 100%;
 }
 
-#savemenu {
+#savemenu, #loadmenu {
     position: absolute;
     background-color: White;
-    border: 2px solid black;
     visibility: hidden;
-    top: 40px;
-    height: 150px;
-    border: 2px solid black;
+    max-height: 300px;
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: column;
 }
 
-#loadmenu {
-    position: absolute;
-    background-color: White;
-    border: 2px solid black;
-    visibility: hidden;
-    top: 40px;
-    height: 150px;
-    border: 2px solid black;
+#savemenu h3, #loadmenu h3 {
+    margin: 0 0 4px 0;
 }
 
-select {
+#savemenu > * {
+    flex: 0 0 auto;
+}
+
+#savemenu .savegames-table {
+    flex: 1 1 auto;
+}
+
+.savegames-header {
+    padding: 8px;
+    flex: 0 0 auto;
+}
+
+.btn {
+    border: 1px solid grey;
+    background: lightgrey;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background: #aaa;
+}
+
+.btn.btn-danger {
+    background: #ffb4b4;
+}
+
+.btn.btn-danger:hover {
+    background: #d47979;
+}
+
+.savegames-header button {
+    margin-top: 4px;
+}
+
+.savegames-table {
+    height: auto;
+}
+
+.savegames-table.btn {
+    height: 100%;
+    width: 100%;
+}
+
+.savegames-table th, .savegames-table td {
+    text-align: left;
+}
+
+.savegames-table td {
+    vertical-align: middle;
+    border: 1px solid grey;
+}
+
+.savegames-table .name-column {
+    width: 220px;
 }
 
 td {
@@ -160,9 +209,6 @@ td {
 #inputtable {
     width: 100%;
     height: 100%;
-}
-
-#InputMenuTitle {
 }
 
 #inputchoices {
@@ -175,9 +221,6 @@ td {
 #cmdinputtable {
     width: 100%;
     height: 100%;
-}
-
-#cmdInputMenuTitle {
 }
 
 #cmdinputchoices {

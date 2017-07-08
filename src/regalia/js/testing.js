@@ -15,6 +15,23 @@ var AdditionalData = "";
 var MovingDirection = "";
 var bMasterTimer = false;
 
+function getDB() {
+    return openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
+}
+
+function hideSaveAndLoadMenus() {
+    $("#RoomThumb").css("visibility", "visible");
+    $("#PlayerPortrait").css("visibility", "visible");
+    $("#RoomObjectsPanel").css("visibility", "visible");
+    $("#RoomThumbImg").css("visibility", "visible");
+    $("#PlayerImg").css("visibility", "visible");
+    $("#VisibleCharactersPanel").css("visibility", "visible");
+    $("#InventoryPanel").css("visibility", "visible");
+    SetExits();
+    $("#savemenu").css("visibility", "hidden");
+    $("#loadmenu").css("visibility", "hidden");
+}
+
 $(function() {
     if (window.File && window.FileReader && window.FileList && window.Blob) {} else {
         alert('The File APIs are not fully supported in this browser.');
@@ -148,52 +165,149 @@ $(function() {
             StartGame();
         }
     });
-    $("#load").click(function(e) {
-        $("#loadinputchoices option").remove();
-        var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-        db.transaction(function(tx) {
-            tx.executeSql('SELECT id, date FROM RagsSave4 order by id desc', [], function(tx, results) {
-                var len = results.rows.length,
-                    i;
-                for (i = 0; i < len; i++) {
-                    var newopt = new Option(results.rows.item(i).id + " : " + results.rows.item(i).date, results.rows.item(i).id);
-                    $("#loadinputchoices").append(newopt);
+
+    // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
+    if (!String.prototype.padStart) {
+        String.prototype.padStart = function padStart(targetLength,padString) {
+            targetLength = targetLength>>0; //floor if number or convert non-number to 0;
+            padString = String(padString || ' ');
+            if (this.length > targetLength) {
+                return String(this);
+            }
+            else {
+                targetLength = targetLength-this.length;
+                if (targetLength > padString.length) {
+                    padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
                 }
+                return padString.slice(0,targetLength) + String(this);
+            }
+        };
+    }
+
+    function formatDate(date) {
+        var weekdays = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+        ];
+        var months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ];
+
+        return [
+            weekdays[date.getDay()],
+            months[date.getMonth()],
+            date.getDate(),
+            [
+                date.getHours().toString().padStart(2, '0'),
+                date.getMinutes().toString().padStart(2, '0'),
+                date.getSeconds().toString().padStart(2, '0')
+            ].join(':')
+        ].join(' ');
+    }
+
+    function setElementTopleftToCursor($el, clickEvent) {
+        $el.css({
+            top: clickEvent.clientY,
+            left: clickEvent.clientX
+        });
+    }
+
+    function addSavesToTable($tbody, buttonTitle) {
+        getDB().transaction(function (tx) {
+            tx.executeSql('SELECT id, SaveName, date FROM RagsSave4 order by id desc', [], function (tx, results) {
+                var len = results.rows.length;
+                for (var i = 0; i < len; i++) {
+                    var item = results.rows.item(i);
+                    var $tr = $('<tr></tr>');
+                    $tr.append('<td>' + item.id + '</td>');
+                    $tr.append('<td>' + item.SaveName + '</td>');
+                    $tr.append('<td>' + formatDate(new Date(item.date)) + '</td>');
+                    $tr.append('<td><button class="btn save-or-load">' + buttonTitle + '</button></td>');
+                    $tr.append('<td><button class="btn btn-danger destroy-save">Destroy</button></td>');
+
+                    var $saveOrLoadButton = $tr.find('button.save-or-load');
+                    $saveOrLoadButton.data('save-id', item.id);
+                    $saveOrLoadButton.data('save-name', item.SaveName);
+
+                    var $destroyButton = $tr.find('button.destroy-save');
+                    $destroyButton.data('save-id', item.id);
+
+                    $tbody.append($tr);
+                }
+
+                // Set visibility of things that care about there being saves
+                $tbody.closest('table').toggle(len > 0);
             }, null);
         });
-        $("#loadmenu").css("top", 0 + "px");
-        var leftposition = window.x;
-        if (window.x + $("#loadmenu").width() > $(window).width())
-            leftposition = $(window).width() - $("#loadmenu").width();
-        $("#loadmenu").css("left", leftposition + "px");
-        $("#loadmenu").css("visibility", "visible");
-        $("#savemenu").css("visibility", "hidden");
-        $("#loadinputchoices").focus();
+    }
+
+    $("#new_savegame").on('click', function () {
+        hideSaveAndLoadMenus();
+        handleFileSave(false, true);
     });
-    $("#save").click(function(e) {
-        $("#saveinputchoices option").remove();
-        var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-        db.transaction(function(tx) {
-            tx.executeSql('SELECT id, date FROM RagsSave4 order by id desc', [], function(tx, results) {
-                var len = results.rows.length,
-                    i;
-                for (i = 0; i < len; i++) {
-                    var newopt = new Option(results.rows.item(i).id + " : " + results.rows.item(i).date, results.rows.item(i).id);
-                    $("#saveinputchoices").append(newopt);
-                }
-            }, null);
-        });
-        var newopt = new Option("New...", "New...");
-        $("#saveinputchoices").append(newopt);
-        $("#savemenu").css("top", 0 + "px");
-        var leftposition = window.x;
-        if (window.x + $("#savemenu").width() > $(window).width())
-            leftposition = $(window).width() - $("#savemenu").width();
-        $("#savemenu").css("left", leftposition + "px");
-        $("#savemenu").css("visibility", "visible");
-        $("#loadmenu").css("visibility", "hidden");
-        $("#saveinputchoices").focus();
+    $(".destroy_savegames").on('click', function () {
+        handleDestroyAllSaves();
     });
+    
+    var createSaveOrLoadMenuHandler = function ($menu, $menuChoices, saveOrLoadButtonText, onSelect) {
+        return function (e) {
+            $menu.off('click');
+            $menuChoices.off('click');
+            $menuChoices.empty();
+
+            $menu.find('table').hide();
+            addSavesToTable($menuChoices, saveOrLoadButtonText);
+
+            $menu.on('click', function (e) {
+                e.stopPropagation();
+            });
+            $menuChoices.on('click', 'button.destroy-save', function (e) {
+                var saveId = $(e.currentTarget).data('save-id');
+                handleDestroySave(saveId);
+            });
+            $menuChoices.on('click', 'button.save-or-load', function (e) {
+                hideSaveAndLoadMenus();
+                var saveId = $(e.currentTarget).data('save-id');
+                var saveName = $(e.currentTarget).data('save-name');
+                onSelect(saveId, saveName);
+            });
+
+            setElementTopleftToCursor($menu, e);
+            hideSaveAndLoadMenus();
+            $menu.css("visibility", "visible");
+
+            $("body").off('click.saveloadmenubackground');
+            setTimeout(function () {
+                $("body").on('click.saveloadmenubackground', function() {
+                    $("body").off('click.saveloadmenubackground');
+                    hideSaveAndLoadMenus();
+                });
+            });
+        };
+    };
+    $("#load").click(createSaveOrLoadMenuHandler($("#loadmenu"), $("#loadinputchoices"), 'Load', function (saveId) {
+        handleFileSelect(false, saveId);
+    }));
+    $("#save").click(createSaveOrLoadMenuHandler($("#savemenu"), $("#saveinputchoices"), 'Overwrite Save', function (saveId, saveName) {
+        handleFileSave(false, false, saveId, saveName);
+    }));
     $("div.genderchoiceSelect").click(function() {
         selectedobj = $(this).val();
         if (selectedobj != null) {
@@ -207,41 +321,6 @@ $(function() {
             SetExits();
             $("#genderchoice").css("visibility", "hidden");
             StartGame();
-        }
-    });
-    $("#saveinputchoices").change(function(e) {
-        selectedobj = $("#saveinputchoices").val();
-        if (selectedobj != null) {
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
-            $("#savemenu").css("visibility", "hidden");
-            if (selectedobj == "New...") {
-                handleFileSave(false, true);
-            } else {
-                handleFileSave(false, false, selectedobj);
-            }
-        }
-    });
-    $("#loadinputchoices").change(function(e) {
-        selectedobj = $("#loadinputchoices").val();
-        if (selectedobj != null) {
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
-            $("#loadmenu").css("visibility", "hidden");
-            handleFileSelect(false, selectedobj);
         }
     });
     $("#inputchoices").change(function(e) {
@@ -364,9 +443,6 @@ $(function() {
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
     });
-    $("#loadmenu").focusout(function() {
-        $("#loadmenu").css("visibility", "hidden");
-    });
     $("#savemenu").focusout(function() {
         $("#savemenu").css("visibility", "hidden");
     });
@@ -481,46 +557,44 @@ function ResetLoopObjects() {
 
 function onError(tx, error) {}
 
-function handleFileSave(bQuick, bNew, CurID) {
-    var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-    var msg;
+function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
+    var db = getDB();
     var curindex = 1;
     if (bQuick)
         curindex = 0;
     db.transaction(function(tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS RagsSave4 (id unique, date,Title,GameData)');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS RagsSave4 (id unique,SaveName,date,Title,GameData)');
     });
     db.transaction(function(tx) {
+        var curdate = new Date();
         if (bQuick) {
-            tx.executeSql('SELECT * FROM RagsSave4 where id=0', [], function(tx, results) {
-                var len = results.rows.length,
-                    i;
-                if (len == 0) {
-                    var curdate = new Date();
-                    tx.executeSql('INSERT INTO RagsSave4 (id, date,Title,GameData) VALUES (?, ?,?,?)', [0, curdate, TheGame.Title, JSON.stringify(TheGame)]);
-                    alert("Quick Saved");
+            tx.executeSql('SELECT id FROM RagsSave4 where id=0', [], function(tx, results) {
+                var len = results.rows.length;
+                if (len === 0) {
+                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [0, 'QuickSave', curdate, TheGame.Title, JSON.stringify(TheGame)]);
                 } else {
-                    var curdate = new Date();
-                    tx.executeSql('update RagsSave4 set date=?,Title=?,GameData=? where id=0', [curdate, TheGame.Title, JSON.stringify(TheGame)]);
-                    alert("Quick Saved");
+                    tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=0', ['QuickSave', curdate, TheGame.Title, JSON.stringify(TheGame)]);
                 }
+                alert("Quick Saved");
             });
         } else {
+            var saveName = prompt("Give a name for the save", oldSaveName);
+            if (saveName === null) {
+                return;
+            }
+
             if (bNew) {
                 tx.executeSql('SELECT id FROM RagsSave4', [], function(tx, results) {
-                    var len = results.rows.length,
-                        i;
-                    for (i = 0; i < len; i++) {
+                    var len = results.rows.length;
+                    for (var i = 0; i < len; i++) {
                         if (results.rows.item(i).id > curindex)
                             curindex = results.rows.item(i).id;
                     }
-                    var curdate = new Date();
-                    tx.executeSql('INSERT INTO RagsSave4 (id, date,Title,GameData) VALUES (?, ?,?,?)', [curindex + 1, curdate, TheGame.Title, JSON.stringify(TheGame)]);
+                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [curindex + 1, saveName, curdate, TheGame.Title, JSON.stringify(TheGame)]);
                     alert("Game Saved");
                 });
             } else {
-                var curdate = new Date();
-                tx.executeSql('update RagsSave4 set date=?,Title=?,GameData=? where id=' + CurID, [curdate, TheGame.Title, JSON.stringify(TheGame)]);
+                tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=' + CurID, [saveName, curdate, TheGame.Title, JSON.stringify(TheGame)]);
                 alert("Game Saved");
             }
         }
@@ -528,57 +602,57 @@ function handleFileSave(bQuick, bNew, CurID) {
 }
 
 function handleFileSelect(bQuick, CurID) {
-    var db = openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-    db.transaction(function(tx) {
+    getDB().transaction(function(tx) {
+        var desiredId = bQuick ? 0 : CurID;
+        tx.executeSql("select * from RagsSave4 where id=" + desiredId, [], function(tx, results) {
+            TheGame = JSON.parse(results.rows.item(0).GameData);
+            RoomChange(false, false);
+            UpdateStatusBars();
+            SetPortrait(TheGame.Player.PlayerPortrait);
+            $("#playernamechoice").css("visibility", "hidden");
+            $("#textactionchoice").css("visibility", "hidden");
+            $("#textchoice").css("visibility", "hidden");
+            $("#inputmenu").css("visibility", "hidden");
+            $("#selectionmenu").css("visibility", "hidden");
+            $("#genderchoice").css("visibility", "hidden");
+            $("#cmdinputmenu").css("visibility", "hidden");
+            $("#RoomThumb").css("visibility", "visible");
+            $("#PlayerPortrait").css("visibility", "visible");
+
+            $("#RoomThumbImg").css("visibility", "visible");
+            $("#PlayerImg").css("visibility", "visible");
+            $("#RoomObjectsPanel").css("visibility", "visible");
+            $("#VisibleCharactersPanel").css("visibility", "visible");
+            $("#InventoryPanel").css("visibility", "visible");
+            SetExits();
+        });
         if (bQuick) {
-            tx.executeSql("select * from RagsSave4 where id=0", [], function(tx, results) {
-                TheGame = JSON.parse(results.rows.item(0).GameData);
-                RoomChange(false, false);
-                UpdateStatusBars();
-                SetPortrait(TheGame.Player.PlayerPortrait);
-                $("#playernamechoice").css("visibility", "hidden");
-                $("#textactionchoice").css("visibility", "hidden");
-                $("#textchoice").css("visibility", "hidden");
-                $("#inputmenu").css("visibility", "hidden");
-                $("#selectionmenu").css("visibility", "hidden");
-                $("#genderchoice").css("visibility", "hidden");
-                $("#cmdinputmenu").css("visibility", "hidden");
-                $("#RoomThumb").css("visibility", "visible");
-                $("#PlayerPortrait").css("visibility", "visible");
-
-                $("#RoomThumbImg").css("visibility", "visible");
-                $("#PlayerImg").css("visibility", "visible");
-                $("#RoomObjectsPanel").css("visibility", "visible");
-                $("#VisibleCharactersPanel").css("visibility", "visible");
-                $("#InventoryPanel").css("visibility", "visible");
-                SetExits();
-                alert("Quick Loaded");
-            });
+            alert("Quick Loaded");
         } else {
-            tx.executeSql("select * from RagsSave4 where id=" + CurID, [], function(tx, results) {
-                TheGame = JSON.parse(results.rows.item(0).GameData);
-                RoomChange(false, false);
-                UpdateStatusBars();
-                SetPortrait(TheGame.Player.PlayerPortrait);
-                $("#playernamechoice").css("visibility", "hidden");
-                $("#textactionchoice").css("visibility", "hidden");
-                $("#textchoice").css("visibility", "hidden");
-                $("#inputmenu").css("visibility", "hidden");
-                $("#selectionmenu").css("visibility", "hidden");
-                $("#genderchoice").css("visibility", "hidden");
-                $("#cmdinputmenu").css("visibility", "hidden");
-                $("#RoomThumb").css("visibility", "visible");
-                $("#PlayerPortrait").css("visibility", "visible");
-
-                $("#RoomThumbImg").css("visibility", "visible");
-                $("#PlayerImg").css("visibility", "visible");
-                $("#RoomObjectsPanel").css("visibility", "visible");
-                $("#VisibleCharactersPanel").css("visibility", "visible");
-                $("#InventoryPanel").css("visibility", "visible");
-                SetExits();
-                alert("Game Loaded");
-            });
+            alert("Game Loaded");
         }
+    });
+}
+
+function handleDestroySave(saveId) {
+    var confirmation = confirm('Are you sure?');
+    if (!confirmation) {
+        return;
+    }
+    getDB().transaction(function(tx) {
+        tx.executeSql("delete from RagsSave4 where id=" + saveId, []);
+        hideSaveAndLoadMenus();
+    });
+}
+
+function handleDestroyAllSaves() {
+    var confirmation = confirm('Are you sure?');
+    if (!confirmation) {
+        return;
+    }
+    getDB().transaction(function(tx) {
+        tx.executeSql("delete from RagsSave4", []);
+        hideSaveAndLoadMenus();
     });
 }
 

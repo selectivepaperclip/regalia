@@ -201,28 +201,41 @@
 </audio>
 
 <div id="savemenu">
-    <table id="savetable" height=100% width=100%>
+    <div class="savegames-header">
+        <h3>Save Game</h3>
+        <button id="new_savegame" class="btn">Create a New Save</button>
+        <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
+    </div>
+    <table class="savegames-table">
+        <thead>
         <tr>
-            <td height=10% id="SaveMenuTitle">Save Game</td>
+            <th>id</th>
+            <th class="name-column">name</th>
+            <th>date</th>
+            <th></th>
+            <th></th>
         </tr>
-        <tr>
-            <td height=90%>
-                <select id="saveinputchoices" multiple="multiple" style="height:100%;"></select>
-            </td>
-        </tr>
+        </thead>
+        <tbody id="saveinputchoices"></tbody>
     </table>
 </div>
 
 <div id="loadmenu">
-    <table id="loadtable" height=100% width=100%>
+    <div class="savegames-header">
+        <h3>Load Game</h3>
+        <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
+    </div>
+    <table class="savegames-table">
+        <thead>
         <tr>
-            <td height=10% id="LoadMenuTitle">Load Game</td>
+            <th>id</th>
+            <th class="name-column">name</th>
+            <th>date</th>
+            <th></th>
+            <th></th>
         </tr>
-        <tr>
-            <td height=90%>
-                <select id="loadinputchoices" multiple="multiple" style="height:100%;"></select>
-            </td>
-        </tr>
+        </thead>
+        <tbody id="loadinputchoices"></tbody>
     </table>
 </div>
 

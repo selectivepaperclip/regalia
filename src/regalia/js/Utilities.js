@@ -117,6 +117,7 @@ function InsertToMaster(commands, addinputdata) {
 function evalJankyJavascript(str) {
     return eval(
         str
+            .replace(new RegExp("//.*?<\s*/?\s*br\s*>", "g"), "") // line comments ending in <br>
             .replace(new RegExp("</br>", "g"), "")
             .replace(new RegExp("<br>", "g"), "")
             .replace(new RegExp("\n", "g"), "")

@@ -20,14 +20,7 @@ function getDB() {
 }
 
 function hideSaveAndLoadMenus() {
-    $("#RoomThumb").css("visibility", "visible");
-    $("#PlayerPortrait").css("visibility", "visible");
-    $("#RoomObjectsPanel").css("visibility", "visible");
-    $("#RoomThumbImg").css("visibility", "visible");
-    $("#PlayerImg").css("visibility", "visible");
-    $("#VisibleCharactersPanel").css("visibility", "visible");
-    $("#InventoryPanel").css("visibility", "visible");
-    SetExits();
+    custom__showGameElements();
     $("#savemenu").css("visibility", "hidden");
     $("#loadmenu").css("visibility", "hidden");
 }
@@ -82,15 +75,7 @@ $(function() {
     $("#Continue").click(function(e) {
         var bgcolor = $("#Continue").css('background-color');
         if (bgcolor == "rgb(128, 128, 128)") {} else {
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -116,15 +101,7 @@ $(function() {
     function setTextInputChoice () {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
             $("#textchoice").css("visibility", "hidden");
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -140,27 +117,12 @@ $(function() {
     $("#playernamebutton").click(function(e) {
         AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");
-        $("#RoomThumb").css("visibility", "visible");
-        $("#PlayerPortrait").css("visibility", "visible");
-
-        $("#RoomThumbImg").css("visibility", "visible");
-        $("#PlayerImg").css("visibility", "visible");
-        $("#RoomObjectsPanel").css("visibility", "visible");
-        $("#VisibleCharactersPanel").css("visibility", "visible");
-        $("#InventoryPanel").css("visibility", "visible");
-        SetExits();
+        custom__showGameElements();
         var newname = $("#playernametext").val();
         TheGame.Player.Name = newname.trim();
         if (TheGame.Player.bPromptForGender) {
             $("#genderchoice").css("visibility", "visible");
-            $("#RoomThumb").css("visibility", "hidden");
-            $("#RoomThumbImg").css("visibility", "hidden");
-            $("#PlayerPortrait").css("visibility", "hidden");
-            $("#PlayerImg").css("visibility", "hidden");
-            $("#RoomObjectsPanel").css("visibility", "hidden");
-            $("#VisibleCharactersPanel").css("visibility", "hidden");
-            $("#InventoryPanel").css("visibility", "hidden");
-            $(".compass-direction").css("visibility", "hidden");
+            custom__hideGameElements();
         } else {
             StartGame();
         }
@@ -311,14 +273,7 @@ $(function() {
     $("div.genderchoiceSelect").click(function() {
         selectedobj = $(this).val();
         if (selectedobj != null) {
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
             $("#genderchoice").css("visibility", "hidden");
             StartGame();
         }
@@ -327,15 +282,7 @@ $(function() {
         selectedobj = $("#inputchoices").val();
         if (selectedobj != null) {
             AdditionalData = selectedobj;
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
             $("#inputmenu").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
 
@@ -351,15 +298,7 @@ $(function() {
         selectedobj = $("#textactioninput").val();
         if (selectedobj != null) {
             AdditionalData = selectedobj;
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
             $("#textactionchoice").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
                 ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
@@ -370,15 +309,7 @@ $(function() {
     $("#cmdinputchoices").change(function(e) {
         selectedobj = $("#cmdinputchoices").val();
         if (selectedobj != null) {
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
             $("#cmdinputmenu").css("visibility", "hidden");
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -386,30 +317,13 @@ $(function() {
     });
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
-
-        $("#RoomThumb").css("visibility", "visible");
-        $("#PlayerPortrait").css("visibility", "visible");
-
-        $("#RoomThumbImg").css("visibility", "visible");
-        $("#PlayerImg").css("visibility", "visible");
-        $("#RoomObjectsPanel").css("visibility", "visible");
-        $("#VisibleCharactersPanel").css("visibility", "visible");
-        $("#InventoryPanel").css("visibility", "visible");
-        SetExits();
+        custom__showGameElements();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });
     $("#cmdCancelInput").click(function(e) {
         AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");
-        $("#RoomThumb").css("visibility", "visible");
-        $("#PlayerPortrait").css("visibility", "visible");
-
-        $("#RoomThumbImg").css("visibility", "visible");
-        $("#PlayerImg").css("visibility", "visible");
-        $("#RoomObjectsPanel").css("visibility", "visible");
-        $("#VisibleCharactersPanel").css("visibility", "visible");
-        $("#InventoryPanel").css("visibility", "visible");
-        SetExits();
+        custom__showGameElements();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });
     $("#Inventory").change(function(e) {
@@ -616,15 +530,7 @@ function handleFileSelect(bQuick, CurID) {
             $("#selectionmenu").css("visibility", "hidden");
             $("#genderchoice").css("visibility", "hidden");
             $("#cmdinputmenu").css("visibility", "hidden");
-            $("#RoomThumb").css("visibility", "visible");
-            $("#PlayerPortrait").css("visibility", "visible");
-
-            $("#RoomThumbImg").css("visibility", "visible");
-            $("#PlayerImg").css("visibility", "visible");
-            $("#RoomObjectsPanel").css("visibility", "visible");
-            $("#VisibleCharactersPanel").css("visibility", "visible");
-            $("#InventoryPanel").css("visibility", "visible");
-            SetExits();
+            custom__showGameElements();
         });
         if (bQuick) {
             alert("Quick Loaded");
@@ -666,28 +572,12 @@ function receivedText() {
         TheGame = SetupGameData();
         if (TheGame.Player.bPromptForName) {
             $("#playernamechoice").css("visibility", "visible");
-            $("#RoomThumb").css("visibility", "hidden");
-            $("#PlayerPortrait").css("visibility", "hidden");
-
-            $("#RoomThumbImg").css("visibility", "hidden");
-            $("#PlayerImg").css("visibility", "hidden");
-            $("#RoomObjectsPanel").css("visibility", "hidden");
-            $("#VisibleCharactersPanel").css("visibility", "hidden");
-            $("#InventoryPanel").css("visibility", "hidden");
-            $(".compass-direction").css("visibility", "hidden");
+            custom__hideGameElements();
             return;
         }
         if (TheGame.Player.bPromptForGender) {
             $("#genderchoice").css("visibility", "visible");
-            $("#RoomThumb").css("visibility", "hidden");
-            $("#PlayerPortrait").css("visibility", "hidden");
-
-            $("#RoomThumbImg").css("visibility", "hidden");
-            $("#PlayerImg").css("visibility", "hidden");
-            $("#RoomObjectsPanel").css("visibility", "hidden");
-            $("#VisibleCharactersPanel").css("visibility", "hidden");
-            $("#InventoryPanel").css("visibility", "hidden");
-            $(".compass-direction").css("visibility", "hidden");
+            custom__hideGameElements();
             return;
         }
         StartGame();

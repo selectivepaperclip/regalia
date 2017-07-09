@@ -61,8 +61,12 @@ function custom__addInputChoice($div) {
     $("#inputchoices").append($div);
 }
 
+function custom__clearInputChoices() {
+    $("#inputchoices").empty();
+}
+
 function custom__clearCmdInputChoices() {
-    $("#cmdinputchoices div").empty();
+    $("#cmdinputchoices").empty();
 }
 
 function custom__setCmdInputMenuTitle(act, title) {
@@ -309,7 +313,7 @@ function SetupStatusBars() {
 }
 
 function RefreshInventory() {
-    $("#Inventory div").empty();
+    $("#Inventory").empty();
     for (var _i = 0; _i < TheGame.Objects.length; _i++) {
         var obj = TheGame.Objects[_i];
         if (obj.locationtype == "LT_PLAYER" && obj.bVisible) {
@@ -339,7 +343,7 @@ function RefreshInventory() {
 }
 
 function RefreshRoomObjects() {
-    $("#RoomObjects div").empty();
+    $("#RoomObjects").empty();
     for (var _i = 0; _i < TheGame.Objects.length; _i++) {
         var obj = TheGame.Objects[_i];
         if (obj.locationtype == "LT_ROOM" && obj.bVisible && obj.locationname == TheGame.Player.CurrentRoom) {
@@ -460,8 +464,7 @@ function AddOpenedObjects(tempobj, thelistbox, selitem) {
 }
 
 function RefreshCharacters() {
-    // $("#VisibleCharacters option").remove();
-    $("#VisibleCharacters div").empty();
+    $("#VisibleCharacters").empty();
     for (var _i = 0; _i < TheGame.Characters.length; _i++) {
         var obj = TheGame.Characters[_i];
         if (obj.CurrentRoom == TheGame.Player.CurrentRoom) {
@@ -570,7 +573,7 @@ function actionShouldBeVisible(action) {
 }
 
 function DisplayActions(Actions, clickEvent) {
-    $("#Actionchoices div").empty();
+    $("#Actionchoices").empty();
     CurActions = Actions;
     for (_i = 0; _i < Actions.length; _i++) {
         if (actionShouldBeVisible(Actions[_i])) {
@@ -660,7 +663,7 @@ function ProcessAction(Action, bTimer) {
     if (act.InputType != "None") {
         InputDataObject = act;
         if (act.InputType == "Custom") {
-            $("#inputchoices div").empty();
+            custom__clearInputChoices();
             for (_i = 0; _i < act.CustomChoices.length; _i++) {
                 var $div = $("<div>", {
                     class: "inputchoices",
@@ -672,7 +675,7 @@ function ProcessAction(Action, bTimer) {
             }
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Character") {
-            $("#inputchoices div").empty();
+            custom__clearInputChoices();
             for (_i = 0; _i < TheGame.Characters.length; _i++) {
                 if (TheGame.Characters[_i].CurrentRoom == TheGame.Player.CurrentRoom) {
                     var $div = $("<div>", {
@@ -686,7 +689,7 @@ function ProcessAction(Action, bTimer) {
             }
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Object") {
-            $("#inputchoices div").empty();
+            custom__clearInputChoices();
             for (_i = 0; _i < TheGame.Objects.length; _i++) {
                 var obj = TheGame.Objects[_i];
                 if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
@@ -728,7 +731,7 @@ function ProcessAction(Action, bTimer) {
             }
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Inventory") {
-            $("#inputchoices div").empty();
+            custom__clearInputChoices();
             for (_i = 0; _i < TheGame.Objects.length; _i++) {
                 var obj = TheGame.Objects[_i];
                 if (obj.locationtype == "LT_PLAYER") {
@@ -743,7 +746,7 @@ function ProcessAction(Action, bTimer) {
             }
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "ObjectOrCharacter") {
-            $("#inputchoices div").empty();
+            custom__clearInputChoices();
             for (_i = 0; _i < TheGame.Objects.length; _i++) {
                 var obj = TheGame.Objects[_i];
                 if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {

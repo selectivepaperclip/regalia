@@ -3666,10 +3666,9 @@ function SetRagsObjectsFromJavascript(resultval) {
     if (temparray != null) {
         for (var _i = 0; _i < temparray.length; _i++) {
             var tempobj = temparray[_i];
-            var tempsubarray = tempobj[0];
-            if (tempsubarray.length > 0) {
-                var objtomodify = "[" + tempsubarray[0].toString() + "]";
-                var newval = tempsubarray[1].toString();
+            if (tempobj.length > 0) {
+                var objtomodify = "[" + tempobj[0].toString() + "]";
+                var newval = tempobj[1].toString();
                 if (newval == "")
                     newval = " ";
                 PerformTextReplacements(objtomodify, null, newval);

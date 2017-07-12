@@ -1,41 +1,31 @@
 ﻿
 function ragscondition() {
     this.conditionname = "";
-    this.PassCommands = new Array();
-    this.FailCommands = new Array();
-    this.Checks = new Array();
+    this.PassCommands = [];
+    this.FailCommands = [];
+    this.Checks = [];
     this.AdditionalInputData = "";
 }
 
 function SetupConditionData(GameData) {
     var CurCondition = new ragscondition();
     CurCondition.conditionname = GameData[1];
-    var numimages = 0;
-    var numimages = 0;
-    for (var _j = 0; _j < GameData[2].length; _j++) {
-        CurCondition.Checks.length = numimages + 1;
-        CurCondition.Checks[numimages] = SetupCheckData(GameData[2][_j]);
-        numimages++;
+    for (var i = 0; i < GameData[2].length; i++) {
+        CurCondition.Checks.push(SetupCheckData(GameData[2][i]));
     }
-    numimages = 0;
-    for (var _j = 0; _j < GameData[3].length; _j++) {
-        CurCondition.PassCommands.length = numimages + 1;
-        if (GameData[3][_j][0] == "CMD") {
-            CurCondition.PassCommands[numimages] = SetupCommandData(GameData[3][_j]);
+    for (var j = 0; j < GameData[3].length; j++) {
+        if (GameData[3][j][0] === "CMD") {
+            CurCondition.PassCommands.push(SetupCommandData(GameData[3][j]));
         } else {
-            CurCondition.PassCommands[numimages] = SetupConditionData(GameData[3][_j]);
+            CurCondition.PassCommands.push(SetupConditionData(GameData[3][j]));
         }
-        numimages++;
     }
-    numimages = 0;
-    for (var _j = 0; _j < GameData[4].length; _j++) {
-        CurCondition.FailCommands.length = numimages + 1;
-        if (GameData[4][_j][0] == "CMD") {
-            CurCondition.FailCommands[numimages] = SetupCommandData(GameData[4][_j]);
+    for (var k = 0; k < GameData[4].length; k++) {
+        if (GameData[4][k][0] === "CMD") {
+            CurCondition.FailCommands.push(SetupCommandData(GameData[4][k]));
         } else {
-            CurCondition.FailCommands[numimages] = SetupConditionData(GameData[4][_j]);
+            CurCondition.FailCommands.push(SetupConditionData(GameData[4][k]));
         }
-        numimages++;
     }
     return CurCondition;
 }

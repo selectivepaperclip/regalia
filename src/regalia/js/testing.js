@@ -1,8 +1,7 @@
 ﻿
 var filename = "";
-var images = new Array();
+var images = [];
 var loadedimages = 0;
-var numimages = 0;
 var curimage = 0;
 var reader;
 var pausedindex = 0;
@@ -565,12 +564,24 @@ function handleDestroyAllSaves() {
     });
 }
 
+function retrieveExportData(callback) {
+    getDB().transaction(function(tx) {
+        tx.executeSql("select * from RagsSave4", [], function (tx, results) {
+            var resultArray = [];
+            var len = results.rows.length;
+            for (var i = 0; i < len; i++) {
+                resultArray.push(results.rows.item(i));
+            }
+            callback(JSON.stringify(resultArray));
+        });
+    });
+}
+
 function receivedText() {
     try {
         var canvas = document.getElementById("MainPic");
         var ctx = canvas.getContext("2d");
-        images = new Array();
-        numimages = 0;
+        images = [];
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         TheGame = SetupGameData();
         if (TheGame.Player.bPromptForName) {

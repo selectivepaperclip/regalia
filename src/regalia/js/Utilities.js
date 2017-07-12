@@ -1,4 +1,4 @@
-var MasterCommandList = new Array();
+var MasterCommandList = [];
 var currenttimer = null;
 var bRunningTimers = false;
 var AdditionalInput = "";
@@ -1203,9 +1203,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Loop_While":
                     {
                         if (TestVariable(step2, step3, step4)) {
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         }
@@ -1219,9 +1217,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1241,9 +1237,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1259,9 +1253,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1272,12 +1264,11 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Loop_Item_Group":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = new Array();
+                            var temparray = [];
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.GroupName == step2) {
-                                    temparray.length = temparray.length + 1;
-                                    temparray[temparray.length - 1] = tempitem;
+                                    temparray.push(tempitem);
                                 }
                             }
                             MasterLoopArray = temparray;
@@ -1286,9 +1277,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1299,13 +1288,12 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Loop_Item_Char_Inventory":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = new Array();
+                            var temparray = [];
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_CHARACTER" &&
                                     tempitem.locationname == step2) {
-                                    temparray.length = temparray.length + 1;
-                                    temparray[temparray.length - 1] = tempitem;
+                                    temparray.push(tempitem);
                                 }
                             }
                             MasterLoopArray = temparray;
@@ -1314,9 +1302,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1327,13 +1313,12 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Loop_Item_Container":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = new Array();
+                            var temparray = [];
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_IN_OBJECT" &&
                                     tempitem.locationname == step2) {
-                                    temparray.length = temparray.length + 1;
-                                    temparray[temparray.length - 1] = tempitem;
+                                    temparray.push(tempitem);
                                 }
                             }
                             MasterLoopArray = temparray;
@@ -1342,9 +1327,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1355,12 +1338,11 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Loop_Item_Inventory":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = new Array();
+                            var temparray = [];
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_PLAYER") {
-                                    temparray.length = temparray.length + 1;
-                                    temparray[temparray.length - 1] = tempitem;
+                                    temparray.push(tempitem);
                                 }
                             }
                             MasterLoopArray = temparray;
@@ -1369,9 +1351,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1382,13 +1362,12 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Loop_Item_Room":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = new Array();
+                            var temparray = [];
                             for (var _i = 0; _i < TheGame.Objects.length; _i++) {
                                 var tempitem = TheGame.Objects[_i];
                                 if (tempitem.locationtype == "LT_ROOM" &&
                                     tempitem.locationname == step2) {
-                                    temparray.length = temparray.length + 1;
-                                    temparray[temparray.length - 1] = tempitem;
+                                    temparray.push(tempitem);
                                 }
                             }
                             MasterLoopArray = temparray;
@@ -1397,9 +1376,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -1417,9 +1394,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             MasterLoopObject = MasterLoopArray[MasterIdx];
                             MasterIdx++;
                             //insert
-                            var condarray = new Array();
-                            condarray.length = 1;
-                            condarray[0] = tempcond;
+                            var condarray = [tempcond];
                             InsertToMaster(condarray);
                             InsertToMaster(tempcond.PassCommands);
                         } else {
@@ -3348,7 +3323,7 @@ function AddTextToRTF(text, clr, fontst) {
             return "</span>";
         });
 
-        var styleformats = new Array();
+        var styleformats = [];
         var tempindex;
         text = MiddlesOnly(replacedtext);
         tempindex = text.indexOf("[middle]", 0);
@@ -3357,10 +3332,10 @@ function AddTextToRTF(text, clr, fontst) {
             var endindex = text.indexOf("[/middle]", tempindex);
             if (endindex >= 0) {
                 text = text.slice(0, endindex) + text.slice(endindex + 9);
-                styleformats.length = styleformats.length + 1;
-                styleformats[styleformats.length - 1] = new Array(2);
-                styleformats[styleformats.length - 1][0] = text.substring(tempindex, endindex)
-                styleformats[styleformats.length - 1][1] = "<div style=\"text-align:center;\">";
+                styleformats.push([
+                    text.substring(tempindex, endindex),
+                    "<div style=\"text-align:center;\">"
+                ]);
             }
             tempindex = text.indexOf("[middle]", 0);
         }

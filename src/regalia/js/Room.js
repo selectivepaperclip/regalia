@@ -7,9 +7,9 @@ function room() {
     this.SDesc = "";
     this.Name = "";
     this.Group = "None";
-    this.Exits = new Array();
-    this.Actions = new Array();
-    this.CustomProperties = new Array();
+    this.Exits = [];
+    this.Actions = [];
+    this.CustomProperties = [];
     this.RoomPic = "None";
     this.LayeredRoomPic = "None";
     this.bEnterFirstTime = false;
@@ -30,23 +30,14 @@ function SetupRoomData(RoomData) {
     TheRoom.bEnterFirstTime = RoomData[6];
     TheRoom.bLeaveFirstTime = RoomData[7];
     TheRoom.UniqueID = RoomData[8];
-    var numimages = 0;
-    for (var _j = 0; _j < RoomData[9].length; _j++) {
-        TheRoom.Exits.length = numimages + 1;
-        TheRoom.Exits[numimages] = SetupExitData(RoomData[9][_j]);
-        numimages++;
+    for (var i = 0; i < RoomData[9].length; i++) {
+        TheRoom.Exits.push(SetupExitData(RoomData[9][i]));
     }
-    numimages = 0;
-    for (_j = 0; _j < RoomData[10].length; _j++) {
-        TheRoom.CustomProperties.length = numimages + 1;
-        TheRoom.CustomProperties[numimages] = SetupCustomPropertyData(RoomData[10][_j]);
-        numimages++;
+    for (var j = 0; j < RoomData[10].length; j++) {
+        TheRoom.CustomProperties.push(SetupCustomPropertyData(RoomData[10][j]));
     }
-    numimages = 0;
-    for (_j = 0; _j < RoomData[11].length; _j++) {
-        TheRoom.Actions.length = numimages + 1;
-        TheRoom.Actions[numimages] = SetupActionData(RoomData[11][_j]);
-        numimages++;
+    for (var k = 0; k < RoomData[11].length; k++) {
+        TheRoom.Actions.push(SetupActionData(RoomData[11][k]));
     }
     return TheRoom;
 }
@@ -62,19 +53,13 @@ function LoadRoom(GameData) {
     TheRoom.bEnterFirstTime = GameData.find('bEnterFirstTime').text();
     TheRoom.bLeaveFirstTime = GameData.find('bLeaveFirstTime').text();
     TheRoom.UniqueID = GameData.find('UniqueID').text();
-    var numimages = 0;
     var exittest = GameData.find('Exit');
     exittest.each(function() {
-        TheRoom.Exits.length = numimages + 1;
-        TheRoom.Exits[numimages] = SetupExitData($(this));
-        numimages++;
+        TheRoom.Exits.push(SetupExitData($(this)));
     });
-    numimages = 0;
     var test = GameData.find('Action');
     test.each(function() {
-        TheRoom.Actions.length = numimages + 1;
-        TheRoom.Actions[numimages] = SetupActionData($(this));
-        numimages++;
+        TheRoom.Actions.push(SetupActionData($(this)));
     });
     return TheRoom;
 }

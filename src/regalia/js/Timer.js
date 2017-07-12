@@ -8,8 +8,8 @@ function timer() {
     this.Length = 0;
     this.LiveTimer = false;
     this.TimerSeconds = 0;
-    this.CustomProperties = new Array();
-    this.Actions = new Array();
+    this.CustomProperties = [];
+    this.Actions = [];
     this.curtickcount = 0;
 }
 
@@ -23,17 +23,11 @@ function SetupTimerData(GameData) {
     TheTimer.Length = GameData[5];
     TheTimer.LiveTimer = GameData[6];
     TheTimer.TimerSeconds = GameData[7];
-    var numimages = 0;
-    for (_j = 0; _j < GameData[8].length; _j++) {
-        TheTimer.CustomProperties.length = numimages + 1;
-        TheTimer.CustomProperties[numimages] = SetupCustomPropertyData(GameData[8][_j]);
-        numimages++;
+    for (var i = 0; i < GameData[8].length; i++) {
+        TheTimer.CustomProperties.push(SetupCustomPropertyData(GameData[8][i]));
     }
-    numimages = 0;
-    for (_j = 0; _j < GameData[9].length; _j++) {
-        TheTimer.Actions.length = numimages + 1;
-        TheTimer.Actions[numimages] = SetupActionData(GameData[9][_j]);
-        numimages++;
+    for (var j = 0; j < GameData[9].length; j++) {
+        TheTimer.Actions.push(SetupActionData(GameData[9][j]));
     }
     return TheTimer;
 }

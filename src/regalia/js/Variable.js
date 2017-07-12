@@ -13,8 +13,8 @@ function variable() {
     this.dtDateTime = "";
     this.vartype = "";
     this.VarComment = "";
-    this.VarArray = new Array();
-    this.CustomProperties = new Array();
+    this.VarArray = [];
+    this.CustomProperties = [];
 }
 
 function SetupVariableData(RoomData) {
@@ -30,11 +30,8 @@ function SetupVariableData(RoomData) {
     TheVariable.vartype = RoomData[8];
     TheVariable.VarComment = RoomData[9];
     TheVariable.VarArray = RoomData[10];
-    var numimages = 0;
-    for (_j = 0; _j < RoomData[11].length; _j++) {
-        TheVariable.CustomProperties.length = numimages + 1;
-        TheVariable.CustomProperties[numimages] = SetupCustomPropertyData(RoomData[11][_j]);
-        numimages++;
+    for (var i = 0; i < RoomData[11].length; i++) {
+        TheVariable.CustomProperties.push(SetupCustomPropertyData(RoomData[11][i]));
     }
     return TheVariable;
 }

@@ -10,10 +10,10 @@ function player() {
     this.bPromptForGender = false;
     this.PlayerPortrait = "";
     this.PlayerLayeredImage = "";
-    this.Actions = new Array();
+    this.Actions = [];
     this.bEnforceWeight = false;
     this.dWeightLimit = 100.5;
-    this.CustomProperties = new Array();
+    this.CustomProperties = [];
 }
 
 function SetupPlayerData(GameData) {
@@ -28,17 +28,14 @@ function SetupPlayerData(GameData) {
     ThePlayer.PlayerPortrait = GameData[7];
     ThePlayer.bEnforceWeight = GameData[8];
     ThePlayer.dWeightLimit = GameData[9];
-    var numimages = 0;
-    for (_j = 0; _j < GameData[10].length; _j++) {
-        ThePlayer.CustomProperties.length = numimages + 1;
-        ThePlayer.CustomProperties[numimages] = SetupCustomPropertyData(GameData[10][_j]);
-        numimages++;
+
+    for (var i = 0; i < GameData[10].length; i++) {
+        ThePlayer.CustomProperties.push(SetupCustomPropertyData(GameData[10][i]));
     }
-    numimages = 0;
-    for (_j = 0; _j < GameData[11].length; _j++) {
-        ThePlayer.Actions.length = numimages + 1;
-        ThePlayer.Actions[numimages] = SetupActionData(GameData[11][_j]);
-        numimages++;
+
+    for (var j = 0; j < GameData[11].length; j++) {
+        ThePlayer.Actions.push(SetupActionData(GameData[11][j]));
     }
+
     return ThePlayer;
 }

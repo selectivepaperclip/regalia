@@ -6,10 +6,10 @@ function action() {
     this.actionparent = "None";
     this.bConditionFailOnFirst = true;
     this.InputType = "None";
-    this.PassCommands = new Array();
-    this.FailCommands = new Array();
-    this.Conditions = new Array();
-    this.CustomChoices = new Array();
+    this.PassCommands = [];
+    this.FailCommands = [];
+    this.Conditions = [];
+    this.CustomChoices = [];
     this.EnhInputData = new enhinputdata();
     this.CustomChoiceTitle = "";
 }
@@ -23,38 +23,30 @@ function SetupActionData(GameData) {
     CurAction.bConditionFailOnFirst = GameData[4];
     CurAction.InputType = GameData[5];
     CurAction.CustomChoiceTitle = GameData[6];
-    var numimages = 0;
-    for (var _j = 0; _j < GameData[7].length; _j++) {
-        CurAction.PassCommands.length = numimages + 1;
-        if (GameData[7][_j][0] == "CMD") {
-            CurAction.PassCommands[numimages] = SetupCommandData(GameData[7][_j]);
+    for (var i = 0; i < GameData[7].length; i++) {
+        if (GameData[7][i][0] === "CMD") {
+            CurAction.PassCommands.push(SetupCommandData(GameData[7][i]));
         } else {
-            CurAction.PassCommands[numimages] = SetupConditionData(GameData[7][_j]);
+            CurAction.PassCommands.push(SetupConditionData(GameData[7][i]));
         }
-        numimages++;
     }
-    numimages = 0;
-    for (var _j = 0; _j < GameData[8].length; _j++) {
-        CurAction.FailCommands.length = numimages + 1;
-        if (GameData[8][_j][0] == "CMD") {
-            CurAction.FailCommands[numimages] = SetupCommandData(GameData[8][_j]);
+
+    for (var j = 0; j < GameData[8].length; j++) {
+        if (GameData[8][j][0] === "CMD") {
+            CurAction.FailCommands.push(SetupCommandData(GameData[8][j]));
         } else {
-            CurAction.FailCommands[numimages] = SetupConditionData(GameData[8][_j]);
+            CurAction.FailCommands.push(SetupConditionData(GameData[8][j]));
         }
-        numimages++;
     }
-    numimages = 0;
-    for (var _j = 0; _j < GameData[9].length; _j++) {
-        CurAction.Conditions.length = numimages + 1;
-        CurAction.Conditions[numimages] = SetupConditionData(GameData[9][_j]);
-        numimages++;
+
+    for (var k = 0; k < GameData[9].length; k++) {
+        CurAction.Conditions.push(SetupConditionData(GameData[9][k]));
     }
-    numimages = 0;
-    for (var _j = 0; _j < GameData[10].length; _j++) {
-        CurAction.CustomChoices.length = numimages + 1;
-        CurAction.CustomChoices[numimages] = GameData[10][_j];
-        numimages++;
+
+    for (var l = 0; l < GameData[10].length; l++) {
+        CurAction.CustomChoices.push(GameData[10][l]);
     }
+
     CurAction.EnhInputData = SetupEnhInputData(GameData[11]);
     return CurAction;
 }

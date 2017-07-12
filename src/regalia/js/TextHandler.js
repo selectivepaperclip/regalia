@@ -5,7 +5,7 @@ function PerformTextReplacements(text, loopobject, newvalue) {
         bChangedSomething = false;
         var startpt = text.length;
         var tempindex = text.lastIndexOf("[", startpt);
-        var foundindexes = new Array();
+        var foundindexes = [];
         while (tempindex >= 0) {
             var endindex = text.indexOf("]", tempindex);
             if (endindex != -1) {
@@ -54,8 +54,7 @@ function PerformTextReplacements(text, loopobject, newvalue) {
                 if (tempindex == 0) {
                     tempindex = -1;
                 } else {
-                    foundindexes.length = foundindexes.length + 1;
-                    foundindexes[foundindexes.length - 1] = tempindex;
+                    foundindexes.push(tempindex);
                     tempindex = text.lastIndexOf("[", tempindex - 1);
                     var bfoundinlist = false;
                     for (var k = 0; k < foundindexes.length; k++) {
@@ -73,8 +72,7 @@ function PerformTextReplacements(text, loopobject, newvalue) {
                 if (tempindex == 0) {
                     tempindex = -1;
                 } else {
-                    foundindexes.length = foundindexes.length + 1;
-                    foundindexes[foundindexes.length - 1] = tempindex;
+                    foundindexes.push(tempindex);
                     tempindex = text.lastIndexOf("[", tempindex - 1);
                     if (foundindexes.indexOf(tempindex) > -1) {
                         tempindex = text.lastIndexOf("[", tempindex - 1);

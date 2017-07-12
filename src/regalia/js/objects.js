@@ -10,9 +10,9 @@ function ragsobject() {
     this.description = "";
     this.sdesc = "";
     this.preposition = "a";
-    this.Actions = new Array();
+    this.Actions = [];
     this.LayeredZoneLevels = "";
-    this.CustomProperties = new Array();
+    this.CustomProperties = [];
     this.bCarryable = false;
     this.bWearable = false;
     this.bOpenable = false;
@@ -55,17 +55,11 @@ function SetupObjectData(GameData) {
     TheObject.bOpen = GameData[18];
     TheObject.bVisible = GameData[19];
     TheObject.LayeredZoneLevels = GameData[20];
-    numimages = 0;
-    for (_j = 0; _j < GameData[21].length; _j++) {
-        TheObject.CustomProperties.length = numimages + 1;
-        TheObject.CustomProperties[numimages] = SetupCustomPropertyData(GameData[21][_j]);
-        numimages++;
+    for (var i = 0; i < GameData[21].length; i++) {
+        TheObject.CustomProperties.push(SetupCustomPropertyData(GameData[21][i]));
     }
-    numimages = 0;
-    for (_j = 0; _j < GameData[22].length; _j++) {
-        TheObject.Actions.length = numimages + 1;
-        TheObject.Actions[numimages] = SetupActionData(GameData[22][_j]);
-        numimages++;
+    for (var j = 0; j < GameData[22].length; j++) {
+        TheObject.Actions.push(SetupActionData(GameData[22][j]));
     }
     return TheObject;
 }

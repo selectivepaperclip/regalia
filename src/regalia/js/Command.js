@@ -6,7 +6,7 @@ function command() {
     this.CommandPart2 = "";
     this.CommandPart3 = "";
     this.CommandPart4 = "";
-    this.CustomChoices = new Array();
+    this.CustomChoices = [];
     this.EnhInputData = null;
     this.AdditionalInputData = "";
 }
@@ -19,11 +19,8 @@ function SetupCommandData(GameData) {
     CurCommand.CommandPart2 = GameData[4];
     CurCommand.CommandPart3 = GameData[5];
     CurCommand.CommandPart4 = GameData[6];
-    var count = 0;
-    for (var _j = 0; _j < GameData[7].length; _j++) {
-        CurCommand.CustomChoices.length = count + 1;
-        CurCommand.CustomChoices[count] = GameData[7][_j];
-        count++;
+    for (var i = 0; i < GameData[7].length; i++) {
+        CurCommand.CustomChoices.push(GameData[7][i]);
     }
     CurCommand.EnhInputData = SetupEnhInputData(GameData[8]);
     return CurCommand;

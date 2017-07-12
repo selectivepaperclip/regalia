@@ -1016,6 +1016,19 @@ function CheckGroupMembership(step2, step3, groupMembershipType) {
 function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) {
     var bResult = true;
     var counter = 0;
+
+    function performLoopIteration() {
+        if (MasterIdx < MasterLoopArray.length) {
+            MasterLoopObject = MasterLoopArray[MasterIdx];
+            MasterIdx++;
+
+            InsertToMaster([tempcond]);
+            InsertToMaster(tempcond.PassCommands);
+        } else {
+            ResetLoopObjects();
+        }
+    }
+
     for (var icond = 0; icond < tempcond.Checks.length; icond++) {
         try {
             var tempcheck = tempcond.Checks[icond];
@@ -1213,16 +1226,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                     {
                         if (MasterLoopArray == null)
                             MasterLoopArray = TheGame.Rooms;
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Exits":
@@ -1233,173 +1237,72 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                                 MasterLoopArray = temproom.Exits;
                             }
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Characters":
                     {
                         if (MasterLoopArray == null)
                             MasterLoopArray = TheGame.Characters;
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Item_Group":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = [];
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var tempitem = TheGame.Objects[_i];
-                                if (tempitem.GroupName == step2) {
-                                    temparray.push(tempitem);
-                                }
-                            }
-                            MasterLoopArray = temparray;
+                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                                return item.GroupName === step2;
+                            });
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Item_Char_Inventory":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = [];
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var tempitem = TheGame.Objects[_i];
-                                if (tempitem.locationtype == "LT_CHARACTER" &&
-                                    tempitem.locationname == step2) {
-                                    temparray.push(tempitem);
-                                }
-                            }
-                            MasterLoopArray = temparray;
+                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                                return item.locationtype === "LT_CHARACTER" && item.locationname === step2;
+                            });
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Item_Container":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = [];
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var tempitem = TheGame.Objects[_i];
-                                if (tempitem.locationtype == "LT_IN_OBJECT" &&
-                                    tempitem.locationname == step2) {
-                                    temparray.push(tempitem);
-                                }
-                            }
-                            MasterLoopArray = temparray;
+                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                                return item.locationtype === "LT_IN_OBJECT" && item.locationname === step2;
+                            });
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Item_Inventory":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = [];
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var tempitem = TheGame.Objects[_i];
-                                if (tempitem.locationtype == "LT_PLAYER") {
-                                    temparray.push(tempitem);
-                                }
-                            }
-                            MasterLoopArray = temparray;
+                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                                return item.locationtype === "LT_PLAYER";
+                            });
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Item_Room":
                     {
                         if (MasterLoopArray == null) {
-                            var temparray = [];
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var tempitem = TheGame.Objects[_i];
-                                if (tempitem.locationtype == "LT_ROOM" &&
-                                    tempitem.locationname == step2) {
-                                    temparray.push(tempitem);
-                                }
-                            }
-                            MasterLoopArray = temparray;
+                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                                return item.locationtype === "LT_ROOM" && item.locationname === step2;
+                            });
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Items":
                     {
                         if (MasterLoopArray == null) {
-
                             MasterLoopArray = TheGame.Objects;
                         }
-                        if (MasterIdx < MasterLoopArray.length) {
-                            MasterLoopObject = MasterLoopArray[MasterIdx];
-                            MasterIdx++;
-                            //insert
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
-                        } else {
-                            ResetLoopObjects();
-                        }
+                        performLoopIteration();
                         break;
                     }
                 case "CT_Room_CustomPropertyCheck":

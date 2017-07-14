@@ -6,11 +6,48 @@ var InputDataObject = null;
 var TheObj = null;
 var bGameReset = false;
 var bCancelMove = false;
+var bResetTimer = false;
 var CurrentImage = "";
 var MasterLoopObject = null;
 var MasterIdx = 0;
 var MasterLoopArray = null;
 var gamePaused = false;
+
+var Logger = {
+    level: 0,
+    log: function () {
+        if (this.level > 0) {
+            console.log.apply(this, arguments);
+        }
+    },
+    logExecutingAction: function (action) {
+        Logger.log(
+            'ACTION:',
+            action.name
+        );
+    },
+    logExecutingCommand: function (command, part2, part3, part4) {
+        Logger.log(
+            'COMMAND:',
+            [
+                command.cmdtype,
+                part2,
+                part3,
+                part4
+            ].join(':'),
+            'Executing'
+        );
+    },
+    logEvaluatedCondition: function (condition, passed) {
+        Logger.log(
+            'CONDITION:',
+            condition.conditionname,
+            passed ? 'Passed' : 'Failed'
+        )
+    }
+};
+
+Logger.level = 1;
 
 function custom__setInputMenuTitle(act) {
     $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
@@ -837,6 +874,7 @@ function isLoopCheck(check) {
 }
 
 function ExecuteAction(act, bTimer, AdditionalInputData) {
+    Logger.logExecutingAction(act);
     var bPassed = true;
     if (act.bConditionFailOnFirst) {
         for (var _i = 0; _i < act.Conditions.length; _i++) {
@@ -1571,6 +1609,9 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 tempcheck.ConditionStep3 + " - " + tempcheck.ConditionStep4);
         }
     }
+    if (!MasterLoopArray) {
+        Logger.logEvaluatedCondition(tempcond, bResult);
+    }
     return bResult;
 }
 
@@ -1622,6 +1663,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
             var part3 = PerformTextReplacements(tempcommand.CommandPart3, LoopObj);
             var part4 = PerformTextReplacements(tempcommand.CommandPart4, LoopObj);
             var cmdtxt = PerformTextReplacements(tempcommand.CommandText, LoopObj);
+            Logger.logExecutingCommand(tempcommand, part2, part3 ,part4);
             try {
                 switch (tempcommand.cmdtype) {
                     case "CT_LAYEREDIMAGE_ADD":

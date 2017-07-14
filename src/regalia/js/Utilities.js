@@ -1215,7 +1215,9 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                         } else {
                             var tempobj = GetObject(step2);
                             if (tempobj != null)
-                                bResult = ((tempobj.locationtype == "LT_ROOM") && (tempobj.locationname == step3));
+                                bResult = tempobj.locationtype == "LT_ROOM" && (
+                                    (tempobj.locationname === step3) || (tempobj.locationname === GetRoom(step3).UniqueID)
+                                );
                             else
                                 bResult = false;
                         }

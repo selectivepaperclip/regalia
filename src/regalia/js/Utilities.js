@@ -188,13 +188,13 @@ function SetBorders() {
 
 function GetActionCount(Actions) {
     //CurActions = Actions;
-    var ActionCount = 0;
-    for (_i = 0; _i < Actions.length; _i++) {
-        if (actionShouldBeVisible(Actions[_i])) {
-            ActionCount++;
+    var count = 0;
+    for (var i = 0; i < Actions.length; i++) {
+        if (actionShouldBeVisible(Actions[i])) {
+            count++;
         }
     }
-    return ActionCount;
+    return count;
 }
 
 function SetRoomThumb(ImageName) {
@@ -339,13 +339,12 @@ function SetPortrait(ImageName) {
 }
 
 function SetupStatusBars() {
-    var visibleItems = [];
-    for (var _i = 0; _i < TheGame.StatusBarItems.length; _i++) {
-        if (TheGame.StatusBarItems[_i].bVisible) {
-            visibleItems.push(TheGame.StatusBarItems[_i].Text);
-        }
-    }
-    var statbar = PerformTextReplacements(visibleItems.join(' | '), null);
+    var visibleItemTexts = TheGame.StatusBarItems.filter(function (item) {
+        return item.bVisible;
+    }).map(function (item) {
+        return item.Text;
+    });
+    var statbar = PerformTextReplacements(visibleItemTexts.join(' | '), null);
     $("#statusbartext").empty().append(statbar);
 }
 
@@ -444,20 +443,18 @@ function RefreshRoomObjects() {
     }
 }
 
-function GetAction(Actions, Name) {
-    Name = Name.trim();
-    for (var _i = 0; _i < Actions.length; _i++) {
-        if (Actions[_i].name.toLowerCase() == Name.toLowerCase())
-            return Actions[_i];
-    }
+function GetAction(actions, name) {
+    name = name.trim();
+    return actions.find(function (action) {
+        return action.name.toLowerCase() === name.toLowerCase();
+    });
 }
 
 function GetTimer(timerName) {
     timerName = timerName.trim();
-    for (var _i = 0; _i < TheGame.Timers.length; _i++) {
-        if (TheGame.Timers[_i].Name == timerName)
-            return TheGame.Timers[_i];
-    }
+    return TheGame.Timers.find(function (timer) {
+        return timer.Name === timerName;
+    });
 }
 
 function GetVariable(variableName) {
@@ -465,11 +462,9 @@ function GetVariable(variableName) {
     if (variableName.indexOf("(") > -1) {
         variableName = variableName.substring(0, variableName.indexOf("("));
     }
-    for (var _i = 0; _i < TheGame.Variables.length; _i++) {
-        if (TheGame.Variables[_i].varname.toLowerCase() == variableName.toLowerCase()) {
-            return TheGame.Variables[_i];
-        }
-    }
+    return TheGame.Variables.find(function (variable) {
+        return variable.varname.toLowerCase() === variableName.toLowerCase();
+    });
 }
 
 function AddOpenedObjects(tempobj, thelistbox, selitem) {

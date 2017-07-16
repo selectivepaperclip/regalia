@@ -392,6 +392,9 @@ $(function() {
         }
     });
     setInterval(function() {
+        if (!TheGame) {
+            return;
+        }
         for (var _i = 0; _i < TheGame.Timers.length; _i++) {
             var curtimer = TheGame.Timers[_i];
             if (curtimer.Active && curtimer.LiveTimer) {

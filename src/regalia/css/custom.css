@@ -16,15 +16,12 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    margin: 0 8px 8px 8px;
+    margin: 3px 8px 3px 8px;
 }
 
 #menu {
-    margin-top: 3px;
     top: 0;
     height: 30px;
-    width: 98%;
-    border: 2px solid black;
     display: inline-block;
     margin-bottom: 5px;
     flex: 0 0 auto;
@@ -38,18 +35,15 @@ body {
 }
 
 #PlayerRow {
-    width: 98%;
     display: flex;
     height: 30%;
     flex: 0 0 auto;
-    margin-bottom: 2px;
-    position: static;
 }
 
 #statusbar {
-    width: 98%;
     height: 30px;
     flex: 0 0 auto;
+    margin-top: 5px;
     position: static;
     display: flex;
     align-items: center;
@@ -95,6 +89,76 @@ body {
 .menuitem {
     padding: 0 20px;
     flex: 1 1 auto;
+}
+
+/* playerrow */
+
+.compass-and-portrait {
+    width: 40%;
+    display: flex;
+}
+
+.compass-and-portrait > * {
+    border-right: 1px solid grey;
+}
+
+.compass-up-down, .compass-rose {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.compass-up-down {
+    flex: 0 0 10%;
+}
+
+.compass-rose {
+    flex: 0 0 50%;
+}
+
+.portrait-holder {
+    position: relative;
+    overflow: hidden;
+    flex: 1 1 auto;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.compass-direction-rows {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.compass-direction-row {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+}
+
+.compass-direction-row > div {
+    flex: 1 1 auto;
+    margin: 2px;
+}
+
+#UDCompass, #Compass {
+    width: auto;
+    height: 100%;
+}
+
+#CustomCompass {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 /* other stuff */
@@ -256,134 +320,71 @@ body {
     color: grey;
 }
 
-.compass-up-down, .compass-rose {
-    position: relative;
-    overflow: hidden;
-    flex: 0 0 auto;
-    height: 100%;
-}
-
-.compass-up-down {
-    min-width: 52px;
-}
-
-.compass-rose {
-    min-width: 280px;
-}
-
-.portrait-holder {
-    position: relative;
-    text-align: center;
-    width: 24%;
-}
-
-#UDCompass, #Compass, #CustomCompass {
-    width: auto;
-    height: 100%;
-}
-
 #PlayerImg {
-    position: static;
-    width: auto !important;
-    height: 100% !important;
+    border: 4px solid black;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 #RoomObjectsPanel, #VisibleCharactersPanel, #InventoryPanel {
     border: 0;
-    width: 19%;
+    flex: 1 1 auto;
 }
 
 #RoomThumbImg,
-#UDCompass, #Compass,
 #roompanel, #menu, #statusbar,
 #RoomObjects,
 #VisibleCharacters,
 #Inventory,
 #selectionmenu,
 #PlayerRow,
-#cmdinputmenu
+#cmdinputmenu,
+#tooltip,
+#MainImg, #MainVid, .MainLayeredImage
 {
     border: 1px solid grey;
 }
 
-#bUp
+#bIn, #bOut
 {
-    top:4.5%;
-    left: calc(50% - 10px);
-}
-#bDown
-{
-    bottom:4.5%;
-    left: calc(50% - 10px);
-}
-#bNorth
-{
-    top:4.5%;
-    left: calc(50% - 10px);
-}
-#bSouth
-{
-    bottom:4.5%;
-    left: calc(50% - 10px);
-}
-#bWest
-{
-    top: calc(50% - 10px);
-    left:7%;
-}
-#bEast
-{
-    top: calc(50% - 10px);
-    right: 7%;
-}
-#bNorthwest
-{
-    top:20%;
-    left:10%;
-}
-#bNortheast
-{
-    top:20%;
-    right:10%;
-}
-#bSouthwest
-{
-    bottom:30%;
-    left:10%;
-}
-#bSoutheast
-{
-    bottom:30%;
-    right:10%;
-}
-#bIn
-{
+    position: absolute;
+    z-index: 1;
     opacity:0.7;
-    filter:alpha(opacity=70);
-    top:4.5%;
-    left: auto;
-    right:5%;
-    width:30px;
-
+    right: 2px;
+    width: 80px;
+    height: 40px;
+    display: none;
 }
+
+#bIn.active, #bOut.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#bIn {
+    top: 2px;
+}
+
 #bOut
 {
-    top:88%;
-    left: auto;
-    right:5%;
-    opacity:0.7;
-    filter:alpha(opacity=70);
-    width:30px;
-
+    bottom: 2px;
 }
 
-.compass-rose .compass-direction, .compass-up-down .compass-direction {
+.compass-direction {
+    visibility: hidden;
+}
+
+.compass-direction.active {
     cursor: pointer;
-    border: 1px solid grey;
+    visibility: visible;
+    opacity: 0.5;
+    background-color: green;
+    border: 1px solid black;
 }
 
-.compass-rose .compass-direction:hover, .compass-up-down .compass-direction:hover {
-    border: 1px solid green;
+.compass-direction.active:hover {
+    opacity: 0.75;
 }
 
 .hidden {

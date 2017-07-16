@@ -385,7 +385,11 @@ $(function() {
     }, 1000);
 
     $(".compass-direction").click(function(e) {
-        var direction = $(e.target).data('direction');
+        var $el = $(e.target);
+        if (!$el.hasClass('active')) {
+            return;
+        }
+        var direction = $el.data('direction');
         var newRoom = GetDestinationRoomName(direction);
         ResetLoopObjects();
         bCancelMove = false;
@@ -408,7 +412,11 @@ $(function() {
         });
     });
     $(".compass-direction").hover(function(e) {
-        var direction = $(e.target).data('direction');
+        var $el = $(e.target);
+        if (!$el.hasClass('active')) {
+            return;
+        }
+        var direction = $el.data('direction');
         var destRoom = GetRoom(GetDestinationRoomName(direction));
         $("#tooltip").text(destRoom.Name);
         $("#tooltip").css({

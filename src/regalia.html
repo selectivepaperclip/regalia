@@ -130,31 +130,48 @@
 </div>
 
 <div id="PlayerRow">
-    <div class="compass-up-down">
-        <img class="compass-direction" id="bUp" data-direction="Up" src="images/North.png">
-        <img class="compass-direction" id="bDown" data-direction="Down" src="images/South.png">
-        <img id="UDCompass" src="images/300px-Compass_Rose_UD.png">
-    </div>
+    <div class="compass-and-portrait">
+        <div class="compass-up-down">
+            <img id="UDCompass" src="images/300px-Compass_Rose_UD.png">
+            <div class="compass-direction-rows">
+                <div class="compass-direction-row">
+                    <div class="compass-direction" data-direction="Up"></div>
+                </div>
+                <div class="compass-direction-row">
+                    <div class="compass-direction" data-direction="Down"></div>
+                </div>
+            </div>
+        </div>
 
-    <div class="compass-rose">
-        <img id="Compass" src="images/300px-Compass_Rose_English_North.png">
-        <img id="CustomCompass" />
-        <img class="compass-direction" id="bNorth" data-direction="North" src="images/North.png">
-        <img class="compass-direction" id="bSouth" data-direction="South" src="images/South.png">
-        <img class="compass-direction" id="bWest" data-direction="West" src="images/West.png">
-        <img class="compass-direction" id="bEast" data-direction="East" src="images/East.png">
-        <img class="compass-direction" id="bNorthwest" data-direction="NorthWest" src="images/Northwest.png">
-        <img class="compass-direction" id="bNortheast" data-direction="NorthEast" src="images/NorthEast.png">
-        <img class="compass-direction" id="bSouthwest" data-direction="SouthWest" src="images/SouthWest.png">
-        <img class="compass-direction" id="bSoutheast" data-direction="SouthEast" src="images/SouthEast.png">
+        <div class="compass-rose">
+            <img id="Compass" src="images/300px-Compass_Rose_English_North.png">
+            <img id="CustomCompass" />
+            <div class="compass-direction-rows">
+                <div class="compass-direction-row">
+                    <div class="compass-direction" data-direction="NorthWest"></div>
+                    <div class="compass-direction" data-direction="North"></div>
+                    <div class="compass-direction" data-direction="NorthEast"></div>
+                </div>
+                <div class="compass-direction-row">
+                    <div class="compass-direction" data-direction="West"></div>
+                    <div></div>
+                    <div class="compass-direction" data-direction="East"></div>
+                </div>
+                <div class="compass-direction-row">
+                    <div class="compass-direction" data-direction="SouthWest"></div>
+                    <div class="compass-direction" data-direction="South"></div>
+                    <div class="compass-direction" data-direction="SouthEast"></div>
+                </div>
+            </div>
 
-        <button class="compass-direction" id="bIn" data-direction="In" style="background-color:green;">In</button>
-        <button class="compass-direction" id="bOut" data-direction="Out" style="background-color:green;">Out</button>
-    </div>
+            <button class="compass-direction" id="bIn" data-direction="In" style="background-color:green;">In</button>
+            <button class="compass-direction" id="bOut" data-direction="Out" style="background-color:green;">Out</button>
+        </div>
 
-    <div class="portrait-holder">
-        <img id="PlayerImg">
-        <canvas id="PlayerPortrait"></canvas>
+        <div class="portrait-holder">
+            <img id="PlayerImg">
+            <canvas id="PlayerPortrait"></canvas>
+        </div>
     </div>
 
     <div id="RoomObjectsPanel">

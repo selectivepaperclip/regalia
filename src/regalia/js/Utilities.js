@@ -64,6 +64,7 @@ function custom__showGameElements() {
     $("#RoomObjectsPanel").css("visibility", "visible");
     $("#VisibleCharactersPanel").css("visibility", "visible");
     $("#InventoryPanel").css("visibility", "visible");
+    $(".compass-direction").css("visibility", "visible");
     SetExits();
 }
 
@@ -182,7 +183,7 @@ function SetBorders() {
     if (GetActionCount(TheGame.Player.Actions) > 0) {
         $("#PlayerImg").css("border-color", "green");
     } else {
-        $("#PlayerImg").css("border-color", "red");
+        $("#PlayerImg").css("border-color", "transparent");
     }
 }
 
@@ -956,46 +957,12 @@ function RoomChange(bRunTimerEvents, bRunEvents) {
 
 function SetExits() {
     var currentroom = GetRoom(TheGame.Player.CurrentRoom);
-    $("#bUp").css("visibility", "hidden");
-    $("#bDown").css("visibility", "hidden");
-    $("#bNorth").css("visibility", "hidden");
-    $("#bSouth").css("visibility", "hidden");
-    $("#bEast").css("visibility", "hidden");
-    $("#bWest").css("visibility", "hidden");
-    $("#bNorthwest").css("visibility", "hidden");
-    $("#bNortheast").css("visibility", "hidden");
-    $("#bSoutheast").css("visibility", "hidden");
-    $("#bSouthwest").css("visibility", "hidden");
-    $("#bIn").css("visibility", "hidden");
-    $("#bOut").css("visibility", "hidden");
+    $(".compass-direction").removeClass("active");
     if (currentroom != null) {
         for (var i = 0; i < currentroom.Exits.length; i++) {
             if (currentroom.Exits[i].DestinationRoom != "" && currentroom.Exits[i].bActive) {
-                if (currentroom.Exits[i].Direction == "Up") {
-                    $("#bUp").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "Down") {
-                    $("#bDown").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "North") {
-                    $("#bNorth").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "South") {
-                    $("#bSouth").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "West") {
-                    $("#bWest").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "East") {
-                    $("#bEast").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "NorthEast") {
-                    $("#bNortheast").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "NorthWest") {
-                    $("#bNorthwest").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "SouthEast") {
-                    $("#bSoutheast").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "SouthWest") {
-                    $("#bSouthwest").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "In") {
-                    $("#bIn").css("visibility", "visible");
-                } else if (currentroom.Exits[i].Direction == "Out") {
-                    $("#bOut").css("visibility", "visible");
-                }
+                var direction = currentroom.Exits[i].Direction;
+                $(".compass-direction[data-direction=" + direction + "]").addClass("active");
             }
         }
     }
@@ -2840,6 +2807,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_MM_SET_MAIN_COMPASS":
                         {
+                            $('#CustomCompass').off('load');
                             $('#CustomCompass').attr('src', 'images/' + part2);
                             $('#Compass').hide();
                             break;

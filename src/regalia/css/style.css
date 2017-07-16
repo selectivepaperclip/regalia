@@ -70,7 +70,6 @@ p {
     margin-left: 5px;
     top: 40px;
     left: 300px;
-    border: 2px solid black;
     vertical-align: top;
 }
 
@@ -80,7 +79,6 @@ p {
     margin-left: 5px;
     top: 40px;
     left: 300px;
-    border: 2px solid black;
     vertical-align: top;
     visibility: hidden;
 }
@@ -91,7 +89,6 @@ p {
     margin-left: 5px;
     top: 40px;
     left: 300px;
-    border: 2px solid black;
     vertical-align: top;
 }
 
@@ -233,7 +230,6 @@ td {
 #selectionmenu {
     position: absolute;
     background-color: White;
-    border: 2px solid black;
     min-width: 200px;
     max-width: 300px;
     max-height: 300px;
@@ -248,29 +244,8 @@ td {
     height: 100%;
 }
 
-#UDCompass {
-    display: inline-block;
-    width: 5%;
-    margin: 2px;
-    border: 2px solid black;
-}
-
-#Compass {
-    display: inline-block;
-    width: 20%;
-    margin: 2px;
-    border: 2px solid black;
-}
-
 #PlayerPortrait {
-    width: 20%;
-    margin: 2px;
-    border: 4px solid black;
-    vertical-align: top;
-}
-
-#PlayerImg {
-    position: absolute;
+    display: none;
     width: 20%;
     margin: 2px;
     border: 4px solid black;
@@ -305,13 +280,11 @@ td {
     vertical-align: top;
     width: 16%;
     margin: 2px;
-    border: 2px solid black;
 }
 
 #RoomObjects {
     width: 97%;
     margin: 2px;
-    border: 2px solid black;
     height: 87%;
 }
 
@@ -320,13 +293,11 @@ td {
     vertical-align: top;
     width: 15%;
     margin: 2px;
-    border: 2px solid black;
 }
 
 #VisibleCharacters {
     width: 97%;
     margin: 2px;
-    border: 2px solid black;
     height: 87%;
 }
 
@@ -335,13 +306,11 @@ td {
     vertical-align: top;
     width: 16%;
     margin: 2px;
-    border: 2px solid black;
 }
 
 #Inventory {
     width: 97%;
     margin: 2px;
-    border: 2px solid black;
     height: 87%;
 }
 
@@ -355,43 +324,12 @@ td {
     margin-left: 20px;
 }
 
-.compass-direction {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    margin: 2px;
-    border: 2px solid black;
-    font-size: x-small;
-    color: Black;
-    text-align: left;
-    font-weight: bold;
-    visibility: hidden;
-
-}
-
 #tooltip {
+    z-index: 100;
     font-weight: bold;
     position: absolute;
     width: auto;
     height: 25px;
     background-color: white;
-    border: 2px solid black;
     visibility: hidden;
-}
-
-#bIn {
-    opacity: 0.7;
-    filter: alpha(opacity=70);
-    top: 4.5%;
-    left: 23%;
-    width: 30px;
-
-}
-
-#bOut {
-    top: 88%;
-    left: 23%;
-    opacity: 0.7;
-    filter: alpha(opacity=70);
-    width: 30px;
 }

@@ -18,6 +18,29 @@ function getDB() {
     return openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
 }
 
+function copyDB(oldTitle) {
+    var oldDb = openDatabase(oldTitle, '1.0', 'Test DB', 2 * 1024 * 1024);
+    var newDb = getDB();
+    oldDb.transaction(function(tx) {
+        tx.executeSql("select * from RagsSave4", [], function(tx, oldDbSelectResult) {
+
+            newDb.transaction(function(tx) {
+                tx.executeSql('CREATE TABLE IF NOT EXISTS RagsSave4 (id unique,SaveName,date,Title,GameData)');
+                for (var i = 0; i < oldDbSelectResult.rows.length; i++) {
+                    var row = oldDbSelectResult.rows[i];
+                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [
+                        row.id,
+                        row.SaveName,
+                        row.date,
+                        row.Title,
+                        row.GameData
+                    ]);
+                }
+            });
+        });
+    });
+}
+
 function hideSaveAndLoadMenus() {
     custom__showGameElements();
     $("#savemenu").css("visibility", "hidden");

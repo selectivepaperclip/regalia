@@ -58,6 +58,13 @@ $(document).ready(function () {
         $('.cheat-menu-player-properties-body').off();
         $('.cheat-menu-player-properties-body').empty();
 
+        if (TheGame.Player.CustomProperties.length === 0) {
+            $('.cheat-menu-player-properties').hide();
+            return;
+        } else {
+            $('.cheat-menu-player-properties').show();
+        }
+
         TheGame.Player.CustomProperties.forEach(function (property) {
             var $propertyRow = $('<tr></tr>');
             $propertyRow.append('<td>' + property.Name + '</td>');

@@ -606,6 +606,10 @@ function actionShouldBeVisible(action) {
 }
 
 function DisplayActions(Actions, clickEvent) {
+    if (GetActionCount(Actions) === 0) {
+        return;
+    }
+
     $("#Actionchoices").empty();
     CurActions = Actions;
     for (_i = 0; _i < Actions.length; _i++) {

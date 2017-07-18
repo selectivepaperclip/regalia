@@ -2824,7 +2824,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 actionlist = CurActions;
                             } else {
                                 tempobj = GetObject(part2);
-                                actionlist = tempobj.Actions;
+                                if (tempobj) {
+                                    actionlist = tempobj.Actions;
+                                }
                             }
                             if (actionlist != null) {
                                 var actname = part3.substring(0, part3.lastIndexOf('-'));

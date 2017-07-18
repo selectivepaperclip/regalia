@@ -690,9 +690,9 @@ function ProcessAction(Action, bTimer) {
     var actionname = "";
     if (selectedobj != null) {
         try {
-            if (curclass == "ragsobject" || "bWearable" in selectedobj)
+            if (curclass == "ragsobject" || selectedobj.hasOwnProperty('bWearable'))
                 actionname = selectedobj.name + ": " + act.name;
-            else if (curclass == "character" || "Charname" in selectedobj)
+            else if ((curclass == "character") || (selectedobj.hasOwnProperty('Charname')))
                 actionname = selectedobj.Charname + ": " + act.name;
         } catch (err) {}
     }

@@ -128,6 +128,7 @@ $(function() {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
             custom__showGameElements();
+            $("#textinput").val('');
             $("#textchoice").css("visibility", "hidden");
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);

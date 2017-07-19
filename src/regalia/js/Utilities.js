@@ -3703,13 +3703,22 @@ function TestVariable(step2, step3, step4) {
             } else if (step3 == "Not Equals") {
                 bResult = replacedstring != tempvar.sString;
             } else if (step3 == "Contains") {
-                bResult = tempvar.sString[0].indexOf(replacedstring) > -1;
+                bResult = tempvar.sString.indexOf(replacedstring) > -1;
             } else if (step3 == "Greater Than") {
                 bResult = tempvar.sString > replacedstring;
             } else if (step3 == "Less Than") {
                 bResult = tempvar.sString < replacedstring;
             }
         }
+    }
+    if ((tempvar === undefined) && (step3 === "Contains")) {
+        // HACK - preserve bug compatibility with desktop RAGS client
+        // It seems like a "varname Contains val" query passes
+        // if varname does not exist. Not sure how many other
+        // situations this applies to. This is needed to get past
+        // the opening quiz questions in Evil, Inc. where the
+        // variable names have been typoed.
+        return true;
     }
     return bResult;
 }

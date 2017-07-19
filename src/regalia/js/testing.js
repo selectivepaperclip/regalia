@@ -55,7 +55,10 @@ $(function() {
         switch (e.keyCode) {
             case 32:
                 {
-                    $("#Continue").click();
+                    if (gamePaused) {
+                        e.preventDefault();
+                        $("#Continue").click();
+                    }
                     break;
                 }
             case 119:

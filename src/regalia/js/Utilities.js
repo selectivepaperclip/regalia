@@ -1218,7 +1218,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Player_In_Same_Room_As":
                     {
                         var curchar = GetCharacter(step2);
-                        bResult = TheGame.Player.CurrentRoom.UniqueID == curchar.CurrentRoom;
+                        bResult = TheGame.Player.CurrentRoom == curchar.CurrentRoom;
                         break;
                     }
                 case "CT_Loop_While":
@@ -3029,7 +3029,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempchar = GetCharacter(part2);
                             if (tempchar != null) {
                                 if (tempchar.CurrentRoom != VoidRoomGuid && tempchar.CurrentRoom != CurrentRoomGuid) {
-                                    TheGame.Player.CurrentRoom = GetRoom(tempchar.CurrentRoom);
+                                    TheGame.Player.CurrentRoom = tempchar.CurrentRoom;
                                 }
                                 if (TheGame.Player.CurrentRoom != null)
                                     RoomChange(false, true);
@@ -3041,7 +3041,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempobj = GetObject(part2);
                             if (tempobj != null) {
                                 if (tempobj.locationtype == "LT_ROOM") {
-                                    TheGame.Player.CurrentRoom = GetRoom(tempobj.locationname);
+                                    TheGame.Player.CurrentRoom = tempobj.locationname;
                                 }
                                 if (TheGame.Player.CurrentRoom != null)
                                     RoomChange(false, true);
@@ -3056,7 +3056,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 if (tempobj.locationtype == "LT_ROOM") {
                                     tempchar.CurrentRoom = tempobj.locationname;
                                 }
-                                if (TheGame.Player.CurrentRoom.UniqueID == tempobj.locationname)
+                                if (TheGame.Player.CurrentRoom == tempobj.locationname)
                                     RoomChange(false, false);
                             }
                             break;

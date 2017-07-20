@@ -219,6 +219,7 @@ td {
 }
 
 #selectionmenu {
+    z-index: 100;
     position: absolute;
     background-color: White;
     min-width: 200px;

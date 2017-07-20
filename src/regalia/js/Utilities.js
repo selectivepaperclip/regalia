@@ -132,10 +132,11 @@ function custom__addCmdInputChoice($div) {
 function custom__setCmdInputForCustomChoices(title, tempcommand) {
     custom__clearCmdInputChoices();
     for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
+        var text = PerformTextReplacements(tempcommand.CustomChoices[_i]);
         var $div = $("<div>", {
             class: "cmdinputchoices",
-            text: tempcommand.CustomChoices[_i],
-            value: tempcommand.CustomChoices[_i]
+            text: text,
+            value: text
         });
 
         custom__addCmdInputChoice($div);

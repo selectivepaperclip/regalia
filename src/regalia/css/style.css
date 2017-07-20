@@ -64,15 +64,6 @@ p {
     height: 300px;
 }
 
-#MainImg {
-    position: absolute;
-    width: 50%;
-    margin-left: 5px;
-    top: 40px;
-    left: 300px;
-    vertical-align: top;
-}
-
 #MainVid {
     position: absolute;
     width: 50%;

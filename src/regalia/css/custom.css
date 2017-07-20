@@ -194,11 +194,8 @@ body {
 }
 
 #MainImg {
-    top: 0;
-    left: 0;
-    position: static;
-    width: auto !important;
-    max-height: 100% !important;
+    max-width: 100%;
+    height: 100%;
 }
 
 #inputmenu, #cmdinputmenu, #playernamechoice, #genderchoice, #textchoice, #textactionchoice {

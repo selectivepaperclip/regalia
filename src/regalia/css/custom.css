@@ -218,11 +218,11 @@ body {
     display: none;
 }
 
-#textchoice {
+#textchoice, #textactionchoice {
     padding: 10px;
 }
 
-#textchoice input {
+#textchoice input, #textactionchoice input {
     margin: 10px 0;
     font-size: 24px;
 }

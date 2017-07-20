@@ -839,6 +839,7 @@ function ProcessAction(Action, bTimer) {
         } else if (act.InputType == "Text") {
             $("#textactionMenuTitle").text(act.CustomChoiceTitle);
             $("#textactionchoice").css("visibility", "visible");
+            $("#textactionchoice input").focus();
         }
         var AdditionalInputData = "";
         if (act.InputType != "Text") {}

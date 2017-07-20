@@ -321,9 +321,11 @@ $(function() {
             }
         }
     });
-    $("#textactionbutton").click(function(e) {
+
+    function setTextActionChoice() {
         selectedobj = $("#textactioninput").val();
         if (selectedobj != null) {
+            $("#textactioninput").val('');
             AdditionalData = selectedobj;
             custom__showGameElements();
             $("#textactionchoice").css("visibility", "hidden");
@@ -331,6 +333,13 @@ $(function() {
                 ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
 
             }
+        }
+    }
+
+    $("#textactionbutton").click(setTextActionChoice);
+    $("#textactioninput").on('keyup', function (e) {
+        if (e.which === 13) { // return key
+            setTextActionChoice();
         }
     });
     $("#cmdinputchoices").change(function(e) {

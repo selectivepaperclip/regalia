@@ -7,6 +7,7 @@ var reader;
 var pausedindex = 0;
 var pausecommandargs = null;
 var TheGame = null;
+var OriginalGame = null;
 var GameData = null;
 var selectedobj = null;
 var VariableGettingSet = null;
@@ -520,6 +521,10 @@ function ResetLoopObjects() {
 
 function onError(tx, error) {}
 
+function saveDataFor(game) {
+    return JSON.stringify(DeepDiff.diff(OriginalGame, game));
+}
+
 function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
     var db = getDB();
     var curindex = 1;
@@ -534,9 +539,9 @@ function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
             tx.executeSql('SELECT id FROM RagsSave4 where id=0', [], function(tx, results) {
                 var len = results.rows.length;
                 if (len === 0) {
-                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [0, 'QuickSave', curdate, TheGame.Title, JSON.stringify(TheGame)]);
+                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [0, 'QuickSave', curdate, TheGame.Title, saveDataFor(TheGame)]);
                 } else {
-                    tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=0', ['QuickSave', curdate, TheGame.Title, JSON.stringify(TheGame)]);
+                    tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=0', ['QuickSave', curdate, TheGame.Title, saveDataFor(TheGame)]);
                 }
                 alert("Quick Saved");
             });
@@ -553,11 +558,11 @@ function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
                         if (results.rows.item(i).id > curindex)
                             curindex = results.rows.item(i).id;
                     }
-                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [curindex + 1, saveName, curdate, TheGame.Title, JSON.stringify(TheGame)]);
+                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [curindex + 1, saveName, curdate, TheGame.Title, saveDataFor(TheGame)]);
                     alert("Game Saved");
                 });
             } else {
-                tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=' + CurID, [saveName, curdate, TheGame.Title, JSON.stringify(TheGame)]);
+                tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=' + CurID, [saveName, curdate, TheGame.Title, saveDataFor(TheGame)]);
                 alert("Game Saved");
             }
         }
@@ -568,7 +573,11 @@ function handleFileSelect(bQuick, CurID) {
     getDB().transaction(function(tx) {
         var desiredId = bQuick ? 0 : CurID;
         tx.executeSql("select * from RagsSave4 where id=" + desiredId, [], function(tx, results) {
-            TheGame = JSON.parse(results.rows.item(0).GameData);
+            TheGame = SetupGameData();
+            var changes = JSON.parse(results.rows.item(0).GameData);
+            for (var i = 0; i < changes.length; i++) {
+                DeepDiff.applyChange(TheGame, true, changes[i]);
+            }
             RoomChange(false, false);
             UpdateStatusBars();
             SetPortrait(TheGame.Player.PlayerPortrait);
@@ -630,6 +639,7 @@ function receivedText() {
         var ctx = canvas.getContext("2d");
         images = [];
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        OriginalGame = SetupGameData();
         TheGame = SetupGameData();
         if (TheGame.Player.bPromptForName) {
             $("#playernamechoice").css("visibility", "visible");

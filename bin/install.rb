@@ -9,7 +9,9 @@ usage: #{$0} directory_to_exported_rags_project
 end
 
 rags_project_dir = ARGV[0]
-src_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src'))
+root_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+src_dir = File.join(root_dir, 'src')
+node_modules_dir = File.join(root_dir, 'node_modules')
 
 puts "Searching '#{rags_project_dir}' for a .html file..."
 
@@ -29,6 +31,7 @@ File.write(File.join(rags_project_dir, "#{game_title.strip} - regalia.html"), ht
 
 FileUtils.rm_rf(File.join(rags_project_dir, 'regalia'))
 FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 'regalia'))
+FileUtils.copy(File.join(node_modules_dir, 'deep-diff', 'releases', 'deep-diff-0.3.8.min.js'), File.join(rags_project_dir, 'regalia', 'vendor'))
 
 puts "Copying Game.js content into Regalia folder..."
 FileUtils.mkdir_p(File.join(rags_project_dir, 'regalia', 'game'))

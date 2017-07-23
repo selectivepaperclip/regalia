@@ -12,10 +12,6 @@ function character() {
     this.bLeaveFirstTime = false;
     this.bAllowInventoryInteraction = false;
     this.CustomProperties = [];
-
-    this.ToString = function() {
-
-    };
 }
 
 function CharToString(thechar) {

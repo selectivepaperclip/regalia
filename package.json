@@ -1,0 +1,10 @@
+{
+  "name": "regalia",
+  "version": "0.1.0",
+  "description": "Improvements to the JS RAGS client",
+  "dependencies": {
+    "deep-diff": "0.3.8"
+  },
+  "devDependencies": {},
+  "license": "ISC"
+}

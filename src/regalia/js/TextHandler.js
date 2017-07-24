@@ -852,7 +852,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
         },
         '[INPUTDATA]', function () {
             var datatoinput = AdditionalData;
-            if (loopobject != null && loopobject.AdditionalInputData != null) {
+            if (loopobject != null && loopobject.AdditionalInputData) {
                 datatoinput = loopobject.AdditionalInputData;
             }
             return datatoinput;

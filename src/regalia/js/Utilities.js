@@ -150,16 +150,24 @@ function custom__showTextMenuChoice(title) {
     $("#textchoice input").focus();
 }
 
+function setAdditionalInputData(command, addinputdata) {
+    if (addinputdata) {
+        command.AdditionalInputData = addinputdata;
+    } else {
+        command.AdditionalInputData = undefined;
+    }
+}
+
 function AddToMaster(commands, addinputdata) {
     for (var _i = 0; _i < commands.length; _i++) {
-        commands[_i].AdditionalInputData = addinputdata;
+        setAdditionalInputData(commands[_i]);
         MasterCommandList.push(commands[_i]);
     }
 }
 
 function InsertToMaster(commands, addinputdata) {
     for (var _i = commands.length - 1; _i >= 0; _i--) {
-        commands[_i].AdditionalInputData = addinputdata;
+        setAdditionalInputData(commands[_i]);
         MasterCommandList.splice(0, 0, commands[_i]);
     }
 }
@@ -841,7 +849,6 @@ function ProcessAction(Action, bTimer) {
             $("#textactionchoice").css("visibility", "visible");
             $("#textactionchoice input").focus();
         }
-        var AdditionalInputData = "";
         if (act.InputType != "Text") {}
         custom__hideGameElements();
     } else {
@@ -1556,7 +1563,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                         var datatocheck = "";
                         if (AdditionalData != null)
                             datatocheck = AdditionalData; //AdditionalData[0];
-                        if (tempcond.AdditionalInputData != null && tempcond.AdditionalInputData != "")
+                        if (tempcond.AdditionalInputData)
                             datatocheck = tempcond.AdditionalInputData; //tempcond.AdditionalInputData[0];
                         if (acttype == "Text") {
                             if (step4.toLowerCase() == datatocheck.toLowerCase())

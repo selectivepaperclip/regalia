@@ -214,6 +214,7 @@
     <div class="savegames-header">
         <h3>Save Game</h3>
         <button id="new_savegame" class="btn">Create a New Save</button>
+        <button class="export_savegames btn btn">Export Saves</button>
         <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
     </div>
     <table class="savegames-table">
@@ -233,6 +234,7 @@
 <div id="loadmenu">
     <div class="savegames-header">
         <h3>Load Game</h3>
+        <button class="export_savegames btn btn">Export Saves</button>
         <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
     </div>
     <table class="savegames-table">
@@ -247,6 +249,18 @@
         </thead>
         <tbody id="loadinputchoices"></tbody>
     </table>
+</div>
+
+<div class="export-menu hidden">
+    <div class="export-menu-content">
+        To export, "Right-click + Save as..." on this link:
+        <div>
+            <a href="#" class="export-download-link">EXPORT</a>
+        </div>
+        <div class="export-menu-actions">
+            <button class="btn">Dismiss</button>
+        </div>
+    </div>
 </div>
 
 <div class="cheat-menu hidden">

@@ -388,7 +388,7 @@ body {
     display: none !important;
 }
 
-.cheat-menu {
+.cheat-menu, .export-menu {
     position: fixed;
     top: 0;
     right: 0;
@@ -398,18 +398,32 @@ body {
     z-index: 1;
 }
 
-.cheat-menu-content {
+.cheat-menu-content, .export-menu-content {
     font-family: sans-serif;
     padding: 15px;
     position: fixed;
-    top: 15%;
-    right: 20%;
-    left: 20%;
-    bottom: 15%;
     border: 1px solid grey;
     background: white;
     display: flex;
     flex-direction: column;
+}
+
+.cheat-menu-content {
+    top: 15%;
+    right: 20%;
+    left: 20%;
+    bottom: 15%;
+}
+
+.export-menu-content {
+    top: 35%;
+    right: 35%;
+    left: 35%;
+    text-align: center;
+}
+
+.export-menu-content a {
+    font-size: 32px;
 }
 
 .cheat-menu-title, .cheat-menu-subtitle {

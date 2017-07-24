@@ -255,6 +255,31 @@ $(function() {
     $(".destroy_savegames").on('click', function () {
         handleDestroyAllSaves();
     });
+
+    $(".export_savegames").on('click', function () {
+        $('.export-menu').removeClass('hidden');
+
+        $('.export-menu, .export-menu-actions button').click(function (e) {
+            $('.export-menu').addClass('hidden');
+        });
+
+        $('.export-menu-content').click(function (e) {
+            e.stopPropagation();
+        });
+
+        const downloadLink = $('.export-download-link')[0];
+        $(downloadLink).prop('disabled', true);
+        $(downloadLink).text('Loading...');
+        var filename = TheGame.Title + '-saves.json';
+        retrieveExportData(function (exportData) {
+            const csvAsBlob = new Blob([exportData], {type: 'text/plain'});
+            $(downloadLink).prop('disabled', false);
+            $(downloadLink).text('EXPORT');
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvAsBlob);
+            downloadLink.target = "_blank";
+        });
+    });
     
     var createSaveOrLoadMenuHandler = function ($menu, $menuChoices, saveOrLoadButtonText, onSelect) {
         return function (e) {

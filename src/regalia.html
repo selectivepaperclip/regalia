@@ -14,6 +14,7 @@
     <script src="regalia/vendor/jquery-1.7.1.min.js"></script>
     <script src="regalia/vendor/deep-diff-0.3.8.min.js"></script>
     <script src="regalia/js/polyfills.js"></script>
+    <script src="regalia/js/SaveAndLoad.js"></script>
     <script src="regalia/js/testing.js"></script>
     <script src="regalia/game/Game.js"></script>
     <script src="regalia/js/Room.js"></script>
@@ -210,48 +211,52 @@
     <source id="semusicsource" src=""/>
 </audio>
 
-<div id="savemenu">
-    <div class="savegames-header">
-        <h3>Save Game</h3>
-        <button id="new_savegame" class="btn">Create a New Save</button>
-        <button class="export_savegames btn btn">Export Saves</button>
-        <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
+<div class="save-menu hidden modal-backdrop">
+    <div class="save-menu-content">
+        <div class="savegames-header">
+            <h3>Save Game</h3>
+            <button id="new_savegame" class="btn">Create a New Save</button>
+            <button class="export_savegames btn btn">Export Saves</button>
+            <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
+        </div>
+        <table class="savegames-table">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th class="name-column">name</th>
+                <th>date</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="save-load-table-body"></tbody>
+        </table>
     </div>
-    <table class="savegames-table">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th class="name-column">name</th>
-            <th>date</th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody id="saveinputchoices"></tbody>
-    </table>
 </div>
 
-<div id="loadmenu">
-    <div class="savegames-header">
-        <h3>Load Game</h3>
-        <button class="export_savegames btn btn">Export Saves</button>
-        <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
+<div class="load-menu hidden modal-backdrop">
+    <div class="load-menu-content">
+        <div class="savegames-header">
+            <h3>Load Game</h3>
+            <button class="export_savegames btn btn">Export Saves</button>
+            <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
+        </div>
+        <table class="savegames-table">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th class="name-column">name</th>
+                <th>date</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="save-load-table-body"></tbody>
+        </table>
     </div>
-    <table class="savegames-table">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th class="name-column">name</th>
-            <th>date</th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody id="loadinputchoices"></tbody>
-    </table>
 </div>
 
-<div class="export-menu hidden">
+<div class="export-menu hidden modal-backdrop">
     <div class="export-menu-content">
         To export, "Right-click + Save as..." on this link:
         <div>
@@ -263,7 +268,7 @@
     </div>
 </div>
 
-<div class="cheat-menu hidden">
+<div class="cheat-menu hidden modal-backdrop">
     <div class="cheat-menu-content">
         <div class="cheat-menu-title">
             <h1>Cheat Menu</h1>

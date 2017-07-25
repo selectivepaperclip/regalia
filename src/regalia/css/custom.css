@@ -388,7 +388,7 @@ body {
     display: none !important;
 }
 
-.cheat-menu, .export-menu {
+.modal-backdrop {
     position: fixed;
     top: 0;
     right: 0;

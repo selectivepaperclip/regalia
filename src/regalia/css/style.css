@@ -118,25 +118,24 @@ table {
     width: 100%;
 }
 
-#savemenu, #loadmenu {
+.save-menu-content, .load-menu-content {
     position: absolute;
     background-color: White;
-    visibility: hidden;
     max-height: 300px;
     border: 1px solid grey;
     display: flex;
     flex-direction: column;
 }
 
-#savemenu h3, #loadmenu h3 {
+.save-menu-content h3, .load-menu-content h3 {
     margin: 0 0 4px 0;
 }
 
-#savemenu > * {
+.save-menu-content  > * {
     flex: 0 0 auto;
 }
 
-#savemenu .savegames-table {
+.save-menu-content .savegames-table {
     flex: 1 1 auto;
 }
 

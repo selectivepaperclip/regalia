@@ -15,37 +15,10 @@ var AdditionalData = "";
 var MovingDirection = "";
 var bMasterTimer = false;
 
-function getDB() {
-    return openDatabase(TheGame.Title, '1.0', 'Test DB', 2 * 1024 * 1024);
-}
-
-function copyDB(oldTitle) {
-    var oldDb = openDatabase(oldTitle, '1.0', 'Test DB', 2 * 1024 * 1024);
-    var newDb = getDB();
-    oldDb.transaction(function(tx) {
-        tx.executeSql("select * from RagsSave4", [], function(tx, oldDbSelectResult) {
-
-            newDb.transaction(function(tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS RagsSave4 (id unique,SaveName,date,Title,GameData)');
-                for (var i = 0; i < oldDbSelectResult.rows.length; i++) {
-                    var row = oldDbSelectResult.rows[i];
-                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [
-                        row.id,
-                        row.SaveName,
-                        row.date,
-                        row.Title,
-                        row.GameData
-                    ]);
-                }
-            });
-        });
-    });
-}
-
 function hideSaveAndLoadMenus() {
     custom__showGameElements();
-    $("#savemenu").css("visibility", "hidden");
-    $("#loadmenu").css("visibility", "hidden");
+    $(".save-menu").addClass("hidden");
+    $(".load-menu").addClass("hidden");
 }
 
 $(function() {
@@ -220,32 +193,28 @@ $(function() {
     }
 
     function addSavesToTable($tbody, buttonTitle) {
-        getDB().transaction(function (tx) {
-            tx.executeSql('SELECT id, SaveName, date FROM RagsSave4 order by id desc', [], function (tx, results) {
-                var len = results.rows.length;
-                for (var i = 0; i < len; i++) {
-                    var item = results.rows.item(i);
-                    var $tr = $('<tr></tr>');
-                    $tr.append('<td>' + item.id + '</td>');
-                    $tr.append('<td>' + item.SaveName + '</td>');
-                    $tr.append('<td>' + formatDate(new Date(item.date)) + '</td>');
-                    $tr.append('<td><button class="btn save-or-load">' + buttonTitle + '</button></td>');
-                    $tr.append('<td><button class="btn btn-danger destroy-save">Destroy</button></td>');
+        var savedGames = SavedGames.getSortedSaves();
+        savedGames.forEach(function (savedGame) {
+            var $tr = $('<tr></tr>');
+            $tr.append('<td>' + savedGame.id + '</td>');
+            $tr.append('<td>' + savedGame.name + '</td>');
+            $tr.append('<td>' + formatDate(new Date(savedGame.date)) + '</td>');
+            $tr.append('<td><button class="btn save-or-load">' + buttonTitle + '</button></td>');
+            $tr.append('<td><button class="btn btn-danger destroy-save">Destroy</button></td>');
 
-                    var $saveOrLoadButton = $tr.find('button.save-or-load');
-                    $saveOrLoadButton.data('save-id', item.id);
-                    $saveOrLoadButton.data('save-name', item.SaveName);
+            var $saveOrLoadButton = $tr.find('button.save-or-load');
+            $saveOrLoadButton.data('save-id', savedGame.id);
+            $saveOrLoadButton.data('save-name', savedGame.name);
 
-                    var $destroyButton = $tr.find('button.destroy-save');
-                    $destroyButton.data('save-id', item.id);
+            var $destroyButton = $tr.find('button.destroy-save');
+            $destroyButton.data('save-id', savedGame.id);
 
-                    $tbody.append($tr);
-                }
-
-                // Set visibility of things that care about there being saves
-                $tbody.closest('table').toggle(len > 0);
-            }, null);
+            $tbody.append($tr);
         });
+
+
+        // Set visibility of things that care about there being saves
+        $tbody.closest('table').toggle(savedGames.length > 0);
     }
 
     $("#new_savegame").on('click', function () {
@@ -281,9 +250,11 @@ $(function() {
         });
     });
     
-    var createSaveOrLoadMenuHandler = function ($menu, $menuChoices, saveOrLoadButtonText, onSelect) {
+    var createSaveOrLoadMenuHandler = function ($backdrop, $menu, saveOrLoadButtonText, onSelect) {
         return function (e) {
             $menu.off('click');
+
+            var $menuChoices = $menu.find('.save-load-table-body');
             $menuChoices.off('click');
             $menuChoices.empty();
 
@@ -306,21 +277,21 @@ $(function() {
 
             setElementTopleftToCursor($menu, e);
             hideSaveAndLoadMenus();
-            $menu.css("visibility", "visible");
+            $backdrop.removeClass("hidden");
 
-            $("body").off('click.saveloadmenubackground');
+            $backdrop.off('click.saveloadmenubackground');
             setTimeout(function () {
-                $("body").on('click.saveloadmenubackground', function() {
-                    $("body").off('click.saveloadmenubackground');
+                $backdrop.on('click.saveloadmenubackground', function() {
+                    $backdrop.off('click.saveloadmenubackground');
                     hideSaveAndLoadMenus();
                 });
             });
         };
     };
-    $("#load").click(createSaveOrLoadMenuHandler($("#loadmenu"), $("#loadinputchoices"), 'Load', function (saveId) {
+    $("#load").click(createSaveOrLoadMenuHandler($('.load-menu'), $(".load-menu-content"), 'Load', function (saveId) {
         handleFileSelect(false, saveId);
     }));
-    $("#save").click(createSaveOrLoadMenuHandler($("#savemenu"), $("#saveinputchoices"), 'Overwrite Save', function (saveId, saveName) {
+    $("#save").click(createSaveOrLoadMenuHandler($(".save-menu"), $('.save-menu-content'), 'Overwrite Save', function (saveId, saveName) {
         handleFileSave(false, false, saveId, saveName);
     }));
     $("div.genderchoiceSelect").click(function() {
@@ -418,9 +389,6 @@ $(function() {
     */
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
-    });
-    $("#savemenu").focusout(function() {
-        $("#savemenu").css("visibility", "hidden");
     });
     $("#RoomObjects").change(function(e) {
         selectedobj = GetObject($("#RoomObjects").val());
@@ -551,76 +519,47 @@ function saveDataFor(game) {
 }
 
 function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
-    var db = getDB();
-    var curindex = 1;
-    if (bQuick)
-        curindex = 0;
-    db.transaction(function(tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS RagsSave4 (id unique,SaveName,date,Title,GameData)');
-    });
-    db.transaction(function(tx) {
-        var curdate = new Date();
-        if (bQuick) {
-            tx.executeSql('SELECT id FROM RagsSave4 where id=0', [], function(tx, results) {
-                var len = results.rows.length;
-                if (len === 0) {
-                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [0, 'QuickSave', curdate, TheGame.Title, saveDataFor(TheGame)]);
-                } else {
-                    tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=0', ['QuickSave', curdate, TheGame.Title, saveDataFor(TheGame)]);
-                }
-                alert("Quick Saved");
-            });
-        } else {
-            var saveName = prompt("Give a name for the save", oldSaveName);
-            if (saveName === null) {
-                return;
-            }
-
-            if (bNew) {
-                tx.executeSql('SELECT id FROM RagsSave4', [], function(tx, results) {
-                    var len = results.rows.length;
-                    for (var i = 0; i < len; i++) {
-                        if (results.rows.item(i).id > curindex)
-                            curindex = results.rows.item(i).id;
-                    }
-                    tx.executeSql('INSERT INTO RagsSave4 (id,SaveName,date,Title,GameData) VALUES (?,?,?,?,?)', [curindex + 1, saveName, curdate, TheGame.Title, saveDataFor(TheGame)]);
-                    alert("Game Saved");
-                });
-            } else {
-                tx.executeSql('update RagsSave4 set SaveName=?,date=?,Title=?,GameData=? where id=' + CurID, [saveName, curdate, TheGame.Title, saveDataFor(TheGame)]);
-                alert("Game Saved");
-            }
+    var curdate = new Date();
+    if (bQuick) {
+        SavedGames.createSave(0, 'QuickSave', curdate, saveDataFor(TheGame));
+        alert("Quick Saved");
+    } else {
+        var saveName = prompt("Give a name for the save", oldSaveName);
+        if (saveName === null) {
+            return;
         }
-    });
+
+        SavedGames.createSave(bNew ? SavedGames.nextSaveId() : CurID, saveName, curdate, saveDataFor(TheGame));
+        alert("Game Saved");
+    }
 }
 
 function handleFileSelect(bQuick, CurID) {
-    getDB().transaction(function(tx) {
-        var desiredId = bQuick ? 0 : CurID;
-        tx.executeSql("select * from RagsSave4 where id=" + desiredId, [], function(tx, results) {
-            TheGame = SetupGameData();
-            var changes = JSON.parse(results.rows.item(0).GameData);
-            for (var i = 0; i < changes.length; i++) {
-                DeepDiff.applyChange(TheGame, true, changes[i]);
-            }
-            RoomChange(false, false);
-            UpdateStatusBars();
-            SetPortrait(TheGame.Player.PlayerPortrait);
-            $("#playernamechoice").css("visibility", "hidden");
-            $("#textactionchoice").css("visibility", "hidden");
-            $("#textchoice").css("visibility", "hidden");
-            $("#inputmenu").css("visibility", "hidden");
-            $("#selectionmenu").css("visibility", "hidden");
-            $("#genderchoice").css("visibility", "hidden");
-            $("#cmdinputmenu").css("visibility", "hidden");
-            custom__showGameElements();
-        });
-        if (bQuick) {
-            alert("Quick Loaded");
-        } else {
-            alert("Game Loaded");
-        }
-    });
+    var desiredId = bQuick ? 0 : CurID;
+    var savedGame = SavedGames.getSave(desiredId);
+
+    TheGame = SetupGameData();
+    var changes = JSON.parse(savedGame.gameData);
+    for (var i = 0; i < changes.length; i++) {
+        DeepDiff.applyChange(TheGame, true, changes[i]);
+    }
+    RoomChange(false, false);
+    UpdateStatusBars();
+    SetPortrait(TheGame.Player.PlayerPortrait);
+    $("#playernamechoice").css("visibility", "hidden");
+    $("#textactionchoice").css("visibility", "hidden");
+    $("#textchoice").css("visibility", "hidden");
+    $("#inputmenu").css("visibility", "hidden");
+    $("#selectionmenu").css("visibility", "hidden");
+    $("#genderchoice").css("visibility", "hidden");
+    $("#cmdinputmenu").css("visibility", "hidden");
+    custom__showGameElements();
+
+    if (bQuick) {
+        alert("Quick Loaded");
+    } else {
+        alert("Game Loaded");
+    }
 }
 
 function handleDestroySave(saveId) {
@@ -628,10 +567,8 @@ function handleDestroySave(saveId) {
     if (!confirmation) {
         return;
     }
-    getDB().transaction(function(tx) {
-        tx.executeSql("delete from RagsSave4 where id=" + saveId, []);
-        hideSaveAndLoadMenus();
-    });
+    SavedGames.destroySave(saveId);
+    hideSaveAndLoadMenus();
 }
 
 function handleDestroyAllSaves() {
@@ -639,23 +576,16 @@ function handleDestroyAllSaves() {
     if (!confirmation) {
         return;
     }
-    getDB().transaction(function(tx) {
-        tx.executeSql("delete from RagsSave4", []);
-        hideSaveAndLoadMenus();
-    });
+    SavedGames.reset();
+    hideSaveAndLoadMenus();
 }
 
 function retrieveExportData(callback) {
-    getDB().transaction(function(tx) {
-        tx.executeSql("select * from RagsSave4", [], function (tx, results) {
-            var resultArray = [];
-            var len = results.rows.length;
-            for (var i = 0; i < len; i++) {
-                resultArray.push(results.rows.item(i));
-            }
-            callback(JSON.stringify(resultArray));
-        });
+    var resultArray = [];
+    SavedGames.getSortedSaves().forEach(function (savedGame) {
+        resultArray.push(SavedGames.getSave(savedGame.id));
     });
+    callback(JSON.stringify(resultArray));
 }
 
 function receivedText() {

@@ -931,7 +931,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
     var desiredRoomId = currentroom.UniqueID;
     if (currentroom == null)
         return;
-    $("#RoomTitle").html(currentroom.Name);
+    $("#RoomTitle").html(roomDisplayName(currentroom));
     SetRoomThumb(currentroom.RoomPic);
     TheGame.Player.CurrentRoom = currentroom.UniqueID;
     if (MovingDirection) {

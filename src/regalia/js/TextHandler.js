@@ -911,10 +911,10 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
         '[ROOM.NAME]', function () {
             var temproom = loopobject;
             if (temproom != null)
-                return temproom.Name;
+                return roomDisplayName(temproom);
             else {
                 if (TheGame.Player.CurrentRoom != null) {
-                    return GetRoom(TheGame.Player.CurrentRoom).Name;
+                    return roomDisplayName(GetRoom(TheGame.Player.CurrentRoom));
                 }
             }
         },

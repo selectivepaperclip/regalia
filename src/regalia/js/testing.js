@@ -15,6 +15,10 @@ var AdditionalData = "";
 var MovingDirection = "";
 var bMasterTimer = false;
 
+function roomDisplayName(room) {
+    return room.SDesc || room.Name;
+}
+
 function hideSaveAndLoadMenus() {
     custom__showGameElements();
     $(".save-menu").addClass("hidden");
@@ -451,7 +455,7 @@ $(function() {
         }
         var direction = $el.data('direction');
         var destRoom = GetRoom(GetDestinationRoomName(direction));
-        $("#tooltip").text(destRoom.Name);
+        $("#tooltip").text(roomDisplayName(destRoom));
         $("#tooltip").css({
             "left": (window.x + 10) + "px",
             "top": window.y + "px",

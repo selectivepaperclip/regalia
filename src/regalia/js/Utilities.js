@@ -381,7 +381,7 @@ function RefreshInventory() {
             $("#Inventory").append($div);
             if (obj.bContainer) {
                 if ((obj.bOpenable) && (!obj.bOpen)) {} else {
-                    AddOpenedObjects(obj, $("#Inventory"), selectedobj);
+                    AddOpenedObjects(obj, $("#Inventory"), 'RoomObjects', selectedobj);
                 }
             }
         }
@@ -411,7 +411,7 @@ function RefreshRoomObjects() {
             $("#RoomObjects").append($div);
             if (obj.bContainer) {
                 if ((obj.bOpenable) && (!obj.bOpen)) {} else {
-                    AddOpenedObjects(obj, $("#RoomObjects"), selectedobj);
+                    AddOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects', selectedobj);
                 }
             }
         }
@@ -443,7 +443,7 @@ function RefreshRoomObjects() {
                             $("#RoomObjects").append($div);
                             if (tempobj.bContainer) {
                                 if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                    AddOpenedObjects(tempobj, $("#RoomObjects"), selectedobj);
+                                    AddOpenedObjects(tempobj, $("#RoomObjects"), 'RoomObjects', selectedobj);
                             }
                         }
                     }
@@ -477,12 +477,12 @@ function GetVariable(variableName) {
     });
 }
 
-function AddOpenedObjects(tempobj, thelistbox, selitem) {
+function AddOpenedObjects(tempobj, thelistbox, itemclass, selitem) {
     for (var i = 0; i < TheGame.Objects.length; i++) {
         var tempobj2 = TheGame.Objects[i];
         if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == tempobj.UniqueIdentifier) && (tempobj2.bVisible)) {
             var $div = $("<div>", {
-                class: "inputchoices",
+                class: itemclass,
                 text: "--" + objecttostring(tempobj2),
                 value: tempobj2.UniqueIdentifier
             });
@@ -499,7 +499,7 @@ function AddOpenedObjects(tempobj, thelistbox, selitem) {
 
             thelistbox.append($div);
             if ((tempobj2.bOpenable) && (tempobj2.bOpen)) {
-                AddOpenedObjects(tempobj2, thelistbox, selitem);
+                AddOpenedObjects(tempobj2, thelistbox, itemclass, selitem);
             }
         }
     }
@@ -767,7 +767,7 @@ function ProcessAction(Action, bTimer) {
 
                                     if (tempobj.bContainer) {
                                         if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                            AddOpenedObjects(tempobj, $("#inputchoices"), selectedobj);
+                                            AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices", selectedobj);
                                     }
                                 }
                             }
@@ -824,7 +824,7 @@ function ProcessAction(Action, bTimer) {
 
                                     if (tempobj.bContainer) {
                                         if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                            AddOpenedObjects(tempobj, $("#inputchoices"), selectedobj);
+                                            AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices", selectedobj);
                                     }
                                 }
                             }

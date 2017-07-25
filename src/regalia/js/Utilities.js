@@ -928,21 +928,32 @@ function runAfterPause(runNextPhase) {
 }
 
 function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
+    var desiredRoomId = currentroom.UniqueID;
     if (currentroom == null)
         return;
     $("#RoomTitle").html(currentroom.Name);
     SetRoomThumb(currentroom.RoomPic);
     TheGame.Player.CurrentRoom = currentroom.UniqueID;
-    $("#MainText").append('</br><b>' + MovingDirection + "</b>");
+    if (MovingDirection) {
+        $("#MainText").append('</br><b>' + MovingDirection + "</b>");
+    }
     if (bRunEvents && !currentroom.bEnterFirstTime) {
         currentroom.bEnterFirstTime = true;
         RunEvents("<<On Player Enter First Time>>");
     }
     runAfterPause(function () {
+        // Handle situations where one of the "Enter First Time" events triggers a new ChangeRoom
+        if (TheGame.Player.CurrentRoom !== desiredRoomId) {
+            return;
+        }
         if (bRunEvents) {
             RunEvents("<<On Player Enter>>");
         }
         runAfterPause(function () {
+            // Handle situations where one of the "Enter" events triggers a new ChangeRoom
+            if (TheGame.Player.CurrentRoom !== desiredRoomId) {
+                return;
+            }
             GetImage(currentroom.RoomPic);
             $("#MainText").animate({
                 scrollTop: $("#MainText")[0].scrollHeight
@@ -1598,6 +1609,14 @@ function RefreshPictureBoxes() {
 
     SetRoomThumb(GetRoom(TheGame.Player.CurrentRoom).RoomPic);
 
+}
+
+function movePlayerToRoom(roomName) {
+    MovingDirection = "";
+    TheGame.Player.CurrentRoom = roomName;
+    if (TheGame.Player.CurrentRoom) {
+        RoomChange(false, true);
+    }
 }
 
 function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
@@ -3027,8 +3046,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_MOVEPLAYER":
                         {
-                            TheGame.Player.CurrentRoom = part2;
-                            RoomChange(false, true);
+                            movePlayerToRoom(part2);
                             break;
                         }
                     case "CT_MOVETOCHAR":
@@ -3036,10 +3054,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempchar = GetCharacter(part2);
                             if (tempchar != null) {
                                 if (tempchar.CurrentRoom != VoidRoomGuid && tempchar.CurrentRoom != CurrentRoomGuid) {
-                                    TheGame.Player.CurrentRoom = tempchar.CurrentRoom;
+                                    movePlayerToRoom(tempchar.CurrentRoom);
                                 }
-                                if (TheGame.Player.CurrentRoom != null)
-                                    RoomChange(false, true);
                             }
                             break;
                         }
@@ -3048,10 +3064,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempobj = GetObject(part2);
                             if (tempobj != null) {
                                 if (tempobj.locationtype == "LT_ROOM") {
-                                    TheGame.Player.CurrentRoom = tempobj.locationname;
+                                    movePlayerToRoom(tempobj.locationname);
                                 }
-                                if (TheGame.Player.CurrentRoom != null)
-                                    RoomChange(false, true);
                             }
                             break;
                         }

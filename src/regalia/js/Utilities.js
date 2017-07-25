@@ -530,20 +530,20 @@ function RefreshCharacters() {
     }
 }
 
-function GetObject(uid) {
-    if (uid == null) {
+function GetObject(uidOrName) {
+    if (!uidOrName) {
         return null;
     }
-    uid = uid.trim();
+    uidOrName = uidOrName.trim();
 
-    for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-        if (TheGame.Objects[_i].UniqueIdentifier == uid) {
-            return TheGame.Objects[_i];
+    for (var i = 0; i < TheGame.Objects.length; i++) {
+        if (TheGame.Objects[i].UniqueIdentifier === uidOrName) {
+            return TheGame.Objects[i];
         }
     }
-    for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-        if (TheGame.Objects[_i].name == uid) {
-            return TheGame.Objects[_i];
+    for (var j = 0; j < TheGame.Objects.length; j++) {
+        if (TheGame.Objects[j].name && TheGame.Objects[j].name.toLowerCase() === uidOrName.toLowerCase()) {
+            return TheGame.Objects[j];
         }
     }
 }

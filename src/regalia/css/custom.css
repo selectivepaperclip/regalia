@@ -188,7 +188,7 @@ body {
     border: 0;
 }
 
-#RoomThumbImg.has-actions {
+#RoomThumbImg.has-actions, #PlayerImg.has-actions {
     border: 2px solid green;
     cursor: pointer;
 }

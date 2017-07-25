@@ -190,9 +190,9 @@ function SetBorders() {
         $("#RoomThumb, #RoomThumbImg").removeClass('has-actions');
     }
     if (GetActionCount(TheGame.Player.Actions) > 0) {
-        $("#PlayerImg").css("border-color", "green");
+        $("#PlayerImg").addClass("has-actions");
     } else {
-        $("#PlayerImg").css("border-color", "transparent");
+        $("#PlayerImg").removeClass("has-actions");
     }
 }
 

@@ -3762,6 +3762,8 @@ function RunEvents(EventType) {
         }
         for (var _i = 0; _i < TheGame.Objects.length; _i++) {
             var tempobj = TheGame.Objects[_i];
+            // TODO: maybe some better way of getting downstream things to know this is the selected obj
+            TheObj = tempobj;
             if (tempobj.locationtype == "LT_ROOM" && tempobj.locationname == TheGame.Player.CurrentRoom) {
                 if (EventType.indexOf("Player Enter") > -1) {
                     if (!tempobj.bEnterFirstTime) {
@@ -3825,6 +3827,7 @@ function RunEvents(EventType) {
                     }
                 }
             }
+            TheObj = undefined;
         }
         for (var _i = 0; _i < TheGame.Characters.length; _i++) {
             var tempchar = TheGame.Characters[_i];

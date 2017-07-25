@@ -477,10 +477,21 @@ function GetVariable(variableName) {
     });
 }
 
+function objectContainsObject(container, object) {
+    return (object.locationtype === "LT_IN_OBJECT") && (object.locationname === container.UniqueIdentifier) && (object.bVisible);
+}
+
+function characterHasObject(character, object) {
+    return (object.locationtype === "LT_CHARACTER") && (object.locationname === character.Charname) && (object.bVisible);
+}
+
 function AddOpenedObjects(tempobj, thelistbox, itemclass, selitem) {
     for (var i = 0; i < TheGame.Objects.length; i++) {
         var tempobj2 = TheGame.Objects[i];
-        if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == tempobj.UniqueIdentifier) && (tempobj2.bVisible)) {
+        if (
+            (objectContainsObject(tempobj, tempobj2)) ||
+            ((tempobj.constructor.name === "character") && characterHasObject(tempobj, tempobj2))
+        ) {
             var $div = $("<div>", {
                 class: itemclass,
                 text: "--" + objecttostring(tempobj2),
@@ -526,6 +537,9 @@ function RefreshCharacters() {
             });
 
             $("#VisibleCharacters").append($div);
+            if (obj.bAllowInventoryInteraction) {
+                AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters', selectedobj);
+            }
         }
     }
 }
@@ -2055,6 +2069,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 else
                                     Tempobj.bVisible = false;
                                 RefreshRoomObjects();
+                                RefreshCharacters();
+                                RefreshInventory();
                             }
                             break;
                         }

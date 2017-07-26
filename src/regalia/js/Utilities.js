@@ -570,7 +570,7 @@ function GetCharacter(characterName) {
 
     characterName = characterName.trim();
     for (var i = 0; i < TheGame.Characters.length; i++) {
-        if (TheGame.Characters[i].Charname == characterName) {
+        if (TheGame.Characters[i].Charname.toLowerCase() == characterName.toLowerCase()) {
             return TheGame.Characters[i];
         }
     }

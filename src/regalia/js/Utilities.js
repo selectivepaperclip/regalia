@@ -740,7 +740,7 @@ function ProcessAction(Action, bTimer) {
                 if (TheGame.Characters[i].CurrentRoom == TheGame.Player.CurrentRoom) {
                     var $div = $("<div>", {
                         class: "inputchoices",
-                        text: TheGame.Characters[i].Charname,
+                        text: CharToString(TheGame.Characters[i]),
                         value: TheGame.Characters[i].Charname
                     });
 
@@ -850,7 +850,7 @@ function ProcessAction(Action, bTimer) {
                 if (TheGame.Characters[i].CurrentRoom == TheGame.Player.CurrentRoom) {
                     var $div = $("<div>", {
                         class: "inputchoices",
-                        text: TheGame.Characters[i].Charname,
+                        text: CharToString(TheGame.Characters[i]),
                         value: TheGame.Characters[i].Charname
                     });
 
@@ -3143,7 +3143,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 for (var i = 0; i < TheGame.Characters.length; i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
-                                        text: TheGame.Character[i].Charname,
+                                        text: CharToString(TheGame.Character[i]),
                                         value: TheGame.Character[i].Charname
                                     });
 
@@ -3197,7 +3197,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 for (var i = 0; i < TheGame.Characters.length; i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
-                                        text: TheGame.Character[i].Charname,
+                                        text: CharToString(TheGame.Character[i]),
                                         value: TheGame.Character[i].Charname
                                     });
 

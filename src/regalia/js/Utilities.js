@@ -160,16 +160,16 @@ function setAdditionalInputData(command, addinputdata) {
 }
 
 function AddToMaster(commands, addinputdata) {
-    for (var _i = 0; _i < commands.length; _i++) {
-        setAdditionalInputData(commands[_i]);
-        MasterCommandList.push(commands[_i]);
+    for (var i = 0; i < commands.length; i++) {
+        setAdditionalInputData(commands[i]);
+        MasterCommandList.push(commands[i]);
     }
 }
 
 function InsertToMaster(commands, addinputdata) {
-    for (var _i = commands.length - 1; _i >= 0; _i--) {
-        setAdditionalInputData(commands[_i]);
-        MasterCommandList.splice(0, 0, commands[_i]);
+    for (var i = commands.length - 1; i >= 0; i--) {
+        setAdditionalInputData(commands[i]);
+        MasterCommandList.splice(0, 0, commands[i]);
     }
 }
 
@@ -227,9 +227,9 @@ function SetRoomThumb(ImageName) {
             if (checkimg.LayeredImages[0] != "") {
 
                 var thelayers = checkimg.LayeredImages[0].split(",");
-                for (var _i = 0; _i < thelayers.length; _i++) {
+                for (var i = 0; i < thelayers.length; i++) {
                     var img = $('<img class="RoomLayeredImage">');
-                    img.attr('src', "images/" + thelayers[_i]);
+                    img.attr('src', "images/" + thelayers[i]);
                     img.width($("#RoomThumbImg").width());
                     img.height($("#RoomThumbImg").height());
                     img.css({
@@ -271,9 +271,9 @@ function GetImage(ImageName) {
             if (checkimg.LayeredImages[0] != "") {
 
                 var thelayers = checkimg.LayeredImages[0].split(",");
-                for (var _i = 0; _i < thelayers.length; _i++) {
+                for (var i = 0; i < thelayers.length; i++) {
                     var img = $('<img class="MainLayeredImage">');
-                    img.attr('src', "images/" + thelayers[_i]);
+                    img.attr('src', "images/" + thelayers[i]);
                     img.css({
                         top: $("#MainImg").position().top,
                         left: $("#MainImg").position().left
@@ -319,9 +319,9 @@ function SetPortrait(ImageName) {
             if (checkimg.LayeredImages[0] != "") {
 
                 var thelayers = checkimg.LayeredImages[0].split(",");
-                for (var _i = 0; _i < thelayers.length; _i++) {
+                for (var i = 0; i < thelayers.length; i++) {
                     var img = $('<img class="PortraitLayeredImage">');
-                    img.attr('src', "images/" + thelayers[_i]);
+                    img.attr('src', "images/" + thelayers[i]);
                     img.width($("#PlayerImg").width());
                     img.height($("#PlayerImg").height());
                     img.css({
@@ -361,8 +361,8 @@ function SetupStatusBars() {
 
 function RefreshInventory() {
     $("#Inventory").empty();
-    for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-        var obj = TheGame.Objects[_i];
+    for (var i = 0; i < TheGame.Objects.length; i++) {
+        var obj = TheGame.Objects[i];
         if (obj.locationtype == "LT_PLAYER" && obj.bVisible) {
             var $div = $("<div>", {
                 class: "RoomObjects",
@@ -391,8 +391,8 @@ function RefreshInventory() {
 
 function RefreshRoomObjects() {
     $("#RoomObjects").empty();
-    for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-        var obj = TheGame.Objects[_i];
+    for (var i = 0; i < TheGame.Objects.length; i++) {
+        var obj = TheGame.Objects[i];
         if (obj.locationtype == "LT_ROOM" && obj.bVisible && obj.locationname == TheGame.Player.CurrentRoom) {
             var $div = $("<div>", {
                 class: "RoomObjects",
@@ -519,8 +519,8 @@ function AddOpenedObjects(tempobj, thelistbox, itemclass, selitem) {
 
 function RefreshCharacters() {
     $("#VisibleCharacters").empty();
-    for (var _i = 0; _i < TheGame.Characters.length; _i++) {
-        var obj = TheGame.Characters[_i];
+    for (var i = 0; i < TheGame.Characters.length; i++) {
+        var obj = TheGame.Characters[i];
         if (obj.CurrentRoom == TheGame.Player.CurrentRoom) {
             var $div = $("<div>", {
                 class: "VisibleCharacters",
@@ -569,22 +569,21 @@ function GetCharacter(characterName) {
     }
 
     characterName = characterName.trim();
-    for (var _i = 0; _i < TheGame.Characters.length; _i++) {
-        if (TheGame.Characters[_i].Charname == characterName) {
-            return TheGame.Characters[_i];
+    for (var i = 0; i < TheGame.Characters.length; i++) {
+        if (TheGame.Characters[i].Charname == characterName) {
+            return TheGame.Characters[i];
         }
     }
 }
 
 function AddChildAction(Actions, Indent, ActionName) {
-    for (var _i = 0; _i < Actions.length; _i++) {
-        if (Actions[_i].name.substring(0, 2) != "<<" && Actions[_i].bActive && Actions[_i].actionparent == ActionName) {
+    for (var i = 0; i < Actions.length; i++) {
+        if (Actions[i].name.substring(0, 2) != "<<" && Actions[i].bActive && Actions[i].actionparent == ActionName) {
             var $div = $("<div>", {
                 class: "ActionChoices",
-                text: Indent + Actions[_i].name,
-                value: Actions[_i].name
+                text: Indent + Actions[i].name,
+                value: Actions[i].name
             });
-
 
             $div.click(function() {
                 var selectionchoice = $(this).val();
@@ -608,11 +607,11 @@ function AddChildAction(Actions, Indent, ActionName) {
 
             $("#Actionchoices").append($div);
 
-            /* var newopt = new Option(Indent + Actions[_i].name, Actions[_i].name);
+            /* var newopt = new Option(Indent + Actions[i].name, Actions[i].name);
             
-            newopt.Action = Actions[_i];
+            newopt.Action = Actions[i];
             $("#Actionchoices").append(newopt);*/
-            AddChildAction(Actions, "--" + Indent, Actions[_i].name);
+            AddChildAction(Actions, "--" + Indent, Actions[i].name);
         }
     }
 }
@@ -703,9 +702,9 @@ function ProcessAction(Action, bTimer) {
     if (getObjectClass(Action) == "action" || Action.actionparent != null) //"actionparent" in Action)
         act = Action;
     else {
-        for (var _i = 0; _i < CurActions.length; _i++) {
-            if (CurActions[_i].name == Action) {
-                act = CurActions[_i];
+        for (var i = 0; i < CurActions.length; i++) {
+            if (CurActions[i].name == Action) {
+                act = CurActions[i];
                 break;
             }
         }
@@ -725,11 +724,11 @@ function ProcessAction(Action, bTimer) {
         InputDataObject = act;
         if (act.InputType == "Custom") {
             custom__clearInputChoices();
-            for (_i = 0; _i < act.CustomChoices.length; _i++) {
+            for (var i = 0; i < act.CustomChoices.length; i++) {
                 var $div = $("<div>", {
                     class: "inputchoices",
-                    text: PerformTextReplacements(act.CustomChoices[_i]),
-                    value: PerformTextReplacements(act.CustomChoices[_i])
+                    text: PerformTextReplacements(act.CustomChoices[i]),
+                    value: PerformTextReplacements(act.CustomChoices[i])
                 });
 
                 custom__addInputChoice($div);
@@ -737,12 +736,12 @@ function ProcessAction(Action, bTimer) {
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Character") {
             custom__clearInputChoices();
-            for (_i = 0; _i < TheGame.Characters.length; _i++) {
-                if (TheGame.Characters[_i].CurrentRoom == TheGame.Player.CurrentRoom) {
+            for (var i = 0; i < TheGame.Characters.length; i++) {
+                if (TheGame.Characters[i].CurrentRoom == TheGame.Player.CurrentRoom) {
                     var $div = $("<div>", {
                         class: "inputchoices",
-                        text: TheGame.Characters[_i].Charname,
-                        value: TheGame.Characters[_i].Charname
+                        text: TheGame.Characters[i].Charname,
+                        value: TheGame.Characters[i].Charname
                     });
 
                     custom__addInputChoice($div);
@@ -751,8 +750,8 @@ function ProcessAction(Action, bTimer) {
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Object") {
             custom__clearInputChoices();
-            for (_i = 0; _i < TheGame.Objects.length; _i++) {
-                var obj = TheGame.Objects[_i];
+            for (var i = 0; i < TheGame.Objects.length; i++) {
+                var obj = TheGame.Objects[i];
                 if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                     var $div = $("<div>", {
                         class: "inputchoices",
@@ -793,8 +792,8 @@ function ProcessAction(Action, bTimer) {
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "Inventory") {
             custom__clearInputChoices();
-            for (_i = 0; _i < TheGame.Objects.length; _i++) {
-                var obj = TheGame.Objects[_i];
+            for (var i = 0; i < TheGame.Objects.length; i++) {
+                var obj = TheGame.Objects[i];
                 if (obj.locationtype == "LT_PLAYER") {
                     var $div = $("<div>", {
                         class: "inputchoices",
@@ -808,8 +807,8 @@ function ProcessAction(Action, bTimer) {
             custom__setInputMenuTitle(act);
         } else if (act.InputType == "ObjectOrCharacter") {
             custom__clearInputChoices();
-            for (_i = 0; _i < TheGame.Objects.length; _i++) {
-                var obj = TheGame.Objects[_i];
+            for (var i = 0; i < TheGame.Objects.length; i++) {
+                var obj = TheGame.Objects[i];
                 if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                     var $div = $("<div>", {
                         class: "inputchoices",
@@ -847,12 +846,12 @@ function ProcessAction(Action, bTimer) {
                     }
                 }
             }
-            for (_i = 0; _i < TheGame.Characters.length; _i++) {
-                if (TheGame.Characters[_i].CurrentRoom == TheGame.Player.CurrentRoom) {
+            for (var i = 0; i < TheGame.Characters.length; i++) {
+                if (TheGame.Characters[i].CurrentRoom == TheGame.Player.CurrentRoom) {
                     var $div = $("<div>", {
                         class: "inputchoices",
-                        text: TheGame.Characters[_i].Charname,
-                        value: TheGame.Characters[_i].Charname
+                        text: TheGame.Characters[i].Charname,
+                        value: TheGame.Characters[i].Charname
                     });
 
                     custom__addInputChoice($div);
@@ -901,8 +900,8 @@ function ExecuteAction(act, bTimer, AdditionalInputData) {
     Logger.logExecutingAction(act);
     var bPassed = true;
     if (act.bConditionFailOnFirst) {
-        for (var _i = 0; _i < act.Conditions.length; _i++) {
-            var tempcond = act.Conditions[_i];
+        for (var i = 0; i < act.Conditions.length; i++) {
+            var tempcond = act.Conditions[i];
             if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, null)) {
                 if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
                     // Do nothing?
@@ -916,8 +915,8 @@ function ExecuteAction(act, bTimer, AdditionalInputData) {
         }
     } else {
         bPassed = (act.Conditions.length === 0);
-        for (var _i = 0; _i < act.Conditions.length; _i++) {
-            var tempcond = act.Conditions[_i];
+        for (var i = 0; i < act.Conditions.length; i++) {
+            var tempcond = act.Conditions[i];
             var btestresult = TestCondition(tempcond, AdditionalInputData, act.InputType, act, null);
             if (btestresult) {
                 bPassed = btestresult;
@@ -1359,8 +1358,8 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                                 temproom = GetRoom(roomname);
                             }
                             if (temproom != null) {
-                                for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                    var curprop = temproom.CustomProperties[_i];
+                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                    var curprop = temproom.CustomProperties[i];
                                     if (curprop.Name == property) {
                                         bResult = TestCustomProperty(curprop.Value, step3, step4);
                                         break;
@@ -1379,8 +1378,8 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             var temproom = null;
                             temproom = GetCharacter(roomname);
                             if (temproom != null) {
-                                for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                    var curprop = temproom.CustomProperties[_i];
+                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                    var curprop = temproom.CustomProperties[i];
                                     if (curprop.Name == property) {
                                         bResult = TestCustomProperty(curprop.Value, step3, step4);
                                         break;
@@ -1399,8 +1398,8 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             var temproom = null;
                             temproom = GetTimer(roomname);
                             if (temproom != null) {
-                                for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                    var curprop = temproom.CustomProperties[_i];
+                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                    var curprop = temproom.CustomProperties[i];
                                     if (curprop.Name == property) {
                                         bResult = TestCustomProperty(curprop.Value, step3, step4);
                                         break;
@@ -1419,8 +1418,8 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             var temproom = null;
                             temproom = GetVariable(roomname);
                             if (temproom != null) {
-                                for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                    var curprop = temproom.CustomProperties[_i];
+                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                    var curprop = temproom.CustomProperties[i];
                                     if (curprop.Name == property) {
                                         bResult = TestCustomProperty(curprop.Value, step3, step4);
                                         break;
@@ -1445,8 +1444,8 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                                 temproom = GetObject(roomname);
                             }
                             if (temproom != null) {
-                                for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                    var curprop = temproom.CustomProperties[_i];
+                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                    var curprop = temproom.CustomProperties[i];
                                     if (curprop.Name == property) {
                                         bResult = TestCustomProperty(curprop.Value, step3, step4);
                                         break;
@@ -1459,8 +1458,8 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                 case "CT_Player_CustomPropertyCheck":
                     {
                         var property = step2;
-                        for (var _i = 0; _i < TheGame.Player.CustomProperties.length; _i++) {
-                            var curprop = TheGame.Player.CustomProperties[_i];
+                        for (var i = 0; i < TheGame.Player.CustomProperties.length; i++) {
+                            var curprop = TheGame.Player.CustomProperties[i];
                             if (curprop.Name == property) {
                                 bResult = TestCustomProperty(curprop.Value, step3, step4);
                             }
@@ -1835,8 +1834,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             }
                             if (tempact != null) {
                                 var bfound = false;
-                                for (_i = 0; _i < tempact.CustomChoices.length; _i++) {
-                                    var str = tempact.CustomChoices[_i];
+                                for (var i = 0; i < tempact.CustomChoices.length; i++) {
+                                    var str = tempact.CustomChoices[i];
                                     if (str == cmdtxt) {
                                         bfound = true;
                                     }
@@ -1859,9 +1858,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             }
                             if (tempact != null) {
                                 var itemindex = 0;
-                                for (var _i = 0; _i < tempact.CustomChoices.length; _i++) {
-                                    if (tempact.CustomChoices[_i] == cmdtxt) {
-                                        tempact.CustomChoices.splice(_i, 1);
+                                for (var i = 0; i < tempact.CustomChoices.length; i++) {
+                                    if (tempact.CustomChoices[i] == cmdtxt) {
+                                        tempact.CustomChoices.splice(i, 1);
                                         break;
                                     }
                                 }
@@ -1899,8 +1898,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 var locname = tempobj.locationname;
                                 var bOkayToWear = true;
                                 var resultstring = "";
-                                for (var _i = 0; _i < tempobj.LayeredZoneLevels.length; _i++) {
-                                    var str = tempobj.LayeredZoneLevels[_i];
+                                for (var i = 0; i < tempobj.LayeredZoneLevels.length; i++) {
+                                    var str = tempobj.LayeredZoneLevels[i];
                                     var Zonelevel = str.split(":");
                                     for (var j = 0; j < TheGame.Objects.length; j++) {
                                         var checkobj = TheGame.Objects[j];
@@ -1951,8 +1950,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 var locname = tempobj.locationname;
                                 var bOkayToWear = true;
                                 var resultstring = "";
-                                for (var _i = 0; _i < tempobj.LayeredZoneLevels.length; _i++) {
-                                    var str = tempobj.LayeredZoneLevels[_i];
+                                for (var i = 0; i < tempobj.LayeredZoneLevels.length; i++) {
+                                    var str = tempobj.LayeredZoneLevels[i];
                                     var Zonelevel = str.split(":");
                                     for (var j = 0; j < TheGame.Objects.length; j++) {
                                         var checkobj = TheGame.Objects[j];
@@ -2042,8 +2041,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 Destobj = GetObject(part3);
                             }
                             if (Tempobj != null && Destobj != null) {
-                                for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                    var anObj = TheGame.Objects[_i];
+                                for (var i = 0; i < TheGame.Objects.length; i++) {
+                                    var anObj = TheGame.Objects[i];
                                     if (anObj.locationtype == "LT_IN_OBJECT" && anObj.locationname == Tempobj.UniqueIdentifier) {
                                         anObj.locationname = Destobj.UniqueIdentifier;
                                     }
@@ -2073,8 +2072,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_MOVEINVENTORYTOCHAR":
                         {
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var obj = TheGame.Objects[_i];
+                            for (var i = 0; i < TheGame.Objects.length; i++) {
+                                var obj = TheGame.Objects[i];
                                 if (obj.locationtype == "LT_PLAYER") {
                                     obj.locationtype = "LT_CHARACTER";
                                     obj.locationname = part2;
@@ -2084,8 +2083,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_MOVEINVENTORYTOROOM":
                         {
-                            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                var obj = TheGame.Objects[_i];
+                            for (var i = 0; i < TheGame.Objects.length; i++) {
+                                var obj = TheGame.Objects[i];
                                 if (obj.locationtype == "LT_PLAYER") {
                                     if (part2 == CurrentRoomGuid) {
                                         obj.locationtype = "LT_ROOM";
@@ -2105,8 +2104,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempchar = null;
                             tempchar = GetCharacter(part2);
                             if (tempchar != null) {
-                                for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                    var obj = TheGame.Objects[_i];
+                                for (var i = 0; i < TheGame.Objects.length; i++) {
+                                    var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_CHARACTER" && obj.locationname == tempchar.Charname && obj.bCarryable && obj.bVisible) {
                                         obj.locationtype = "LT_PLAYER";
                                     }
@@ -2123,8 +2122,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 temproom = TheGame.GetRoom(part2);
                             }
                             if (temproom != null) {
-                                for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                                    var obj = TheGame.Objects[_i];
+                                for (var i = 0; i < TheGame.Objects.length; i++) {
+                                    var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_ROOM" && obj.locationname == temproom.UniqueID && obj.bCarryable && obj.bVisible) {
                                         obj.locationtype = "LT_PLAYER";
                                     }
@@ -2381,8 +2380,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         temproom = GetRoom(roomname);
                                     }
                                     if (temproom != null) {
-                                        for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                            var curprop = temproom.CustomProperties[_i];
+                                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                            var curprop = temproom.CustomProperties[i];
                                             if (curprop.Name == propname) {
                                                 ValueToSet = curprop.Value;
                                             }
@@ -2424,8 +2423,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var temproom = null;
                                     temproom = GetTimer(roomname);
                                     if (temproom != null) {
-                                        for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                            var curprop = temproom.CustomProperties[_i];
+                                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                            var curprop = temproom.CustomProperties[i];
                                             if (curprop.Name == propname) {
                                                 ValueToSet = curprop.Value;
                                             }
@@ -2450,8 +2449,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var temproom = null;
                                     temproom = GetVariable(roomname);
                                     if (temproom != null) {
-                                        for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                            var curprop = temproom.CustomProperties[_i];
+                                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                            var curprop = temproom.CustomProperties[i];
                                             if (curprop.Name == propname) {
                                                 ValueToSet = curprop.Value;
                                             }
@@ -2476,8 +2475,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var temproom = null;
                                     temproom = GetCharacter(roomname);
                                     if (temproom != null) {
-                                        for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                            var curprop = temproom.CustomProperties[_i];
+                                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                            var curprop = temproom.CustomProperties[i];
                                             if (curprop.Name == propname) {
                                                 ValueToSet = curprop.Value;
                                             }
@@ -2508,8 +2507,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         temproom = GetObject(roomname);
                                     }
                                     if (temproom != null) {
-                                        for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                            var curprop = temproom.CustomProperties[_i];
+                                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                            var curprop = temproom.CustomProperties[i];
                                             if (curprop.Name == propname) {
                                                 ValueToSet = curprop.Value;
                                             }
@@ -2528,8 +2527,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             if (tempvar != null) {
                                 var ValueToSet = "";
                                 var propname = part3;
-                                for (var _i = 0; _i < temproom.CustomProperties.length; _i++) {
-                                    var curprop = temproom.CustomProperties[_i];
+                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
+                                    var curprop = temproom.CustomProperties[i];
                                     if (curprop.Name == propname) {
                                         ValueToSet = curprop.Value;
                                     }
@@ -3141,11 +3140,11 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Character") {
                                 custom__clearCmdInputChoices();
-                                for (_i = 0; _i < TheGame.Characters.length; _i++) {
+                                for (var i = 0; i < TheGame.Characters.length; i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
-                                        text: TheGame.Character[_i].Charname,
-                                        value: TheGame.Character[_i].Charname
+                                        text: TheGame.Character[i].Charname,
+                                        value: TheGame.Character[i].Charname
                                     });
 
                                     custom__addCmdInputChoice($div)
@@ -3153,8 +3152,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Object") {
                                 custom__clearCmdInputChoices();
-                                for (_i = 0; _i < TheGame.Objects.length; _i++) {
-                                    var obj = TheGame.Objects[_i];
+                                for (var i = 0; i < TheGame.Objects.length; i++) {
+                                    var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                                         var $div = $("<div>", {
                                             class: "cmdinputchoices",
@@ -3168,8 +3167,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Inventory") {
                                 custom__clearCmdInputChoices();
-                                for (_i = 0; _i < TheGame.Objects.length; _i++) {
-                                    var obj = TheGame.Objects[_i];
+                                for (var i = 0; i < TheGame.Objects.length; i++) {
+                                    var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER") {
                                         var $div = $("<div>", {
                                             class: "cmdinputchoices",
@@ -3183,8 +3182,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "ObjectOrCharacter") {
                                 custom__clearCmdInputChoices();
-                                for (_i = 0; _i < TheGame.Objects.length; _i++) {
-                                    var obj = TheGame.Objects[_i];
+                                for (var i = 0; i < TheGame.Objects.length; i++) {
+                                    var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                                         var $div = $("<div>", {
                                             class: "cmdinputchoices",
@@ -3195,11 +3194,11 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                         custom__addCmdInputChoice($div)
                                     }
                                 }
-                                for (_i = 0; _i < TheGame.Characters.length; _i++) {
+                                for (var i = 0; i < TheGame.Characters.length; i++) {
                                     var $div = $("<div>", {
                                         class: "cmdinputchoices",
-                                        text: TheGame.Character[_i].Charname,
-                                        value: TheGame.Character[_i].Charname
+                                        text: TheGame.Character[i].Charname,
+                                        value: TheGame.Character[i].Charname
                                     });
 
                                     custom__addCmdInputChoice($div)
@@ -3290,11 +3289,11 @@ function AddTextToRTF(text, clr, fontst) {
             tempindex = text.indexOf("[middle]", 0);
         }
         text = TextOnly(replacedtext);
-        for (var _i = 0; _i < styleformats.length; _i++) {
-            var startindex = text.indexOf(styleformats[_i][0]);
-            text = text.slice(0, startindex) + styleformats[_i][1] + text.slice(startindex);
-            startindex = text.indexOf(styleformats[_i][0]);
-            text = text.slice(0, startindex + styleformats[_i][0].length) + "</div>" + text.slice(startindex + styleformats[_i][0].length);
+        for (var i = 0; i < styleformats.length; i++) {
+            var startindex = text.indexOf(styleformats[i][0]);
+            text = text.slice(0, startindex) + styleformats[i][1] + text.slice(startindex);
+            startindex = text.indexOf(styleformats[i][0]);
+            text = text.slice(0, startindex + styleformats[i][0].length) + "</div>" + text.slice(startindex + styleformats[i][0].length);
         }
 
         $("#MainText").append('</br>' + text);
@@ -3580,8 +3579,8 @@ function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, repl
 function SetRagsObjectsFromJavascript(resultval) {
     var temparray = resultval;
     if (temparray != null) {
-        for (var _i = 0; _i < temparray.length; _i++) {
-            var tempobj = temparray[_i];
+        for (var i = 0; i < temparray.length; i++) {
+            var tempobj = temparray[i];
             if (tempobj.length > 0) {
                 var objtomodify = "[" + tempobj[0].toString() + "]";
                 var newval = tempobj[1].toString();
@@ -3759,8 +3758,8 @@ function RunEvents(EventType) {
         if (tempact != null) {
             ProcessAction(tempact, false);
         }
-        for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-            var tempobj = TheGame.Objects[_i];
+        for (var i = 0; i < TheGame.Objects.length; i++) {
+            var tempobj = TheGame.Objects[i];
             // TODO: maybe some better way of getting downstream things to know this is the selected obj
             TheObj = tempobj;
             if (tempobj.locationtype == "LT_ROOM" && tempobj.locationname == TheGame.Player.CurrentRoom) {
@@ -3828,8 +3827,8 @@ function RunEvents(EventType) {
             }
             TheObj = undefined;
         }
-        for (var _i = 0; _i < TheGame.Characters.length; _i++) {
-            var tempchar = TheGame.Characters[_i];
+        for (var i = 0; i < TheGame.Characters.length; i++) {
+            var tempchar = TheGame.Characters[i];
             if (tempchar.CurrentRoom == TheGame.Player.CurrentRoom) {
                 if (EventType.indexOf("Player Enter") > -1) {
                     if (!tempchar.bEnterFirstTime) {
@@ -3868,8 +3867,8 @@ function RunTimerEvents() {
     bRunningTimers = true;
     bResetTimer = false;
     currenttimer = "";
-    for (var _i = 0; _i < TheGame.Timers.length; _i++) {
-        var temptimer = TheGame.Timers[_i];
+    for (var i = 0; i < TheGame.Timers.length; i++) {
+        var temptimer = TheGame.Timers[i];
         if (temptimer != null) {
             currenttimer = temptimer.Name;
             var bresult = false;
@@ -3925,9 +3924,9 @@ function UpdateStatusBars() {
 }
 
 function GetExit(room, dir) {
-    for (var _i = 0; _i < room.Exits.length; _i++) {
-        if (room.Exits[_i].Direction == dir) {
-            return room.Exits[_i];
+    for (var i = 0; i < room.Exits.length; i++) {
+        if (room.Exits[i].Direction == dir) {
+            return room.Exits[i];
         }
     }
     return null;

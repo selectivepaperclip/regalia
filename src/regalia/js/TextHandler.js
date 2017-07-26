@@ -300,8 +300,8 @@ function ReplaceProperty(property, text, tempindex, replacementvalue) {
                 }
             }
             if (tempobj != null) {
-                for (var _i = 0; _i < tempobj.CustomProperties.length; _i++) {
-                    var prop = tempobj.CustomProperties[_i];
+                for (var i = 0; i < tempobj.CustomProperties.length; i++) {
+                    var prop = tempobj.CustomProperties[i];
                     if (prop.Name.toLowerCase() == partmatch.toLowerCase()) {
                         text = text.slice(0, tempindex) + prop.Value + text.slice(tempindex);
                         if (bReplacement) {
@@ -549,8 +549,8 @@ function ReplaceAttribute(AttType, text, tempindex, replacementvalue) {
                             {
                                 var layers = "[";
                                 var count = 0;
-                                for (var _i = 0; _i < tempobject.LayeredZoneLevels.length; _i++) {
-                                    var str = tempobject.LayeredZoneLevels[_i];
+                                for (var i = 0; i < tempobject.LayeredZoneLevels.length; i++) {
+                                    var str = tempobject.LayeredZoneLevels[i];
                                     if (count > 0)
                                         layers += ",";
                                     count++;
@@ -768,11 +768,11 @@ function JavaScriptArray(tempvar) {
         return "";
     var newval = "[";
     var count = -1;
-    for (var _i = 0; _i < tempvar.VarArray.length; _i++) {
+    for (var i = 0; i < tempvar.VarArray.length; i++) {
         count++;
         if (count > 0)
             newval += ",";
-        var row = tempvar.VarArray[_i];
+        var row = tempvar.VarArray[i];
         if (row != null) {
             newval += "[";
             var count2 = -1;
@@ -863,8 +863,8 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
         },
         '[CURRENTCARRY]', function () {
             var totalweight = 0;
-            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                var obj = ObjectList[_i];
+            for (var i = 0; i < TheGame.Objects.length; i++) {
+                var obj = ObjectList[i];
                 if (obj.locationtype == "LT_PLAYER") {
                     totalweight += GetItemWeight(obj.UniqueIdentifier);
                 }
@@ -1023,8 +1023,8 @@ function GetItemWeight(objid) {
     if (tempobj != null) {
         retval += tempobj.dWeight;
         if (tempobj.bContainer) {
-            for (var _i = 0; _i < TheGame.Objects.length; _i++) {
-                var containedobj = TheGame.Objects[_i];
+            for (var i = 0; i < TheGame.Objects.length; i++) {
+                var containedobj = TheGame.Objects[i];
                 if (containedobj.locationtype == "LT_IN_OBJECT" && containedobj.locationname == tempobj.UniqueIdentifier) {
                     retval += GetItemWeight(containedobj.UniqueIdentifier);
                 }

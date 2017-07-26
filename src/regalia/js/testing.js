@@ -403,8 +403,8 @@ $(function() {
         if (!TheGame) {
             return;
         }
-        for (var _i = 0; _i < TheGame.Timers.length; _i++) {
-            var curtimer = TheGame.Timers[_i];
+        for (var i = 0; i < TheGame.Timers.length; i++) {
+            var curtimer = TheGame.Timers[i];
             if (curtimer.Active && curtimer.LiveTimer) {
                 curtimer.curtickcount += 1000;
                 if (curtimer.curtickcount >= curtimer.TimerSeconds * 1000) {
@@ -476,9 +476,9 @@ function GetRoom(roomName) {
         }
     }
     //check by name if we get here
-    for (var i = 0; i < TheGame.Rooms.length; i++) {
-        if (TheGame.Rooms[i].Name == roomName) {
-            return TheGame.Rooms[i];
+    for (var j = 0; j < TheGame.Rooms.length; j++) {
+        if (TheGame.Rooms[j].Name == roomName) {
+            return TheGame.Rooms[j];
         }
     }
     return null;

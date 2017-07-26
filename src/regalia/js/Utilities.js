@@ -12,6 +12,7 @@ var MasterLoopObject = null;
 var MasterIdx = 0;
 var MasterLoopArray = null;
 var gamePaused = false;
+var CurActions = undefined;
 
 var Logger = {
     level: 0,
@@ -131,8 +132,8 @@ function custom__addCmdInputChoice($div) {
 
 function custom__setCmdInputForCustomChoices(title, tempcommand) {
     custom__clearCmdInputChoices();
-    for (_i = 0; _i < tempcommand.CustomChoices.length; _i++) {
-        var text = PerformTextReplacements(tempcommand.CustomChoices[_i]);
+    for (var i = 0; i < tempcommand.CustomChoices.length; i++) {
+        var text = PerformTextReplacements(tempcommand.CustomChoices[i]);
         var $div = $("<div>", {
             class: "cmdinputchoices",
             text: text,
@@ -635,12 +636,12 @@ function DisplayActions(Actions, clickEvent) {
 
     $("#Actionchoices").empty();
     CurActions = Actions;
-    for (_i = 0; _i < Actions.length; _i++) {
-        if (actionShouldBeVisible(Actions[_i])) {
+    for (var i = 0; i < Actions.length; i++) {
+        if (actionShouldBeVisible(Actions[i])) {
             var $div = $("<div>", {
                 class: "ActionChoices",
-                text: nameForAction(Actions[_i]),
-                value: Actions[_i].name
+                text: nameForAction(Actions[i]),
+                value: Actions[i].name
             });
 
             $div.click(function(e) {
@@ -664,7 +665,7 @@ function DisplayActions(Actions, clickEvent) {
             });
 
             $("#Actionchoices").append($div);
-            AddChildAction(Actions, "--", Actions[_i].name);
+            AddChildAction(Actions, "--", Actions[i].name);
         }
     }
 
@@ -700,7 +701,7 @@ function ProcessAction(Action, bTimer) {
     var act = null;
     bMasterTimer = bTimer;
     if (getObjectClass(Action) == "action" || Action.actionparent != null) //"actionparent" in Action)
-        act = Action
+        act = Action;
     else {
         for (var _i = 0; _i < CurActions.length; _i++) {
             if (CurActions[_i].name == Action) {
@@ -1760,7 +1761,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 }
                             }
                             break;
-                            break;
                         }
                     case "CT_DISPLAYITEMDESC":
                         {
@@ -1777,7 +1777,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_LOOP_BREAK":
                         {
                             return true;
-                            break;
                         }
                     case "CT_EXPORTVARIABLE":
                         {
@@ -1860,7 +1859,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             }
                             if (tempact != null) {
                                 var itemindex = 0;
-                                for (_i = 0; _i < tempact.CustomChoices.length; _i++) {
+                                for (var _i = 0; _i < tempact.CustomChoices.length; _i++) {
                                     if (tempact.CustomChoices[_i] == cmdtxt) {
                                         tempact.CustomChoices.splice(_i, 1);
                                         break;
@@ -1877,11 +1876,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_PAUSEGAME":
                         {
                             pausedindex = i;
-                            bExitPauseLoop = false;
                             AddTextToRTF("--------------------------------\r\n", "Black", "Bold");
                             PauseGame();
                             return;
-                            break;
                         }
                     case "CT_SETPLAYERNAME":
                         {
@@ -2199,7 +2196,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 if (TheObj != null) {
                                     var locationnameref = "";
                                     try {
-                                        locationnameref = part3;;
+                                        locationnameref = part3;
                                     } catch (err) {
                                         var locationobj = GetObject(part3);
                                         if (locationobj != null)
@@ -3135,7 +3132,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             custom__hideGameElements();
                             VariableGettingSet = tempcommand;
                             return;
-                            break;
                         }
                     case "CT_SETVARIABLEBYINPUT":
                         {
@@ -3216,7 +3212,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             VariableGettingSet = tempcommand;
                             custom__hideGameElements();
                             return;
-                            break;
                         }
                 }
             } catch (err) {
@@ -3385,13 +3380,6 @@ function CheckItemInInventory(tempobj) {
         return false;
 }
 
-function sleep(milliseconds) {
-    setTimeout(function() {
-        var start = new Date().getTime();
-        while ((new Date().getTime() - start) < milliseconds) {}
-    }, 0);
-}
-
 function GetCustomChoiceAction(type, name, actionname) {
     var tempact = null;
     if (type == "Chr") {
@@ -3403,13 +3391,11 @@ function GetCustomChoiceAction(type, name, actionname) {
     } else if (type == "Player") {
         tempact = GetAction(TheGame.Player.Actions, actionname);
     } else if (type == "Room") {
-        var temproom = null;
-        temproom = GetRoom(name);
+        var temproom = GetRoom(name);
         if (temproom != null)
             tempact = GetAction(temproom.Actions, actionname);
     } else if (type == "Timer") {
-        var temptimer = null;
-        temptimer = GetTimer(name);
+        var temptimer = GetTimer(name);
         if (temptimer != null)
             tempact = GetAction(temptimer.Actions, actionname);
     }
@@ -3671,12 +3657,9 @@ function SetCommandInput(tempcommand, Value) {
 }
 
 function SetCustomProperty(curprop, part3, replacedstring) {
-    var bInteger = false;
-    var iReplacedString = 0.0;
-    var iPropVal = 0.0;
-    iPropVal = parseFloat(curprop.Value);
-    iReplacedString = parseFloat(replacedstring);
-    bInteger = true;
+    var bInteger = true;
+    var iReplacedString = parseFloat(replacedstring);
+    var iPropVal = parseFloat(curprop.Value);
     if (isNaN(parseFloat(curprop.Value)) && isNaN(parseFloat(replacedstring))) {
         bInteger = false;
     }

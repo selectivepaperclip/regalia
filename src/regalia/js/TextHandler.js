@@ -525,7 +525,6 @@ function ReplaceAttribute(AttType, text, tempindex, replacementvalue) {
                                         }
                                     } else if (parts[3].toUpperCase() == "DESTINATIONNAME") {
                                         text = text.slice(0, tempindex) + tempexit.DestinationRoom + text.slice(tempindex);
-                                        t
                                         if (bReplacement) {
                                             tempexit.DestinationRoom = GetRoom(replacementvalue).UniqueID;
                                         }
@@ -767,9 +766,8 @@ function JavaScriptArray(tempvar) {
     }
     if (!bValidType)
         return "";
-    var newval = "";
+    var newval = "[";
     var count = -1;
-    newval = "[";
     for (var _i = 0; _i < tempvar.VarArray.length; _i++) {
         count++;
         if (count > 0)

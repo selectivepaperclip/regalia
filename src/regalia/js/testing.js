@@ -1,9 +1,6 @@
 ﻿
-var filename = "";
 var images = [];
-var loadedimages = 0;
 var curimage = 0;
-var reader;
 var pausedindex = 0;
 var pausecommandargs = null;
 var TheGame = null;
@@ -379,7 +376,7 @@ $(function() {
             DisplayActions(selectedobj.Actions);
         }
     });
-    $
+
     /*("div").click(function () {
     //alert($(this).text());
     //alert($(this).hasClass("VisibleCharacters"));
@@ -504,7 +501,6 @@ function GetDestinationRoomName(CurDirection) {
         for (var i = 0; i < CurrentRoom.Exits.length; i++) {
             if (CurrentRoom.Exits[i].Direction == CurDirection) {
                 return CurrentRoom.Exits[i].DestinationRoom;
-                break;
             }
         }
     }
@@ -623,8 +619,7 @@ function StartGame() {
     if (currentroom != null) {
         ChangeRoom(currentroom, true, true);
     }
-    AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular")
-    $
+    AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");
     /*("#MainText").append('</br>' + PerformTextReplacements(TheGame.OpeningMessage,null));
     $("#MainText").animate({
     scrollTop: $("#MainText")[0].scrollHeight
@@ -634,33 +629,10 @@ function StartGame() {
     RunEvents("<<On Game Start>>");
 }
 
-function doSomething() {
-    curimage++;
-    if (curimage + 1 >= TheGame.Images.length)
-        curimage = 0;
-    GetImage(TheGame.Images[curimage].TheName);
-}
-
 function calculateRoomThumbScale(image) {
     if (image == null)
         return;
     var curcanvas = document.getElementById("RoomThumb");
-    var canvaswidth = curcanvas.offsetWidth;
-    var canvasheight = curcanvas.offsetHeight;
-    var imagewidth = image.width;
-    var imageheight = image.height;
-    var widthscale = canvaswidth / imagewidth;
-    var heightscale = canvasheight / imageheight;
-    if (widthscale <= heightscale)
-        return widthscale;
-    else
-        return heightscale;
-}
-
-function calculateScale(image) {
-    if (image == null)
-        return;
-    var curcanvas = document.getElementById("MainPic");
     var canvaswidth = curcanvas.offsetWidth;
     var canvasheight = curcanvas.offsetHeight;
     var imagewidth = image.width;
@@ -697,5 +669,3 @@ function GetImageMimeType(lastthree) {
     }
     return "";
 }
-
-function FileLoaded(theFile) {}

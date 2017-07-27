@@ -3056,7 +3056,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     alert("Error in command CT_MoveChar.  Could not locate a room called " + part3);
                                     continue;
                                 }
-                                GetCharacter(part2).CurrentRoom = part3;
+                                GetCharacter(part2).CurrentRoom = GetRoom(part3).UniqueID;
                                 if (part3 == TheGame.Player.CurrentRoom) {
                                     var tempact = GetAction(tempchar.Actions, "<<On Character Enter>>");
                                     if (tempact != null)
@@ -3097,7 +3097,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempobj = GetObject(part3);
                             if (tempobj != null && tempchar != null) {
                                 if (tempobj.locationtype == "LT_ROOM") {
-                                    tempchar.CurrentRoom = tempobj.locationname;
+                                    tempchar.CurrentRoom = GetRoom(tempobj.locationname).UniqueID;
                                 }
                                 if (TheGame.Player.CurrentRoom == tempobj.locationname)
                                     RoomChange(false, false);

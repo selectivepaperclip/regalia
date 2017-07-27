@@ -1678,13 +1678,23 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                 switch (tempcommand.cmdtype) {
                     case "CT_LAYEREDIMAGE_ADD":
                         {
+                            function uniqueArray(array) {
+                                var hsh = {};
+                                for (var i = 0; i < array.length; i++) {
+                                    hsh[array[i]] = true;
+                                }
+                                return Object.keys(hsh);
+                            }
+
                             var temp = GetGameImage(part2);
                             if (temp != null) {
-                                if (temp.LayeredImages[0].length > 0)
-                                    temp.LayeredImages[0] += ",";
-                                temp.LayeredImages[0] += part3;
+                                var layeredImagesArray = temp.LayeredImages[0].split(',');
+                                layeredImagesArray.push(part3);
+                                layeredImagesArray = layeredImagesArray.filter(function (image) {
+                                    return !!image;
+                                });
 
-                                //temp.LayeredImages.Add(part3);
+                                temp.LayeredImages[0] = uniqueArray(layeredImagesArray).join(',');
                                 RefreshPictureBoxes();
                             }
                             break;

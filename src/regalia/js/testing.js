@@ -55,21 +55,15 @@ $(function() {
     $("#Actionchoices").change(function(e) {
         var selectionchoice = $("#Actionchoices").val();
         if (selectionchoice != null) {
-            $("#MainText").append('</br><b>' + selectionchoice + "</b>");
-            $("#MainText").animate({
-                scrollTop: $("#MainText")[0].scrollHeight
+            custom__executeAndRunTimers(function () {
+                $("#MainText").append('</br><b>' + selectionchoice + "</b>");
+                $("#MainText").animate({
+                    scrollTop: $("#MainText")[0].scrollHeight
+                });
+                $("#selectionmenu").css("visibility", "hidden");
+                ResetLoopObjects();
+                ProcessAction(selectionchoice);
             });
-            $("#selectionmenu").css("visibility", "hidden");
-            ResetLoopObjects();
-            ProcessAction(selectionchoice);
-            //we may await user input...if so, don't run events
-            //if out of commands
-            if (!bGameReset && MasterCommandList.length == 0) {
-                RunTimerEvents();
-                UpdateStatusBars();
-            } else
-                bGameReset = false;
-
         }
     });
     $("#Continue").click(function(e) {
@@ -102,6 +96,7 @@ $(function() {
     function setTextInputChoice () {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
+            gamePaused = false;
             custom__showGameElements();
             $("#textinput").val('');
             $("#textchoice").css("visibility", "hidden");
@@ -119,6 +114,7 @@ $(function() {
     $("#playernamebutton").click(function(e) {
         AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");
+        gamePaused = false;
         custom__showGameElements();
         var newname = $("#playernametext").val();
         TheGame.Player.Name = newname.trim();
@@ -298,6 +294,7 @@ $(function() {
     $("div.genderchoiceSelect").click(function() {
         selectedobj = $(this).val();
         if (selectedobj != null) {
+            gamePaused = false;
             custom__showGameElements();
             $("#genderchoice").css("visibility", "hidden");
             StartGame();
@@ -307,6 +304,7 @@ $(function() {
         selectedobj = $("#inputchoices").val();
         if (selectedobj != null) {
             AdditionalData = selectedobj;
+            gamePaused = false;
             custom__showGameElements();
             $("#inputmenu").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
@@ -325,6 +323,7 @@ $(function() {
         if (selectedobj != null) {
             $("#textactioninput").val('');
             AdditionalData = selectedobj;
+            gamePaused = false;
             custom__showGameElements();
             $("#textactionchoice").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
@@ -343,6 +342,7 @@ $(function() {
     $("#cmdinputchoices").change(function(e) {
         selectedobj = $("#cmdinputchoices").val();
         if (selectedobj != null) {
+            gamePaused = false;
             custom__showGameElements();
             $("#cmdinputmenu").css("visibility", "hidden");
             SetCommandInput(VariableGettingSet, selectedobj);
@@ -351,12 +351,14 @@ $(function() {
     });
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
+        gamePaused = false;
         custom__showGameElements();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });
     $("#cmdCancelInput").click(function(e) {
         AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");
+        gamePaused = false;
         custom__showGameElements();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });

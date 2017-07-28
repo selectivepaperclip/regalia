@@ -4,7 +4,6 @@ var bRunningTimers = false;
 var AdditionalInput = "";
 var InputDataObject = null;
 var TheObj = null;
-var bGameReset = false;
 var bCancelMove = false;
 var bResetTimer = false;
 var CurrentImage = "";
@@ -79,21 +78,34 @@ function custom__hideGameElements() {
     $(".compass-direction").css("visibility", "hidden");
 }
 
+function custom__executeAndRunTimers(fn) {
+    var wasRunningTimers = bRunningTimers;
+
+    fn();
+
+    if (MasterCommandList.length == 0 && !gamePaused && !wasRunningTimers) {
+        RunTimerEvents();
+        UpdateStatusBars();
+    }
+}
+
 function custom__addInputChoice($div) {
     $div.click(function() {
         selectedobj = $(this).val();
         if (selectedobj != null) {
-            AdditionalData = selectedobj;
-            custom__showGameElements();
-            $("#inputmenu").css("visibility", "hidden");
-            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                if (bMasterTimer)
-                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                else
-                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-            }
+            custom__executeAndRunTimers(function () {
+                AdditionalData = selectedobj;
+                gamePaused = false;
+                custom__showGameElements();
+                $("#inputmenu").css("visibility", "hidden");
+                if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
+                    ExecuteAction(InputDataObject, true, selectedobj);
+                    if (bMasterTimer)
+                        RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                    else
+                        RunCommands(TheObj, selectedobj, InputDataObject, null);
+                }
+            });
         }
     });
 
@@ -118,11 +130,14 @@ function custom__addCmdInputChoice($div) {
     $div.click(function () {
         selectedobj = $(this).val();
         if (selectedobj != null) {
-            $("#cmdinputmenu").hide();
-            custom__showGameElements();
-            $("#cmdinputmenu").css("visibility", "hidden");
-            SetCommandInput(VariableGettingSet, selectedobj);
-            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+            custom__executeAndRunTimers(function () {
+                $("#cmdinputmenu").hide();
+                gamePaused = false;
+                custom__showGameElements();
+                $("#cmdinputmenu").css("visibility", "hidden");
+                SetCommandInput(VariableGettingSet, selectedobj);
+                RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+            });
         }
     });
 
@@ -588,20 +603,15 @@ function AddChildAction(Actions, Indent, ActionName) {
             $div.click(function() {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
-                    $("#MainText").append('</br><b>' + selectionchoice + "</b>");
-                    $("#MainText").animate({
-                        scrollTop: $("#MainText")[0].scrollHeight
+                    custom__executeAndRunTimers(function () {
+                        $("#MainText").append('</br><b>' + selectionchoice + "</b>");
+                        $("#MainText").animate({
+                            scrollTop: $("#MainText")[0].scrollHeight
+                        });
+                        $("#selectionmenu").css("visibility", "hidden");
+                        ResetLoopObjects();
+                        ProcessAction(selectionchoice);
                     });
-                    $("#selectionmenu").css("visibility", "hidden");
-                    ResetLoopObjects();
-                    ProcessAction(selectionchoice);
-                    //we may await user input...if so, don't run events
-                    //if out of commands
-                    if (!bGameReset && MasterCommandList.length == 0) {
-                        RunTimerEvents();
-                        UpdateStatusBars();
-                    } else
-                        bGameReset = false;
                 }
             });
 
@@ -646,20 +656,15 @@ function DisplayActions(Actions, clickEvent) {
             $div.click(function(e) {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
-                    $("#MainText").append('</br><b>' + selectionchoice + "</b>");
-                    $("#MainText").animate({
-                        scrollTop: $("#MainText")[0].scrollHeight
+                    custom__executeAndRunTimers(function () {
+                        $("#MainText").append('</br><b>' + selectionchoice + "</b>");
+                        $("#MainText").animate({
+                            scrollTop: $("#MainText")[0].scrollHeight
+                        });
+                        $("#selectionmenu").css("visibility", "hidden");
+                        ResetLoopObjects();
+                        ProcessAction(selectionchoice);
                     });
-                    $("#selectionmenu").css("visibility", "hidden");
-                    ResetLoopObjects();
-                    ProcessAction(selectionchoice);
-                    //we may await user input...if so, don't run events
-                    //if out of commands
-                    if (!bGameReset && MasterCommandList.length == 0) {
-                        RunTimerEvents();
-                        UpdateStatusBars();
-                    } else
-                        bGameReset = false;
                 }
             });
 
@@ -864,6 +869,7 @@ function ProcessAction(Action, bTimer) {
             $("#textactionchoice input").focus();
         }
         if (act.InputType != "Text") {}
+        gamePaused = true;
         custom__hideGameElements();
     } else {
         ExecuteAction(act, bTimer);
@@ -896,7 +902,7 @@ function isLoopCheck(check) {
     return loopCondTypes.indexOf(check.CondType) > -1;
 }
 
-function ExecuteAction(act, bTimer, AdditionalInputData) {
+function ExecuteAction(act, runNext, AdditionalInputData) {
     Logger.logExecutingAction(act);
     var bPassed = true;
     if (act.bConditionFailOnFirst) {
@@ -906,11 +912,11 @@ function ExecuteAction(act, bTimer, AdditionalInputData) {
                 if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
                     // Do nothing?
                 } else {
-                    addCommands(bTimer, tempcond.PassCommands, AdditionalInputData, act);
+                    addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
                 }
             } else {
                 bPassed = false;
-                addCommands(bTimer, tempcond.FailCommands, AdditionalInputData, act);
+                addCommands(runNext, tempcond.FailCommands, AdditionalInputData, act);
             }
         }
     } else {
@@ -920,16 +926,24 @@ function ExecuteAction(act, bTimer, AdditionalInputData) {
             var btestresult = TestCondition(tempcond, AdditionalInputData, act.InputType, act, null);
             if (btestresult) {
                 bPassed = btestresult;
-                addCommands(bTimer, tempcond.PassCommands, AdditionalInputData, act);
+                addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
             } else {
-                addCommands(bTimer, tempcond.FailCommands, AdditionalInputData, act);
+                addCommands(runNext, tempcond.FailCommands, AdditionalInputData, act);
             }
         }
     }
     if (bPassed) {
-        addCommands(bTimer, act.PassCommands, AdditionalInputData, act);
+        addCommands(runNext, act.PassCommands, AdditionalInputData, act);
     } else {
-        addCommands(bTimer, act.FailCommands, AdditionalInputData, act);
+        addCommands(runNext, act.FailCommands, AdditionalInputData, act);
+    }
+}
+
+function runNextAfterPause(runNextPhase) {
+    if (gamePaused) {
+        MasterCommandList.unshift(runNextPhase);
+    } else {
+        runNextPhase();
     }
 }
 
@@ -1637,7 +1651,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
     pausecommandargs = arguments;
     var bResult = false;
     var i = 0;
-    while (MasterCommandList.length > 0 && $("#RoomThumb").css("visibility") != "hidden") {
+    while (MasterCommandList.length > 0 && !gamePaused) {
         if (typeof MasterCommandList[0] === "function") {
             var callback = MasterCommandList[0];
             MasterCommandList.splice(0, 1);
@@ -2335,10 +2349,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 temptimer.TurnNumber = 0;
                                 if (bRunningTimers && currenttimer == temptimer.Name) {
                                     bResetTimer = true;
-                                    return false;
                                 } else {
                                     bResetTimer = false;
-                                    return false;
                                 }
                             }
                             break;
@@ -3138,6 +3150,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             } else if (acttype == "Text") {
                                 custom__showTextMenuChoice(part4);
                             } else {}
+                            gamePaused = true;
                             custom__hideGameElements();
                             VariableGettingSet = tempcommand;
                             return;
@@ -3219,6 +3232,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__showTextMenuChoice(part4);
                             } else {}
                             VariableGettingSet = tempcommand;
+                            gamePaused = true;
                             custom__hideGameElements();
                             return;
                         }
@@ -3873,32 +3887,52 @@ function RunEvents(EventType) {
     }
 }
 
+function runSingleTimer(temptimer) {
+    currenttimer = temptimer.Name;
+    RunTimer(temptimer, function () {
+        if (bResetTimer) {
+            runSingleTimer(temptimer);
+        }
+    });
+}
+
 function RunTimerEvents() {
+    if (bRunningTimers) {
+        return;
+    }
+
+    if (TheGame == null)
+        return;
+
     bRunningTimers = true;
     bResetTimer = false;
     currenttimer = "";
     for (var i = 0; i < TheGame.Timers.length; i++) {
-        var temptimer = TheGame.Timers[i];
-        if (temptimer != null) {
-            currenttimer = temptimer.Name;
-            var bresult = false;
-            if (!temptimer.LiveTimer) {
-                bresult = RunTimer(temptimer);
-                while (!bresult) {
-                    bresult = RunTimer(temptimer);
-                }
-            }
+        var timer = TheGame.Timers[i];
+        var lastTimer = (i === TheGame.Timers - 1);
+        if (!timer.LiveTimer) {
+            runAfterPause(function (timer) {
+                return function () {
+                    if (timer != null) {
+                        runSingleTimer(timer);
+                    }
+                };
+            }(timer));
         }
-        if (TheGame == null)
-            return;
     }
-    RefreshInventory();
-    RefreshRoomObjects();
-    RefreshCharacters();
+    runAfterPause(function () {
+        bRunningTimers = false;
+        RefreshInventory();
+        RefreshRoomObjects();
+        RefreshCharacters();
+    });
 }
 
-function RunTimer(temptimer) {
-    var bresult = true;
+function RunTimer(temptimer, callback) {
+    if (!callback) {
+        callback = function () { };
+    }
+
     bResetTimer = false;
     if (temptimer.Active) {
         temptimer.TurnNumber++;
@@ -3910,23 +3944,31 @@ function RunTimer(temptimer) {
             var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
             if (tempact != null)
                 ProcessAction(tempact, false); //null);
-            if (bResetTimer)
-                return false;
-            tempact = GetAction(temptimer.Actions, "<<On Turn " +
-                temptimer.TurnNumber.toString() + ">>");
-            if (tempact != null)
-                ProcessAction(tempact, false); //null);
-            if (bResetTimer)
-                return false;
-            if (temptimer.TurnNumber == temptimer.Length) {
-                tempact = GetAction(temptimer.Actions, "<<On Last Turn>>");
+
+            UpdateStatusBars();
+            runNextAfterPause(function () {
+                if (bResetTimer)
+                    return callback();
+                tempact = GetAction(temptimer.Actions, "<<On Turn " +
+                    temptimer.TurnNumber.toString() + ">>");
                 if (tempact != null)
                     ProcessAction(tempact, false); //null);
-            }
+                UpdateStatusBars();
+
+                runNextAfterPause(function () {
+                    if (bResetTimer)
+                        return callback();
+                    if (temptimer.TurnNumber == temptimer.Length) {
+                        tempact = GetAction(temptimer.Actions, "<<On Last Turn>>");
+                        if (tempact != null)
+                            ProcessAction(tempact, false); //null);
+                    }
+                    UpdateStatusBars();
+                    callback();
+                });
+            });
         }
-        UpdateStatusBars();
     }
-    return bresult;
 }
 
 function UpdateStatusBars() {

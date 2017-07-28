@@ -616,10 +616,10 @@ function StartGame() {
     var currentroom = GetRoom(TheGame.Player.StartingRoom);
     SetupStatusBars();
     RefreshInventory();
+    AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");
     if (currentroom != null) {
         ChangeRoom(currentroom, true, true);
     }
-    AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");
     /*("#MainText").append('</br>' + PerformTextReplacements(TheGame.OpeningMessage,null));
     $("#MainText").animate({
     scrollTop: $("#MainText")[0].scrollHeight

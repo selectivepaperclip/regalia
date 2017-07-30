@@ -126,25 +126,6 @@ $(function() {
         }
     });
 
-    // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
-    if (!String.prototype.padStart) {
-        String.prototype.padStart = function padStart(targetLength,padString) {
-            targetLength = targetLength>>0; //floor if number or convert non-number to 0;
-            padString = String(padString || ' ');
-            if (this.length > targetLength) {
-                return String(this);
-            }
-            else {
-                targetLength = targetLength-this.length;
-                if (targetLength > padString.length) {
-                    padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
-                }
-                return padString.slice(0,targetLength) + String(this);
-            }
-        };
-    }
-
     function formatDate(date) {
         var weekdays = [
             "Sunday",
@@ -378,18 +359,6 @@ $(function() {
             DisplayActions(selectedobj.Actions);
         }
     });
-
-    /*("div").click(function () {
-    //alert($(this).text());
-    //alert($(this).hasClass("VisibleCharacters"));
-    selectedobj = GetCharacter($(this).text());
-    if (selectedobj != null) {
-    TheObj = selectedobj;
-    //$("#VisibleCharacters").val([]);
-    DisplayActions(selectedobj.Actions);
-    }
-    });
-    */
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
     });
@@ -621,12 +590,8 @@ function StartGame() {
     AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");
     if (currentroom != null) {
         ChangeRoom(currentroom, true, true);
+        showImage(currentroom.RoomPic);
     }
-    /*("#MainText").append('</br>' + PerformTextReplacements(TheGame.OpeningMessage,null));
-    $("#MainText").animate({
-    scrollTop: $("#MainText")[0].scrollHeight
-    });
-    */
     SetPortrait(TheGame.Player.PlayerPortrait);
     RunEvents("<<On Game Start>>");
 }

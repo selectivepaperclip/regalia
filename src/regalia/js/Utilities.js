@@ -240,7 +240,6 @@ function SetRoomThumb(ImageName) {
         if (checkimg != null) {
             //layers?
             if (checkimg.LayeredImages[0] != "") {
-
                 var thelayers = checkimg.LayeredImages[0].split(",");
                 for (var i = 0; i < thelayers.length; i++) {
                     var img = $('<img class="RoomLayeredImage">');
@@ -257,21 +256,13 @@ function SetRoomThumb(ImageName) {
                     });
                     img.appendTo('#RoomImageLayers');
                 }
-
             }
-
-
-
-
         }
-
     };
     tempimage.src = "images/" + ImageName;
-
-
 }
 
-function GetImage(ImageName) {
+function showImage(ImageName) {
     if (ImageName == null || ImageName == "None")
         return;
     $("#MainImageLayers").empty();
@@ -295,18 +286,10 @@ function GetImage(ImageName) {
                     });
                     img.appendTo('#MainImageLayers');
                 }
-
             }
-
-
-
-
         }
     };
     tempimage.src = "images/" + ImageName;
-
-
-
 }
 
 function SetPortrait(ImageName) {
@@ -349,19 +332,10 @@ function SetPortrait(ImageName) {
                     });
                     img.appendTo('#PortraitImageLayers');
                 }
-
             }
-
-
-
-
         }
-
     };
     tempimage.src = "images/" + ImageName;
-
-
-
 }
 
 function SetupStatusBars() {
@@ -982,7 +956,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
             if (TheGame.Player.CurrentRoom !== desiredRoomId) {
                 return;
             }
-            GetImage(currentroom.RoomPic);
+            showImage(currentroom.RoomPic);
             $("#MainText").animate({
                 scrollTop: $("#MainText")[0].scrollHeight
             });
@@ -1017,51 +991,6 @@ function SetExits() {
                 $(".compass-direction[data-direction=" + direction + "]").addClass("active");
             }
         }
-    }
-}
-
-function CheckGroupMembership(step2, step3, groupMembershipType) {
-    //step 2 is the item, step 3 is the group
-    var TheTable = "Media";
-    var TheGroup = "MediaGroups";
-    if (groupMembershipType == "GroupMembershipType.GM_Item") {
-        TheTable = "Items";
-        TheGroup = "ItemGroups";
-    }
-    /* SqlCeConnection con = Game.GetDBConnection();
-    SqlCeCommand cmd = new SqlCeCommand(@"select GroupName from " + TheTable + @" where
-    Name=@name",con);
-    cmd.Parameters.AddWithValue("@name", step2);
-    SqlCeDataReader dr = cmd.ExecuteReader();
-    string itemvalue = string.Empty;
-    if (dr.Read())
-    {
-    itemvalue = dr["GroupName"].ToString();
-    }
-    dr.Close();
-    dr.Dispose();
-    cmd.Dispose();*/
-
-    if (itemvalue == step3) {
-        return true;
-    } else {
-        /* string cmdtext = string.Empty;
-
-        cmdtext = @"Select Name from " + TheGroup + @" where
-        parent=@parent";
-        cmd = new SqlCeCommand(cmdtext, con);
-        cmd.Parameters.AddWithValue("@parent", step3);
-        dr = cmd.ExecuteReader();
-        while (dr.Read())
-        {
-        bool bretval = CheckGroupMembership(step2, dr["Name"].ToString(), groupMembershipType);
-        if (bretval)
-        {
-        return bretval;
-        }
-
-        }*/
-        return false;
     }
 }
 
@@ -1108,7 +1037,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                     }
                 case "CT_MultiMedia_InGroup":
                     {
-                        break;
+                        throw new Error("CT_MultiMedia_InGroup not implemented!");
                     }
                 case "CT_Item_Held_By_Player":
                     {
@@ -1632,11 +1561,10 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
 }
 
 function RefreshPictureBoxes() {
-    GetImage(CurrentImage);
+    showImage(CurrentImage);
     SetPortrait(TheGame.Player.PlayerPortrait);
 
     SetRoomThumb(GetRoom(TheGame.Player.CurrentRoom).RoomPic);
-
 }
 
 function movePlayerToRoom(roomName) {
@@ -1765,11 +1693,11 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_ITEM_GETRANDOMGROUP":
                         {
-                            break;
+                            throw new Error("CT_ITEM_GETRANDOMGROUP not implemented!");
                         }
                     case "CT_MM_GETRANDOMGROUP":
                         {
-                            break;
+                            throw new Error("CT_MM_GETRANDOMGROUP not implemented!");
                         }
                     case "CT_Status_ItemVisibleInvisible":
                         {
@@ -2172,7 +2100,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var tempchar = null;
                             tempchar = GetCharacter(part2);
                             if (tempchar != null) {
-                                GetImage(tempchar.CharPortrait);
+                                showImage(tempchar.CharPortrait);
                             }
                             break;
                         }
@@ -2180,12 +2108,12 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             if (part2 == CurrentRoomGuid) {
                                 var currentroom = GetRoom(TheGame.Player.CurrentRoom);
-                                GetImage(currentroom.RoomPic);
+                                showImage(currentroom.RoomPic);
                             } else {
                                 var temproom = null;
                                 temproom = GetRoom(part2);
                                 if (temproom != null) {
-                                    GetImage(temproom.RoomPic);
+                                    showImage(temproom.RoomPic);
                                 }
                             }
                             break;
@@ -2825,7 +2753,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             if (temproom != null) {
                                 temproom.RoomPic = part3;
                                 if (temproom == TheGame.Player.CurrentRoom) {
-                                    GetImage(temproom.RoomPic);
+                                    showImage(temproom.RoomPic);
                                 }
                             }
                             break;
@@ -2846,7 +2774,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_DISPLAYLAYEREDPICTURE":
                     case "CT_DISPLAYPICTURE":
                         {
-                            GetImage(part2);
+                            showImage(part2);
                             break;
                         }
                     case "CT_MM_SET_BACKGROUND_MUSIC":

@@ -188,14 +188,46 @@ function InsertToMaster(commands, addinputdata) {
     }
 }
 
+function escapeQuotedTags(str) {
+    var insideQuote = false;
+    var result = [];
+    var quoteContent = [];
+    for (var i = 0; i < str.length; i++) {
+        var thisChr = str[i];
+        var prevChr = str[i-1];
+        if (insideQuote) {
+            quoteContent.push(thisChr);
+            if (thisChr === "\n") {
+                quoteContent[quoteContent.length - 1] = "&lt;br&gt;"
+            } else if (thisChr === '"' && prevChr != "\\") {
+                result = result.concat(
+                    quoteContent
+                        .join('')
+                        .replace(new RegExp(/<\s*\/br\s*>/, "g"), "&lt;br&gt;")
+                        .replace(new RegExp(/<\s*br\s*>/, "g"), "&lt;br&gt;")
+                        .split('')
+                );
+                insideQuote = false;
+                quoteContent = [];
+            }
+        } else if (thisChr === '"' && prevChr != "\\") {
+            insideQuote = true;
+            quoteContent = [thisChr];
+        } else {
+            result.push(thisChr);
+        }
+    }
+    return result.join('');
+}
+
 function evalJankyJavascript(str) {
-    return eval(
-        str
-            .replace(new RegExp("//.*?<\s*/?\s*br\s*>", "g"), "") // line comments ending in <br>
-            .replace(new RegExp("</br>", "g"), "")
-            .replace(new RegExp("<br>", "g"), "")
-            .replace(new RegExp("\n", "g"), "")
-    );
+    var escapedStr = escapeQuotedTags(str)
+        .replace(new RegExp("//.*?<\s*/?\s*br\s*>", "g"), "") // line comments ending in <br>
+        .replace(new RegExp("</br>", "g"), "")
+        .replace(new RegExp("<br>", "g"), "")
+        .replace(new RegExp("&lt;br&gt;", "g"), "<br>")
+        .replace(new RegExp("\n", "g"), "");
+    return eval(escapedStr);
 }
 
 function SetBorders() {

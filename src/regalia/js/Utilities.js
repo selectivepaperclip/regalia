@@ -294,34 +294,45 @@ function SetRoomThumb(ImageName) {
     tempimage.src = "images/" + ImageName;
 }
 
+var mainImageExtraLayers = [];
 function showImage(ImageName) {
     if (ImageName == null || ImageName == "None")
         return;
-    $("#MainImageLayers").empty();
     CurrentImage = ImageName;
+    mainImageExtraLayers = [];
+    renderMainImageAndLayers();
+}
+
+function renderMainImageAndLayers() {
+    $("#MainImageLayers").empty();
+
+    var layers = [];
+    var checkimg = GetGameImage(CurrentImage);
+    if (checkimg != null) {
+        if (checkimg.LayeredImages[0] != "") {
+            layers = layers.concat(checkimg.LayeredImages[0].split(","));
+        }
+    }
+    layers = layers.concat(mainImageExtraLayers);
+
     var tempimage = new Image();
     tempimage.onload = function() {
-        $("#MainImg").attr("src", "images/" + ImageName);
+        $("#MainImg").attr("src", "images/" + CurrentImage);
 
-        var checkimg = GetGameImage(ImageName);
-        if (checkimg != null) {
-            //layers?
-            if (checkimg.LayeredImages[0] != "") {
-
-                var thelayers = checkimg.LayeredImages[0].split(",");
-                for (var i = 0; i < thelayers.length; i++) {
-                    var img = $('<img class="MainLayeredImage">');
-                    img.attr('src', "images/" + thelayers[i]);
-                    img.css({
-                        top: $("#MainImg").position().top,
-                        left: $("#MainImg").position().left
-                    });
-                    img.appendTo('#MainImageLayers');
-                }
-            }
-        }
+        $('.MainLayeredImage').css({
+            top: $("#MainImg").position().top,
+            left: $("#MainImg").position().left
+        });
+        $('.MainLayeredImage').height($("#MainImg").height());
+        $('.MainLayeredImage').width($("#MainImg").width());
     };
-    tempimage.src = "images/" + ImageName;
+    tempimage.src = "images/" + CurrentImage;
+
+    for (var i = 0; i < layers.length; i++) {
+        var img = $('<img class="MainLayeredImage">');
+        img.attr('src', "images/" + layers[i]);
+        img.appendTo('#MainImageLayers');
+    }
 }
 
 function SetPortrait(ImageName) {
@@ -2804,6 +2815,11 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             break;
                         }
                     case "CT_DISPLAYLAYEREDPICTURE":
+                        {
+                            mainImageExtraLayers.push(part2);
+                            renderMainImageAndLayers();
+                            break;
+                        }
                     case "CT_DISPLAYPICTURE":
                         {
                             showImage(part2);

@@ -76,10 +76,6 @@ p {
 
 .MainLayeredImage {
     position: absolute;
-    width: 50%;
-    margin-left: 5px;
-    top: 40px;
-    left: 300px;
     vertical-align: top;
 }
 

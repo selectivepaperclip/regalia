@@ -12,6 +12,7 @@ var MasterIdx = 0;
 var MasterLoopArray = null;
 var gamePaused = false;
 var CurActions = undefined;
+var runningLiveTimerCommands = false;
 
 var Logger = {
     level: 0,
@@ -925,7 +926,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
     if (act.bConditionFailOnFirst) {
         for (var i = 0; i < act.Conditions.length; i++) {
             var tempcond = act.Conditions[i];
-            if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, null)) {
+            if (TestCondition(tempcond, AdditionalInputData, act, null)) {
                 if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
                     // Do nothing?
                 } else {
@@ -940,7 +941,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
         bPassed = (act.Conditions.length === 0);
         for (var i = 0; i < act.Conditions.length; i++) {
             var tempcond = act.Conditions[i];
-            var btestresult = TestCondition(tempcond, AdditionalInputData, act.InputType, act, null);
+            var btestresult = TestCondition(tempcond, AdditionalInputData, act, null);
             if (btestresult) {
                 bPassed = btestresult;
                 addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
@@ -1037,7 +1038,7 @@ function SetExits() {
     }
 }
 
-function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) {
+function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobject) {
     var bResult = true;
     var counter = 0;
 
@@ -1576,7 +1577,7 @@ function TestCondition(tempcond, AdditionalInputData, acttype, Act, loopobject) 
                             datatocheck = AdditionalData; //AdditionalData[0];
                         if (tempcond.AdditionalInputData)
                             datatocheck = tempcond.AdditionalInputData; //tempcond.AdditionalInputData[0];
-                        if (acttype == "Text") {
+                        if (conditionAction.InputType == "Text") {
                             if (step4.toLowerCase() == datatocheck.toLowerCase())
                                 bResult = true;
                             else
@@ -1622,7 +1623,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
     pausecommandargs = arguments;
     var bResult = false;
     var i = 0;
-    while (MasterCommandList.length > 0 && !gamePaused) {
+    while (MasterCommandList.length > 0 && (!gamePaused || runningLiveTimerCommands)) {
         if (typeof MasterCommandList[0] === "function") {
             var callback = MasterCommandList[0];
             MasterCommandList.splice(0, 1);
@@ -1642,7 +1643,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
         }
         MasterCommandList.splice(0, 1);
         if (tempcond != null) {
-            if (TestCondition(tempcond, AdditionalInputData, act.InputType, act, LoopObj)) {
+            if (TestCondition(tempcond, AdditionalInputData, act, LoopObj)) {
                 if (tempcond.Checks.length === 1 && isLoopCheck(tempcond.Checks[0])) {
                     // Do nothing?
                 } else {
@@ -2816,7 +2817,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_DISPLAYLAYEREDPICTURE":
                         {
-                            mainImageExtraLayers.push(part2);
+                            mainImageExtraLayers = [part2];
                             renderMainImageAndLayers();
                             break;
                         }
@@ -3916,34 +3917,46 @@ function RunTimer(temptimer, callback) {
             if (!temptimer.Restart)
                 temptimer.Active = false;
             temptimer.TurnNumber = 0;
-        } else {
-            var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
+            return;
+        }
+
+        var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
+        if (tempact != null) {
+            if (temptimer.LiveTimer) {
+                runningLiveTimerCommands = true;
+                MasterCommandList.unshift(function () {
+                   runningLiveTimerCommands = false;
+                });
+                ProcessAction(tempact, true);
+                RunCommands(TheObj, null, null, null);
+                return;
+            } else {
+                ProcessAction(tempact, false);
+            }
+        }
+
+        UpdateStatusBars();
+        runNextAfterPause(function () {
+            if (bResetTimer)
+                return callback();
+            tempact = GetAction(temptimer.Actions, "<<On Turn " +
+                temptimer.TurnNumber.toString() + ">>");
             if (tempact != null)
                 ProcessAction(tempact, false); //null);
-
             UpdateStatusBars();
+
             runNextAfterPause(function () {
                 if (bResetTimer)
                     return callback();
-                tempact = GetAction(temptimer.Actions, "<<On Turn " +
-                    temptimer.TurnNumber.toString() + ">>");
-                if (tempact != null)
-                    ProcessAction(tempact, false); //null);
+                if (temptimer.TurnNumber == temptimer.Length) {
+                    tempact = GetAction(temptimer.Actions, "<<On Last Turn>>");
+                    if (tempact != null)
+                        ProcessAction(tempact, false); //null);
+                }
                 UpdateStatusBars();
-
-                runNextAfterPause(function () {
-                    if (bResetTimer)
-                        return callback();
-                    if (temptimer.TurnNumber == temptimer.Length) {
-                        tempact = GetAction(temptimer.Actions, "<<On Last Turn>>");
-                        if (tempact != null)
-                            ProcessAction(tempact, false); //null);
-                    }
-                    UpdateStatusBars();
-                    callback();
-                });
+                callback();
             });
-        }
+        });
     }
 }
 

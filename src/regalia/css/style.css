@@ -1,6 +1,8 @@
 ﻿body {
     background-color: white;
     color: black;
+    min-width: 750px;
+    min-height: 500px;
 }
 
 div {

@@ -979,6 +979,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
         return;
     $("#RoomTitle").html(roomDisplayName(currentroom));
     SetRoomThumb(currentroom.RoomPic);
+    showImage(currentroom.RoomPic);
     TheGame.Player.CurrentRoom = currentroom.UniqueID;
     if (MovingDirection) {
         $("#MainText").append('</br><b>' + MovingDirection + "</b>");
@@ -1000,7 +1001,6 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
             if (TheGame.Player.CurrentRoom !== desiredRoomId) {
                 return;
             }
-            showImage(currentroom.RoomPic);
             $("#MainText").animate({
                 scrollTop: $("#MainText")[0].scrollHeight
             });

@@ -590,7 +590,6 @@ function StartGame() {
     AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");
     if (currentroom != null) {
         ChangeRoom(currentroom, true, true);
-        showImage(currentroom.RoomPic);
     }
     SetPortrait(TheGame.Player.PlayerPortrait);
     RunEvents("<<On Game Start>>");

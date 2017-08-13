@@ -66,3 +66,13 @@ The export code in the original 'Save To Web Format(BETA)' feature does an okay 
 ## Problems
 
 I don't know, file an issue, I guess. I don't have a lot of time to work on this project anymore, but maybe we can figure something out.
+
+## For Developers
+
+### Running Tests
+
+On windows:
+`cmd /C "set GAMES_DIR=C:\a-directory-with-games-in-it && rspec spec`
+
+Elsewhere:
+`GAMES_DIR=/a/directory/with/games/in/it rspec spec`

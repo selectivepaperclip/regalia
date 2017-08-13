@@ -205,6 +205,7 @@ $(function() {
 
     $(".export_savegames").on('click', function () {
         $('.export-menu').removeClass('hidden');
+        $('.export-menu, .export-menu-actions button, .export-menu-content').off();
 
         $('.export-menu, .export-menu-actions button').click(function (e) {
             $('.export-menu').addClass('hidden');
@@ -225,6 +226,30 @@ $(function() {
             downloadLink.download = filename;
             downloadLink.href = window.URL.createObjectURL(csvAsBlob);
             downloadLink.target = "_blank";
+        });
+    });
+
+    $(".import_savegames").on('click', function () {
+        $('.import-menu').removeClass('hidden');
+        $('.import-menu, .import-menu-actions button, .import-menu-content, .import-menu-content input').off();
+        $('.import-menu-content input[type=file]').val('');
+
+        $('.import-menu, .import-menu-actions button').click(function (e) {
+            $('.import-menu').addClass('hidden');
+        });
+
+        $('.import-menu-content').click(function (e) {
+            e.stopPropagation();
+        });
+
+        $('.import-menu-content input[type=file]').change(function (e) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                SavedGames.import(JSON.parse(this.result));
+                $('.import-menu').addClass('hidden');
+                hideSaveAndLoadMenus();
+            };
+            reader.readAsText(this.files[0]);
         });
     });
     

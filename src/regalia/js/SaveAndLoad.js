@@ -59,5 +59,18 @@ var SavedGames = {
             }
         }
         localStorage.setItem(this.keyForIndex(), JSON.stringify({}));
+    },
+    import: function (newSaves) {
+        var savedGames = this.getIndex();
+        for (var i = 0; i < newSaves.length; i++) {
+            var newSave = newSaves[i];
+            savedGames[newSave.id] = {
+                id: newSave.id,
+                name: newSave.name,
+                date: newSave.date
+            };
+            localStorage.setItem(this.keyForSave(newSave.id), JSON.stringify(newSave));
+        }
+        localStorage.setItem(this.keyForIndex(), JSON.stringify(savedGames));
     }
 };

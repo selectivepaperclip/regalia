@@ -216,6 +216,7 @@
             <h3>Save Game</h3>
             <button id="new_savegame" class="btn">Create a New Save</button>
             <button class="export_savegames btn btn">Export Saves</button>
+            <button class="import_savegames btn btn">Import Saves</button>
             <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
         </div>
         <table class="savegames-table">
@@ -238,6 +239,7 @@
         <div class="savegames-header">
             <h3>Load Game</h3>
             <button class="export_savegames btn btn">Export Saves</button>
+            <button class="import_savegames btn btn">Import Saves</button>
             <button class="destroy_savegames btn btn-danger">Destroy All Saves</button>
         </div>
         <table class="savegames-table">
@@ -262,6 +264,18 @@
             <a href="#" class="export-download-link">EXPORT</a>
         </div>
         <div class="export-menu-actions">
+            <button class="btn">Dismiss</button>
+        </div>
+    </div>
+</div>
+
+<div class="import-menu hidden modal-backdrop">
+    <div class="import-menu-content">
+        To import, choose a .json file of exported saves in this picker:
+        <div>
+            <input type="file">
+        </div>
+        <div class="import-menu-actions">
             <button class="btn">Dismiss</button>
         </div>
     </div>

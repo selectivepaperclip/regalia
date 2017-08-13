@@ -398,7 +398,7 @@ body {
     z-index: 1;
 }
 
-.cheat-menu-content, .export-menu-content {
+.cheat-menu-content, .import-menu-content, .export-menu-content {
     font-family: sans-serif;
     padding: 15px;
     position: fixed;
@@ -415,7 +415,7 @@ body {
     bottom: 15%;
 }
 
-.export-menu-content {
+.import-menu-content, .export-menu-content {
     top: 35%;
     right: 35%;
     left: 35%;
@@ -424,6 +424,10 @@ body {
 
 .export-menu-content a {
     font-size: 32px;
+}
+
+.import-menu-content input {
+    margin: 20px 0;
 }
 
 .cheat-menu-title, .cheat-menu-subtitle {

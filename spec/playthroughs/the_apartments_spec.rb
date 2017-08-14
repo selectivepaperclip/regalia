@@ -99,35 +99,6 @@ def go_to_room(destination_room)
   end
 end
 
-def go_direction(direction)
-  page.find(".compass-direction[data-direction=\"#{direction}\"]").click
-end
-
-def continue_until_unpaused
-  while (continue_button = page.all('#Continue', visible: true)[0])
-    click_on 'Continue'
-  end
-end
-
-def click_on_character(character)
-  page.find(".VisibleCharacters", text: character).click
-end
-
-def click_on_object(object)
-  page.find(".RoomObjects", text: object).click
-end
-
-def act_on_object(object, action)
-  click_on_object(object)
-  choose_action(action)
-end
-
-def choose_action(action)
-  within '#Actionchoices' do
-    page.find(".ActionChoices", text: action).click
-  end
-end
-
 def chat_with(character)
   click_on_character(character)
   choose_action("Chat")
@@ -224,17 +195,14 @@ def order_shop_item(item)
   go_to_room("Shop")
   click_on_character("Shop Assistant Amanda")
   choose_action("Ask About")
-  page.find('.inputchoices', text: item).click
+  choose_input_action(item)
 end
 
 describe 'the apartments', type: :feature, js: true do
   it 'can play through the game' do
-    url = find_game_url('The Apartments')
+    start_game('The Apartments')
 
-    visit url
-    execute_script('$.fx.off = true')
-
-    find('.inputchoices[value="New Game"]').click
+    choose_input_action('New Game')
     fill_in 'textinput', with: 'Testplayer'
     click_on 'textbutton'
 

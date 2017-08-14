@@ -318,20 +318,13 @@ function renderMainImageAndLayers() {
 
     var tempimage = new Image();
     tempimage.onload = function() {
-        $("#MainImg").attr("src", "images/" + CurrentImage);
-
-        $('.MainLayeredImage').css({
-            top: $("#MainImg").position().top,
-            left: $("#MainImg").position().left
-        });
-        $('.MainLayeredImage').height($("#MainImg").height());
-        $('.MainLayeredImage').width($("#MainImg").width());
+        $("#MainImg").css("background-image", "url('images/" + CurrentImage + "')");
     };
     tempimage.src = "images/" + CurrentImage;
 
     for (var i = 0; i < layers.length; i++) {
-        var img = $('<img class="MainLayeredImage">');
-        img.attr('src', "images/" + layers[i]);
+        var img = $('<div class="MainLayeredImage"></div>');
+        img.css('background-image', "url('images/" + layers[i] + "')");
         img.appendTo('#MainImageLayers');
     }
 }

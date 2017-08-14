@@ -193,9 +193,15 @@ body {
     cursor: pointer;
 }
 
-#MainImg {
-    max-width: 100%;
-    height: 100%;
+#MainImg, .MainLayeredImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 #inputmenu, #cmdinputmenu, #playernamechoice, #genderchoice, #textchoice, #textactionchoice {
@@ -340,6 +346,11 @@ body {
 #MainImg, #MainVid, .MainLayeredImage
 {
     border: 1px solid grey;
+}
+
+/* TODO: revive if any games ever require canvas or a video */
+#MainPic, #MainVid {
+    display: none;
 }
 
 #bIn, #bOut

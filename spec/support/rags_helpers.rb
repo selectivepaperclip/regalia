@@ -39,3 +39,29 @@ end
 def set_game_variable(name, value)
   page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].dNumType = #{value}")
 end
+
+def export_savegames
+  click_on 'save'
+  accept_alert do
+    accept_prompt(with: 'rspec save') do
+      click_on 'Create a New Save'
+    end
+  end
+  click_on 'save'
+  now_string = DateTime.now.strftime('%Y-%m-%d-%H-%M-%S')
+  filename = "rspec_save_#{now_string}.json"
+  File.write(filename, page.evaluate_script('retrieveExportData()'))
+
+  puts "Exported saves as #{filename}"
+  exit 0
+end
+
+def import_savegames
+  page.evaluate_script("SavedGames.import(#{File.read(ENV.fetch('IMPORT_FILE'))})")
+  click_on 'load'
+  accept_alert do
+    within '.load-menu' do
+      click_on 'Load'
+    end
+  end
+end

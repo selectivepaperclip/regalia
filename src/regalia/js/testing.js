@@ -219,14 +219,14 @@ $(function() {
         $(downloadLink).prop('disabled', true);
         $(downloadLink).text('Loading...');
         var filename = TheGame.Title + '-saves.json';
-        retrieveExportData(function (exportData) {
-            const csvAsBlob = new Blob([exportData], {type: 'text/plain'});
-            $(downloadLink).prop('disabled', false);
-            $(downloadLink).text('EXPORT');
-            downloadLink.download = filename;
-            downloadLink.href = window.URL.createObjectURL(csvAsBlob);
-            downloadLink.target = "_blank";
-        });
+        var exportData = retrieveExportData();
+
+        const csvAsBlob = new Blob([exportData], {type: 'text/plain'});
+        $(downloadLink).prop('disabled', false);
+        $(downloadLink).text('EXPORT');
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvAsBlob);
+        downloadLink.target = "_blank";
     });
 
     $(".import_savegames").on('click', function () {
@@ -576,12 +576,12 @@ function handleDestroyAllSaves() {
     hideSaveAndLoadMenus();
 }
 
-function retrieveExportData(callback) {
+function retrieveExportData() {
     var resultArray = [];
     SavedGames.getSortedSaves().forEach(function (savedGame) {
         resultArray.push(SavedGames.getSave(savedGame.id));
     });
-    callback(JSON.stringify(resultArray));
+    return JSON.stringify(resultArray);
 }
 
 function receivedText() {

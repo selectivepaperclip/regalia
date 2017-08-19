@@ -1,3 +1,4 @@
+require 'dotenv/load'
 require 'capybara/rspec'
 
 Capybara.register_driver :selenium do |app|

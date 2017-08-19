@@ -1,5 +1,69 @@
+class Navigator
+  def initialize(map)
+    @map = map
+  end
+
+  def navigation_directions(start_room, end_room)
+    results = []
+    compute_navigation_direction_possibilities(results, start_room, end_room)
+
+    results.sort_by(&:length).first
+  end
+
+  def compute_navigation_direction_possibilities(results, start_room, end_room, rooms_seen = [], directions_taken = [])
+    if start_room == end_room
+      results << directions_taken
+      return
+    end
+
+    # Stop wandering around the graph if the path is already longer than the shortest found path
+    if results.length > 0 && results.sort_by(&:length).first.length < directions_taken.length
+      return
+    end
+
+    directions = @map[start_room]
+    unless directions
+      raise "Don't know how to get anywhere from room '#{start_room}''"
+    end
+
+    directions.each do |direction, next_room|
+      next if rooms_seen.include?(next_room)
+      next if direction == opposite_direction(directions_taken.last)
+
+      compute_navigation_direction_possibilities(
+          results,
+          next_room,
+          end_room,
+          rooms_seen + [next_room],
+          directions_taken + [direction]
+      )
+    end
+
+    nil
+  end
+
+  private
+
+  def opposite_direction(direction)
+    {
+        'North' => 'South',
+        'South' => 'North',
+        'West' => 'East',
+        'East' => 'West',
+        'NorthWest' => 'SouthEast',
+        'SouthEast' => 'NorthWest',
+        'NorthEast' => 'SouthWest',
+        'SouthWest' => 'NorthEast',
+        'Up' => 'Down',
+        'Down' => 'Up',
+        'In' => 'Out',
+        'Out' => 'In',
+    }[direction]
+  end
+end
+
 def go_direction(direction)
-  page.find(".compass-direction[data-direction=\"#{direction}\"]").click
+  page.find(".compass-direction.active[data-direction=\"#{direction}\"]").click
 end
 
 def continue_until_unpaused
@@ -32,12 +96,36 @@ def choose_action(action)
   end
 end
 
+def has_action?(action)
+  within '#Actionchoices' do
+    page.all(".ActionChoices", text: action).length > 0
+  end
+end
+
+def choose_room_action(action)
+  page.find('#RoomThumbImg').click
+  choose_action(action)
+end
+
+def click_on_self
+  page.find('#PlayerImg').click
+end
+
+def choose_self_action(action)
+  click_on_self
+  choose_action(action)
+end
+
 def choose_input_action(action)
   page.find('.inputchoices', text: action).click
 end
 
 def set_game_variable(name, value)
   page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].dNumType = #{value}")
+end
+
+def freeze_game_variable(name)
+  page.evaluate_script("cheatFreezes.variables['#{name}'] = true")
 end
 
 def export_savegames
@@ -56,12 +144,24 @@ def export_savegames
   exit 0
 end
 
-def import_savegames
-  page.evaluate_script("SavedGames.import(#{File.read(ENV.fetch('IMPORT_FILE'))})")
+def import_savegames(filename)
+  page.evaluate_script("SavedGames.import(#{File.read(filename)})")
   click_on 'load'
   accept_alert do
     within '.load-menu' do
       click_on 'Load'
+    end
+  end
+  accept_alert do
+    click_on 'load'
+    click_on 'Destroy All Saves'
+  end
+end
+
+def run_until_condition
+  Timeout.timeout(15) do
+    while true
+      break if yield
     end
   end
 end

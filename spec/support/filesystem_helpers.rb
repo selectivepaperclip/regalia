@@ -27,5 +27,14 @@ def start_game(name)
   url = find_game_url(name)
 
   visit url
+  # Disable animations
   execute_script('$.fx.off = true')
+
+  # Hide tooltips so Capybara doesn't accidentally click them instead of compass directions
+  execute_script(<<-EOT)
+var css = '#tooltip { display: none; }';
+var style = document.createElement('style');
+style.appendChild(document.createTextNode(css));
+document.head.appendChild(style);
+  EOT
 end

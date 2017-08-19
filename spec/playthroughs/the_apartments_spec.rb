@@ -67,23 +67,7 @@ $game_map = {
   }
 }
 
-def navigation_directions(start_room, end_room, rooms_seen = [], directions_taken = [])
-  return directions_taken if start_room == end_room
-
-  directions = $game_map[start_room]
-  unless directions
-    raise "Don't know how to get anywhere from room '#{start_room}''"
-  end
-
-  directions.each do |direction, next_room|
-    next if rooms_seen.include?(next_room)
-
-    result = navigation_directions(next_room, end_room, rooms_seen + [next_room], directions_taken + [direction])
-    return result if result
-  end
-
-  nil
-end
+$navigator = Navigator.new($game_map)
 
 def go_to_room(destination_room)
   current_room = page.find('#RoomTitle').text
@@ -92,7 +76,7 @@ def go_to_room(destination_room)
     raise "Don't know anything about destination room (#{destination_room})"
   end
 
-  directions = navigation_directions(current_room, destination_room)
+  directions = $navigator.navigation_directions(current_room, destination_room)
   directions.each do |direction|
     go_direction(direction)
     continue_until_unpaused

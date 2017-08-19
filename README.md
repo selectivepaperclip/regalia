@@ -71,8 +71,15 @@ I don't know, file an issue, I guess. I don't have a lot of time to work on this
 
 ### Running Tests
 
-On windows:
-`cmd /C "set GAMES_DIR=C:\a-directory-with-games-in-it && rspec spec`
+Create or update a `.env` file in the project root directory, with the following vars populated:
+```
+GAMES_DIR=/some-directory-with-games-in-it
+```
 
-Elsewhere:
-`GAMES_DIR=/a/directory/with/games/in/it rspec spec`
+Then, run all the playthrough specs:
+
+`rspec spec`
+
+Or a specific playthrough spec:
+
+`rspec spec/playthroughs/the_apartments_spec.rb`

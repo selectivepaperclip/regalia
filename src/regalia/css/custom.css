@@ -233,10 +233,6 @@ body {
     font-size: 24px;
 }
 
-#inputchoices {
-    height: auto;
-}
-
 .picpanel {
     width: 60%;
     display: flex;
@@ -256,57 +252,36 @@ body {
     justify-content: flex-end;
 }
 
-#cmdinputchoices {
-    height: auto;
+#inputchoices, #cmdinputchoices {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
 
-#cmdInputMenuTitle {
+#InputMenuTitle, #cmdInputMenuTitle {
     font-weight: bold;
     font-size: 18px;
     padding: 10px;
 }
 
-#cmdinputchoices .cmdinputchoices {
+#inputchoices .inputchoices, #cmdinputchoices .inputchoices {
     cursor: pointer;
     padding: 5px 10px;
     margin: 3px;
 }
 
-#cmdinputchoices .cmdinputchoices:empty {
+#inputchoices .inputchoices:empty, #cmdinputchoices .inputchoices:empty {
     padding: 0;
     margin: 0;
 }
 
-#cmdinputchoices .cmdinputchoices:hover {
+#inputchoices .inputchoices:hover, #cmdinputchoices .inputchoices:hover {
     background-color: #b5b5b5;
     color: black;
-}
-
-#InputMenuTitle {
-    font-weight: bold;
-    font-size: 18px;
-    padding: 10px;
 }
 
 #CancelInput, #cmdCancelInput {
     margin: 10px;
     width: 100px;
-}
-
-#inputchoices .inputchoices {
-    cursor: pointer;
-    padding: 5px 10px;
-    margin: 3px;
-}
-
-#inputchoices .inputchoices:empty {
-    padding: 0;
-    margin: 0;
-}
-
-#inputchoices .inputchoices:hover {
-    background-color: #b5b5b5;
-    color: black;
 }
 
 #RoomObjects .RoomObjects:not(.no-actions):hover,

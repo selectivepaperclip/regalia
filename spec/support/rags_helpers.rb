@@ -36,10 +36,6 @@ def choose_input_action(action)
   page.find('.inputchoices', text: action).click
 end
 
-def choose_cmdinput_action(action)
-  page.find('.cmdinputchoices', text: action).click
-end
-
 def set_game_variable(name, value)
   page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].dNumType = #{value}")
 end

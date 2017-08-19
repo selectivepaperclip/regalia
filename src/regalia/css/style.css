@@ -191,30 +191,6 @@ td {
     text-align: center;
 }
 
-#inputtable {
-    width: 100%;
-    height: 100%;
-}
-
-#inputchoices {
-    width: auto;
-    height: 100%;
-    opacity: 0.9;
-    filter: alpha(opacity=90);
-}
-
-#cmdinputtable {
-    width: 100%;
-    height: 100%;
-}
-
-#cmdinputchoices {
-    width: auto;
-    height: 100%;
-    opacity: 0.9;
-    filter: alpha(opacity=90);
-}
-
 #selectionmenu {
     z-index: 100;
     position: absolute;

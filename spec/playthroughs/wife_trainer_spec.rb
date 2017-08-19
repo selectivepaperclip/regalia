@@ -24,7 +24,7 @@ end
 def skip_to_weekend
   click_on_object('End Day')
   choose_action('Skip forward to Weekend')
-  choose_cmdinput_action('Yes, go to Friday')
+  choose_input_action('Yes, go to Friday')
   continue_until_unpaused
 end
 
@@ -46,15 +46,15 @@ describe 'wife trainer', type: :feature, js: true do
 
     click_on_object('Check Messages')
     choose_action('New Message')
-    choose_cmdinput_action('Yes')
+    choose_input_action('Yes')
 
     click_on_object('Check Messages')
     choose_action('New Message')
-    choose_cmdinput_action('Yes')
+    choose_input_action('Yes')
 
     click_on_object('Check Messages')
     choose_action('New Message')
-    choose_cmdinput_action('Yes')
+    choose_input_action('Yes')
 
     go_downtown
 
@@ -85,47 +85,65 @@ describe 'wife trainer', type: :feature, js: true do
     buy_object('Fuck Machine')
 
     go_direction('SouthWest')
+
+    go_direction('North')
+    click_on_object('Elevator')
+    choose_action('Visit the Law Office')
+    act_on_character('Receptionist', 'Talk to her')
+    choose_input_action("I'd like an appointment")
+    act_on_character('Receptionist', 'Wait')
+    continue_until_unpaused
+    choose_input_action('Ask about the woman')
+    choose_input_action('Ask about hiring her')
+    continue_until_unpaused
+    choose_input_action('Leave')
+    continue_until_unpaused
+    go_direction('South')
+
+    go_direction('SouthWest')
+    continue_until_unpaused
+
     click_on_object('Buy a coffee')
     choose_action('Pick up a coffee to go')
-    choose_cmdinput_action('Pay up')
+    choose_input_action('Pay up')
     continue_until_unpaused
 
     go_home
 
     start_client_session('Elsa')
     act_on_character('Elsa', 'Talk to Her')
-    choose_cmdinput_action('How far will you go')
+    choose_input_action('How far will you go')
     act_on_character('Elsa', 'Tell Her to Come Closer')
     act_on_character('Elsa', 'Kiss')
     continue_until_unpaused
 
-    choose_cmdinput_action("It's lovely")
+    choose_input_action("It's lovely")
     continue_until_unpaused
 
     start_client_session('Chelsea')
     act_on_character('Chelsea', 'Talk to Her')
     continue_until_unpaused
-    choose_cmdinput_action("For this to work, you need to let me")
+    choose_input_action("For this to work, you need to let me")
     act_on_character('Chelsea', 'Work on Her Diet')
     continue_until_unpaused
-    choose_cmdinput_action("How to structure")
+    choose_input_action("How to structure")
     continue_until_unpaused
 
-    choose_cmdinput_action("Invite her in")
+    choose_input_action("Invite her in")
     continue_until_unpaused
-    choose_cmdinput_action("Show her the boudoir")
+    choose_input_action("Show her the boudoir")
     continue_until_unpaused
 
     start_client_session('Jasmine')
     act_on_character('Jasmine', 'Talk to Her')
     continue_until_unpaused
-    choose_cmdinput_action("Not really.")
+    choose_input_action("Not really.")
     act_on_character('Jasmine', 'Prep Work')
     continue_until_unpaused
 
     skip_to_weekend
     start_weekend_session('Chelsea')
-    choose_cmdinput_action("Boot Camp")
+    choose_input_action("Boot Camp")
     continue_until_unpaused
   end
 end

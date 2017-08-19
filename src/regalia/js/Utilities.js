@@ -151,7 +151,7 @@ function custom__setCmdInputForCustomChoices(title, tempcommand) {
     for (var i = 0; i < tempcommand.CustomChoices.length; i++) {
         var text = PerformTextReplacements(tempcommand.CustomChoices[i]);
         var $div = $("<div>", {
-            class: "cmdinputchoices",
+            class: "inputchoices",
             text: text,
             value: text
         });
@@ -3135,7 +3135,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__clearCmdInputChoices();
                                 for (var i = 0; i < TheGame.Characters.length; i++) {
                                     var $div = $("<div>", {
-                                        class: "cmdinputchoices",
+                                        class: "inputchoices",
                                         text: CharToString(TheGame.Character[i]),
                                         value: TheGame.Character[i].Charname
                                     });
@@ -3149,7 +3149,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                                         var $div = $("<div>", {
-                                            class: "cmdinputchoices",
+                                            class: "inputchoices",
                                             text: objecttostring(obj),
                                             value: obj.UniqueIdentifier
                                         });
@@ -3164,7 +3164,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER") {
                                         var $div = $("<div>", {
-                                            class: "cmdinputchoices",
+                                            class: "inputchoices",
                                             text: objecttostring(obj),
                                             value: obj.UniqueIdentifier
                                         });
@@ -3179,7 +3179,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                                         var $div = $("<div>", {
-                                            class: "cmdinputchoices",
+                                            class: "inputchoices",
                                             text: objecttostring(obj),
                                             value: obj.UniqueIdentifier
                                         });
@@ -3189,7 +3189,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 }
                                 for (var i = 0; i < TheGame.Characters.length; i++) {
                                     var $div = $("<div>", {
-                                        class: "cmdinputchoices",
+                                        class: "inputchoices",
                                         text: CharToString(TheGame.Character[i]),
                                         value: TheGame.Character[i].Charname
                                     });

@@ -40,7 +40,8 @@ var SavedGames = {
             id: id,
             name: name,
             date: date,
-            gameData: gameData
+            gameData: gameData,
+            cheatFreezes: window.cheatFreezes
         }));
         localStorage.setItem(this.keyForIndex(), JSON.stringify(savedGames));
     },

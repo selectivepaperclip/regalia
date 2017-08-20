@@ -1,7 +1,9 @@
-$(document).ready(function () {
-    var frozenVariables = {};
-    var frozenPlayerProperties = {};
+var cheatFreezes = {
+  variables: {},
+  playerProperties: {}
+};
 
+$(document).ready(function () {
     function variableScalar(variable) {
         if (variable.vartype === "VT_NUMBER") {
             return true;
@@ -47,11 +49,11 @@ $(document).ready(function () {
     }
 
     function isFrozenVariable(variable) {
-        return !!frozenVariables[variable.varname];
+        return !!cheatFreezes.variables[variable.varname];
     }
 
     function isFrozenPlayerProperty(property) {
-        return !!frozenPlayerProperties[property.Name];
+        return !!cheatFreezes.playerProperties[property.Name];
     }
 
     function setupPlayerProperties() {
@@ -100,10 +102,10 @@ $(document).ready(function () {
             var $freezeButton = $(e.target);
             var propertyToFreeze = findCustomProperty(TheGame.Player, $freezeButton.data('propertyname'));
             if (isFrozenPlayerProperty(propertyToFreeze)) {
-                delete frozenPlayerProperties[propertyToFreeze.Name];
+                delete cheatFreezes.playerProperties[propertyToFreeze.Name];
                 $freezeButton.removeClass('frozen');
             } else {
-                frozenPlayerProperties[propertyToFreeze.Name] = true;
+                cheatFreezes.playerProperties[propertyToFreeze.Name] = true;
                 $freezeButton.addClass('frozen');
             }
         });
@@ -167,10 +169,10 @@ $(document).ready(function () {
             var $freezeButton = $(e.target);
             var variableToFreeze = GetVariable($freezeButton.data('varname'));
             if (isFrozenVariable(variableToFreeze)) {
-                delete frozenVariables[variableToFreeze.varname];
+                delete cheatFreezes.variables[variableToFreeze.varname];
                 $freezeButton.removeClass('frozen');
             } else {
-                frozenVariables[variableToFreeze.varname] = true;
+                cheatFreezes.variables[variableToFreeze.varname] = true;
                 $freezeButton.addClass('frozen');
             }
         });

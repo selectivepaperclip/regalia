@@ -539,6 +539,9 @@ function handleFileSelect(bQuick, CurID) {
     for (var i = 0; i < changes.length; i++) {
         DeepDiff.applyChange(TheGame, true, changes[i]);
     }
+    if (savedGame.cheatFreezes) {
+        window.cheatFreezes = savedGame.cheatFreezes;
+    }
     RoomChange(false, false);
     UpdateStatusBars();
     SetPortrait(TheGame.Player.PlayerPortrait);

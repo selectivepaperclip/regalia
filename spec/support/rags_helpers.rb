@@ -106,6 +106,7 @@ def choose_room_action(action)
   page.find('#RoomThumbImg').click
   choose_action(action)
 end
+alias act_on_room choose_room_action
 
 def click_on_self
   page.find('#PlayerImg').click
@@ -115,6 +116,7 @@ def choose_self_action(action)
   click_on_self
   choose_action(action)
 end
+alias act_on_self choose_self_action
 
 def choose_input_action(action)
   page.find('.inputchoices', text: action).click

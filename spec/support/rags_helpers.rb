@@ -130,16 +130,16 @@ def freeze_game_variable(name)
   page.evaluate_script("cheatFreezes.variables['#{name}'] = true")
 end
 
-def export_savegames
+def export_savegames(prefix = 'rspec')
   click_on 'save'
   accept_alert do
-    accept_prompt(with: 'rspec save') do
+    accept_prompt(with: "#{prefix} save") do
       click_on 'Create a New Save'
     end
   end
   click_on 'save'
   now_string = DateTime.now.strftime('%Y-%m-%d-%H-%M-%S')
-  filename = "rspec_save_#{now_string}.json"
+  filename = "#{prefix}_save_#{now_string}.json"
   File.write(filename, page.evaluate_script('retrieveExportData()'))
 
   puts "Exported saves as #{filename}"

@@ -26,7 +26,7 @@ end
 def start_game(name)
   url = find_game_url(name)
 
-  visit url
+  visit url + '?speedy_timers'
   # Disable animations
   execute_script('$.fx.off = true')
 

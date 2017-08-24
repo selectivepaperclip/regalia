@@ -412,7 +412,7 @@ $(function() {
                 }
             }
         }
-    }, 1000);
+    }, window.location.href.match(/speedy_timers/) ? 50 : 1000);
 
     $(".compass-direction").click(function(e) {
         var $el = $(e.target);

@@ -314,6 +314,10 @@ body {
     background-color: #b5b5b5;
 }
 
+.RoomObjects, .VisibleCharacters {
+    padding: 2px;
+}
+
 .no-actions {
     font-style: italic;
     color: grey;

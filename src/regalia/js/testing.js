@@ -76,14 +76,6 @@ $(function() {
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
     });
-    $("#PlayerPortrait").click(function(e) {
-        TheObj = TheGame.Player;
-        DisplayActions(TheGame.Player.Actions, e);
-    });
-    $("#RoomThumb").click(function(e) {
-        TheObj = GetRoom(TheGame.Player.CurrentRoom);
-        DisplayActions(TheObj.Actions, e);
-    });
     $("#PlayerImg").click(function(e) {
         TheObj = TheGame.Player;
         DisplayActions(TheGame.Player.Actions,e );
@@ -589,10 +581,7 @@ function retrieveExportData() {
 
 function receivedText() {
     try {
-        var canvas = document.getElementById("MainPic");
-        var ctx = canvas.getContext("2d");
         images = [];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         OriginalGame = SetupGameData();
         TheGame = SetupGameData();
         if (TheGame.Player.bPromptForName) {
@@ -621,38 +610,6 @@ function StartGame() {
     }
     SetPortrait(TheGame.Player.PlayerPortrait);
     RunEvents("<<On Game Start>>");
-}
-
-function calculateRoomThumbScale(image) {
-    if (image == null)
-        return;
-    var curcanvas = document.getElementById("RoomThumb");
-    var canvaswidth = curcanvas.offsetWidth;
-    var canvasheight = curcanvas.offsetHeight;
-    var imagewidth = image.width;
-    var imageheight = image.height;
-    var widthscale = canvaswidth / imagewidth;
-    var heightscale = canvasheight / imageheight;
-    if (widthscale <= heightscale)
-        return widthscale;
-    else
-        return heightscale;
-}
-
-function calculatePortraitScale(image) {
-    if (image == null)
-        return;
-    var curcanvas = document.getElementById("PlayerPortrait");
-    var canvaswidth = curcanvas.offsetWidth;
-    var canvasheight = curcanvas.offsetHeight - 4;
-    var imagewidth = image.width;
-    var imageheight = image.height;
-    var widthscale = canvaswidth / imagewidth;
-    var heightscale = canvasheight / imageheight;
-    if (widthscale <= heightscale)
-        return widthscale;
-    else
-        return heightscale;
 }
 
 function GetImageMimeType(lastthree) {

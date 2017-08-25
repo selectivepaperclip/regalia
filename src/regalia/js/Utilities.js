@@ -57,9 +57,6 @@ function custom__setInputMenuTitle(act) {
 }
 
 function custom__showGameElements() {
-    $("#RoomThumb").css("visibility", "visible");
-    $("#PlayerPortrait").css("visibility", "visible");
-
     $("#RoomThumbImg").css("visibility", "visible");
     $("#PlayerImg").css("visibility", "visible");
     $("#RoomObjectsPanel").css("visibility", "visible");
@@ -70,7 +67,6 @@ function custom__showGameElements() {
 }
 
 function custom__hideGameElements() {
-    $("#RoomThumb").css("visibility", "hidden");
     $("#PlayerImg").css("visibility", "hidden");
     $("#RoomThumbImg").css("visibility", "hidden");
     $("#RoomObjectsPanel").css("visibility", "hidden");
@@ -234,9 +230,9 @@ function evalJankyJavascript(str) {
 function SetBorders() {
     if (GetActionCount(GetRoom(TheGame.Player.CurrentRoom).Actions) > 0) {
         //set green border on room thumb
-        $("#RoomThumb, #RoomThumbImg").addClass('has-actions');
+        $("#RoomThumbImg").addClass('has-actions');
     } else {
-        $("#RoomThumb, #RoomThumbImg").removeClass('has-actions');
+        $("#RoomThumbImg").removeClass('has-actions');
     }
     if (GetActionCount(TheGame.Player.Actions) > 0) {
         $("#PlayerImg").addClass("has-actions");
@@ -259,40 +255,27 @@ function GetActionCount(Actions) {
 function SetRoomThumb(ImageName) {
     if (ImageName == null || ImageName == "None")
         return;
-    $("#RoomImageLayers").empty();
-    var tempimage = new Image();
-    tempimage.onload = function() {
-        var width = parseInt(tempimage.width);
-        var height = parseInt(tempimage.height);
-        var scalefactor = calculateRoomThumbScale(tempimage);
-        $("#RoomThumbImg").attr("src", "images/" + ImageName);
-        $("#RoomThumbImg").width(width * scalefactor);
-        $("#RoomThumbImg").height(height * scalefactor);
 
-        var checkimg = GetGameImage(ImageName);
-        if (checkimg != null) {
-            //layers?
-            if (checkimg.LayeredImages[0] != "") {
-                var thelayers = checkimg.LayeredImages[0].split(",");
-                for (var i = 0; i < thelayers.length; i++) {
-                    var img = $('<img class="RoomLayeredImage">');
-                    img.attr('src', "images/" + thelayers[i]);
-                    img.width($("#RoomThumbImg").width());
-                    img.height($("#RoomThumbImg").height());
-                    img.css({
-                        top: $("#RoomThumbImg").position().top,
-                        left: $("#RoomThumbImg").position().left
-                    });
-                    img.click(function(clickEvent) {
-                        TheObj = GetRoom(TheGame.Player.CurrentRoom);
-                        DisplayActions(TheObj.Actions, clickEvent);
-                    });
-                    img.appendTo('#RoomImageLayers');
-                }
+    $("#RoomImageLayers").empty();
+
+    $("#RoomThumbImg").css("background-image", "url('images/" + ImageName + "')");
+
+    var checkimg = GetGameImage(ImageName);
+    if (checkimg != null) {
+        //layers?
+        if (checkimg.LayeredImages[0] != "") {
+            var thelayers = checkimg.LayeredImages[0].split(",");
+            for (var i = 0; i < thelayers.length; i++) {
+                var img = $('<div class="RoomLayeredImage">');
+                img.css('background-image', "url('images/" + thelayers[i] + "')");
+                img.click(function(clickEvent) {
+                    TheObj = GetRoom(TheGame.Player.CurrentRoom);
+                    DisplayActions(TheObj.Actions, clickEvent);
+                });
+                img.appendTo('#RoomImageLayers');
             }
         }
-    };
-    tempimage.src = "images/" + ImageName;
+    }
 }
 
 var mainImageExtraLayers = [];
@@ -316,11 +299,7 @@ function renderMainImageAndLayers() {
     }
     layers = layers.concat(mainImageExtraLayers);
 
-    var tempimage = new Image();
-    tempimage.onload = function() {
-        $("#MainImg").css("background-image", "url('images/" + CurrentImage + "')");
-    };
-    tempimage.src = "images/" + CurrentImage;
+    $("#MainImg").css("background-image", "url('images/" + CurrentImage + "')");
 
     for (var i = 0; i < layers.length; i++) {
         var img = $('<div class="MainLayeredImage"></div>');
@@ -333,46 +312,25 @@ function SetPortrait(ImageName) {
     if (ImageName == null || ImageName == "")
         return;
     $("#PortraitImageLayers").empty();
-    var tempimage = new Image();
-    tempimage.onload = function() {
-        var width = parseInt(tempimage.width);
-        var height = parseInt(tempimage.height);
-        var scalefactor = calculatePortraitScale(tempimage);
-        var newwidth = (width * scalefactor + 0.5) | 0;
-        var newheight = (height * scalefactor + 0.5) | 0;
-        if (newwidth >= $("#PlayerImg").width())
-            newwidth = $("#PlayerImg").width() - 2;
-        if (newheight >= $("#PlayerImg").height())
-            newheight = $("#PlayerImg").height() - 2;
-        $("#PlayerImg").attr("src", "images/" + ImageName);
-        $("#PlayerImg").width(width * scalefactor);
-        $("#PlayerImg").height(height * scalefactor);
 
-        var checkimg = GetGameImage(ImageName);
-        if (checkimg != null) {
-            //layers?
-            if (checkimg.LayeredImages[0] != "") {
+    $("#PlayerImg").css("background-image", "url('images/" + ImageName + "')");
 
-                var thelayers = checkimg.LayeredImages[0].split(",");
-                for (var i = 0; i < thelayers.length; i++) {
-                    var img = $('<img class="PortraitLayeredImage">');
-                    img.attr('src', "images/" + thelayers[i]);
-                    img.width($("#PlayerImg").width());
-                    img.height($("#PlayerImg").height());
-                    img.css({
-                        top: $("#PlayerImg").offset().top,
-                        left: $("#PlayerImg").offset().left
-                    });
-                    img.click(function(clickEvent) {
-                        TheObj = TheGame.Player;
-                        DisplayActions(TheGame.Player.Actions, clickEvent);
-                    });
-                    img.appendTo('#PortraitImageLayers');
-                }
+    var checkimg = GetGameImage(ImageName);
+    if (checkimg != null) {
+        //layers?
+        if (checkimg.LayeredImages[0] != "") {
+            var layers = checkimg.LayeredImages[0].split(",");
+            for (var i = 0; i < layers.length; i++) {
+                var img = $('<div class="PortraitLayeredImage">');
+                img.css('background-image', "url('images/" + layers[i] + "')");
+                img.click(function(clickEvent) {
+                    TheObj = TheGame.Player;
+                    DisplayActions(TheGame.Player.Actions, clickEvent);
+                });
+                img.appendTo('#PortraitImageLayers');
             }
         }
-    };
-    tempimage.src = "images/" + ImageName;
+    }
 }
 
 function SetupStatusBars() {

@@ -172,9 +172,10 @@ body {
 }
 
 #RoomThumbHolder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    height: 60px;
+    width: 60px;
+    flex-shrink: 0;
 }
 
 #RoomTitle {
@@ -186,6 +187,9 @@ body {
     margin: 0;
     display: flex;
     border: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #RoomThumbImg.has-actions, #PlayerImg.has-actions {
@@ -193,6 +197,8 @@ body {
     cursor: pointer;
 }
 
+#RoomThumbImg, .RoomLayeredImage,
+#PlayerImg, .PortraitLayeredImage,
 #MainImg, .MainLayeredImage {
     position: absolute;
     top: 0;
@@ -202,6 +208,21 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+#MainImg, .MainLayeredImage {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#RoomThumbImg, .RoomLayeredImage,
+#PlayerImg, .PortraitLayeredImage {
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    right: 2px;
 }
 
 #inputmenu, #cmdinputmenu, #playernamechoice, #genderchoice, #textchoice, #textactionchoice {
@@ -298,19 +319,16 @@ body {
     color: grey;
 }
 
-#PlayerImg {
-    border: 4px solid black;
-    max-width: 100%;
-    max-height: 100%;
-}
-
 #RoomObjectsPanel, #VisibleCharactersPanel, #InventoryPanel {
     border: 0;
     flex: 1 1 auto;
 }
 
+#PlayerImg,
 #RoomThumbImg,
-#roompanel, #menu, #statusbar,
+#roompanel,
+#menu,
+#statusbar,
 #RoomObjects,
 #VisibleCharacters,
 #Inventory,
@@ -318,14 +336,14 @@ body {
 #PlayerRow,
 #cmdinputmenu,
 #tooltip,
-#MainImg, #MainVid, .MainLayeredImage
+#MainImg,
+.MainLayeredImage
 {
     border: 1px solid grey;
 }
 
-/* TODO: revive if any games ever require canvas or a video */
-#MainPic, #MainVid {
-    display: none;
+#MainImg {
+    border-left: none;
 }
 
 .compass-center {

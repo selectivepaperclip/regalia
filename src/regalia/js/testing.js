@@ -502,14 +502,10 @@ function ResetLoopObjects() {
 
 function onError(tx, error) {}
 
-function saveDataFor(game) {
-    return JSON.stringify(DeepDiff.diff(OriginalGame, game));
-}
-
 function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
     var curdate = new Date();
     if (bQuick) {
-        SavedGames.createSave(0, 'QuickSave', curdate, saveDataFor(TheGame));
+        SavedGames.createSave(0, 'QuickSave', curdate, SavedGames.saveDataFor(TheGame));
         alert("Quick Saved");
     } else {
         var saveName = prompt("Give a name for the save", oldSaveName);
@@ -517,7 +513,7 @@ function handleFileSave(bQuick, bNew, CurID, oldSaveName) {
             return;
         }
 
-        SavedGames.createSave(bNew ? SavedGames.nextSaveId() : CurID, saveName, curdate, saveDataFor(TheGame));
+        SavedGames.createSave(bNew ? SavedGames.nextSaveId() : CurID, saveName, curdate, SavedGames.saveDataFor(TheGame));
         alert("Game Saved");
     }
 }
@@ -527,10 +523,7 @@ function handleFileSelect(bQuick, CurID) {
     var savedGame = SavedGames.getSave(desiredId);
 
     TheGame = SetupGameData();
-    var changes = JSON.parse(savedGame.gameData);
-    for (var i = 0; i < changes.length; i++) {
-        DeepDiff.applyChange(TheGame, true, changes[i]);
-    }
+    SavedGames.applySaveToGame(TheGame, savedGame);
     if (savedGame.cheatFreezes) {
         window.cheatFreezes = savedGame.cheatFreezes;
     }

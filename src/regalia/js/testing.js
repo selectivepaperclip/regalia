@@ -30,7 +30,7 @@ $(function() {
         switch (e.keyCode) {
             case 32:
                 {
-                    if (gamePaused) {
+                    if (GameController.gamePaused) {
                         e.preventDefault();
                         $("#Continue").click();
                     }
@@ -69,8 +69,7 @@ $(function() {
     $("#Continue").click(function(e) {
         var bgcolor = $("#Continue").css('background-color');
         if (bgcolor == "rgb(128, 128, 128)") {} else {
-            gamePaused = false;
-            custom__showGameElements();
+            GameController.continue();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -88,8 +87,7 @@ $(function() {
     function setTextInputChoice () {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
-            gamePaused = false;
-            custom__showGameElements();
+            GameController.stopAwaitingInput();
             $("#textinput").val('');
             $("#textchoice").css("visibility", "hidden");
             SetCommandInput(VariableGettingSet, selectedobj);
@@ -106,8 +104,7 @@ $(function() {
     $("#playernamebutton").click(function(e) {
         AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");
-        gamePaused = false;
-        custom__showGameElements();
+        GameController.stopAwaitingInput();
         var newname = $("#playernametext").val();
         TheGame.Player.Name = newname.trim();
         if (TheGame.Player.bPromptForGender) {
@@ -292,8 +289,7 @@ $(function() {
     $("div.genderchoiceSelect").click(function() {
         selectedobj = $(this).val();
         if (selectedobj != null) {
-            gamePaused = false;
-            custom__showGameElements();
+            GameController.stopAwaitingInput();
             $("#genderchoice").css("visibility", "hidden");
             StartGame();
         }
@@ -302,8 +298,7 @@ $(function() {
         selectedobj = $("#inputchoices").val();
         if (selectedobj != null) {
             AdditionalData = selectedobj;
-            gamePaused = false;
-            custom__showGameElements();
+            GameController.stopAwaitingInput();
             $("#inputmenu").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
 
@@ -321,8 +316,7 @@ $(function() {
         if (selectedobj != null) {
             $("#textactioninput").val('');
             AdditionalData = selectedobj;
-            gamePaused = false;
-            custom__showGameElements();
+            GameController.stopAwaitingInput();
             $("#textactionchoice").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
                 ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
@@ -340,8 +334,7 @@ $(function() {
     $("#cmdinputchoices").change(function(e) {
         selectedobj = $("#cmdinputchoices").val();
         if (selectedobj != null) {
-            gamePaused = false;
-            custom__showGameElements();
+            GameController.stopAwaitingInput();
             $("#cmdinputmenu").css("visibility", "hidden");
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -349,15 +342,13 @@ $(function() {
     });
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
-        gamePaused = false;
-        custom__showGameElements();
+        GameController.stopAwaitingInput();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });
     $("#cmdCancelInput").click(function(e) {
         AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");
-        gamePaused = false;
-        custom__showGameElements();
+        GameController.stopAwaitingInput();
         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
     });
     $("#Inventory").change(function(e) {

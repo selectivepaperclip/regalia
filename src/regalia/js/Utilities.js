@@ -10,7 +10,6 @@ var CurrentImage = "";
 var MasterLoopObject = null;
 var MasterIdx = 0;
 var MasterLoopArray = null;
-var gamePaused = false;
 var CurActions = undefined;
 var runningLiveTimerCommands = false;
 
@@ -50,6 +49,35 @@ var Logger = {
 
 Logger.level = 1;
 
+var GameController = {
+    gamePaused: false,
+    gameAwaitingInput: false,
+
+    startAwaitingInput: function () {
+        this.gameAwaitingInput = true;
+        custom__hideGameElements();
+    },
+
+    stopAwaitingInput: function () {
+        this.gameAwaitingInput = false;
+        custom__showGameElements();
+    },
+
+    pause: function () {
+        this.gamePaused = true;
+        custom__hideGameElements();
+    },
+
+    continue: function () {
+        this.gamePaused = false;
+        custom__showGameElements();
+    },
+
+    shouldRunCommands: function () {
+        return !(this.gamePaused || this.gameAwaitingInput);
+    }
+};
+
 function custom__setInputMenuTitle(act) {
     $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
     $("#inputmenu").css("visibility", "visible");
@@ -80,7 +108,7 @@ function custom__executeAndRunTimers(fn) {
 
     fn();
 
-    if (MasterCommandList.length == 0 && !gamePaused && !wasRunningTimers) {
+    if (MasterCommandList.length == 0 && GameController.shouldRunCommands() && !wasRunningTimers) {
         RunTimerEvents();
         UpdateStatusBars();
     }
@@ -92,8 +120,7 @@ function custom__addInputChoice($div) {
         if (selectedobj != null) {
             custom__executeAndRunTimers(function () {
                 AdditionalData = selectedobj;
-                gamePaused = false;
-                custom__showGameElements();
+                GameController.stopAwaitingInput();
                 $("#inputmenu").css("visibility", "hidden");
                 if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
                     ExecuteAction(InputDataObject, true, selectedobj);
@@ -129,8 +156,7 @@ function custom__addCmdInputChoice($div) {
         if (selectedobj != null) {
             custom__executeAndRunTimers(function () {
                 $("#cmdinputmenu").hide();
-                gamePaused = false;
-                custom__showGameElements();
+                GameController.stopAwaitingInput();
                 $("#cmdinputmenu").css("visibility", "hidden");
                 SetCommandInput(VariableGettingSet, selectedobj);
                 RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -838,8 +864,7 @@ function ProcessAction(Action, bTimer) {
             $("#textactionchoice input").focus();
         }
         if (act.InputType != "Text") {}
-        gamePaused = true;
-        custom__hideGameElements();
+        GameController.startAwaitingInput();
     } else {
         ExecuteAction(act, bTimer);
     }
@@ -909,7 +934,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
 }
 
 function runNextAfterPause(runNextPhase) {
-    if (gamePaused) {
+    if (!GameController.shouldRunCommands()) {
         MasterCommandList.unshift(runNextPhase);
     } else {
         runNextPhase();
@@ -917,7 +942,7 @@ function runNextAfterPause(runNextPhase) {
 }
 
 function runAfterPause(runNextPhase) {
-    if (gamePaused) {
+    if (!GameController.shouldRunCommands()) {
         MasterCommandList.push(runNextPhase);
     } else {
         runNextPhase();
@@ -1574,7 +1599,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
     pausecommandargs = arguments;
     var bResult = false;
     var i = 0;
-    while (MasterCommandList.length > 0 && (!gamePaused || runningLiveTimerCommands)) {
+    while (MasterCommandList.length > 0 && (GameController.shouldRunCommands() || runningLiveTimerCommands)) {
         if (typeof MasterCommandList[0] === "function") {
             var callback = MasterCommandList[0];
             MasterCommandList.splice(0, 1);
@@ -3078,8 +3103,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             } else if (acttype == "Text") {
                                 custom__showTextMenuChoice(part4);
                             } else {}
-                            gamePaused = true;
-                            custom__hideGameElements();
+                            GameController.startAwaitingInput();
                             VariableGettingSet = tempcommand;
                             return;
                         }
@@ -3160,8 +3184,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                 custom__showTextMenuChoice(part4);
                             } else {}
                             VariableGettingSet = tempcommand;
-                            gamePaused = true;
-                            custom__hideGameElements();
+                            GameController.startAwaitingInput();
                             return;
                         }
                 }
@@ -3354,8 +3377,7 @@ function GetCustomChoiceAction(type, name, actionname) {
 }
 
 function PauseGame() {
-    gamePaused = true;
-    custom__hideGameElements();
+    GameController.pause();
     $("#Continue").css('background-color', "rgb(255, 255, 255)");
     $("#Continue").css('visibility', "visible");
 }

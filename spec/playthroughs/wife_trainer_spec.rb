@@ -1,39 +1,39 @@
-def buy_object(name)
-  click_on_object(name)
-  choose_action('Buy?')
-  choose_input_action('Yes')
-end
-
-def go_downtown
-  click_on_object('Go Downtown')
-  choose_action('Go Downtown')
-end
-
-def go_home
-  click_on_object('Go Home')
-  choose_action('Go Home')
-end
-
-def start_client_session(name)
-  click_on_object('Arrange Session')
-  choose_action(name)
-  continue_until_unpaused
-  go_direction('NorthWest')
-end
-
-def skip_to_weekend
-  click_on_object('End Day')
-  choose_action('Skip forward to Weekend')
-  choose_input_action('Yes, go to Friday')
-  continue_until_unpaused
-end
-
-def start_weekend_session(name)
-  click_on_object('Arrange Weekend Session')
-  choose_action(name)
-end
-
 describe 'wife trainer', type: :feature, js: true do
+  def buy_object(name)
+    click_on_object(name)
+    choose_action('Buy?')
+    choose_input_action('Yes')
+  end
+
+  def go_downtown
+    click_on_object('Go Downtown')
+    choose_action('Go Downtown')
+  end
+
+  def go_home
+    click_on_object('Go Home')
+    choose_action('Go Home')
+  end
+
+  def start_client_session(name)
+    click_on_object('Arrange Session')
+    choose_action(name)
+    continue_until_unpaused
+    go_direction('NorthWest')
+  end
+
+  def skip_to_weekend
+    click_on_object('End Day')
+    choose_action('Skip forward to Weekend')
+    choose_input_action('Yes, go to Friday')
+    continue_until_unpaused
+  end
+
+  def start_weekend_session(name)
+    click_on_object('Arrange Weekend Session')
+    choose_action(name)
+  end
+
   it 'can play through the game' do
     start_game('Wife Trainer')
 

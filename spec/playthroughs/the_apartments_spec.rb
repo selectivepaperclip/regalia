@@ -1,188 +1,194 @@
 require 'spec_helper'
 
-$game_map = {
-  'Your Bedroom' => {
-    'NorthWest' => 'Your Bathroom',
-    'West' => 'Your Apartment'
-  },
-  'Your Bathroom' => {
-    'SouthEast' => 'Your Bedroom',
-    'SouthWest' => 'Your Apartment'
-  },
-  'Your Apartment' => {
-    'NorthEast' => 'Your Bathroom',
-    'East' => 'Your Bedroom',
-    'South' => 'Hallway'
-  },
-  'Hallway' => {
-    'NorthWest' => 'Satin\'s Apartment',
-    'North' => 'Your Apartment',
-    'NorthEast' => 'Samantha\'s Apartment',
-    'West' => 'Sophia\'s Apartment',
-    'East' => 'Jessie\'s Apartment',
-    'SouthWest' => 'Riley\'s Apartment',
-    'South' => 'City',
-    'SouthEast' => 'Supervisors Office',
-    'Up' => 'Roof Gardens',
-    'Down' => 'Gym',
-  },
-  'Satin\'s Apartment' => {
-    'SouthWest' => 'Hallway'
-  },
-  'Samantha\'s Apartment' => {
-    'SouthEast' => 'Hallway'
-  },
-  'Sophia\'s Apartment' => {
-    'East' => 'Hallway'
-  },
-  'Jessie\'s Apartment' => {
-    'West' => 'Hallway'
-  },
-  'Riley\'s Apartment' => {
-    'NorthEast' => 'Hallway'
-  },
-  'Supervisors Office' => {
-    'NorthWest' => 'Hallway'
-  },
-  'Roof Gardens' => {
-    'Down' => 'Hallway'
-  },
-  'Gym' => {
-    'Up' => 'Hallway'
-  },
-  'City' => {
-    'North' => 'Hallway',
-    'West' => 'Office',
-    'East' => 'Shop',
-    'SouthEast' => 'Restaurant'
-  },
-  'Office' => {
-    'East' => 'City'
-  },
-  'Shop' => {
-    'West' => 'City'
-  },
-  'Restaurant' => {
-    'NorthWest' => 'City'
+module TheApartmentsHelper
+  GAME_MAP = {
+    'Your Bedroom' => {
+      'NorthWest' => 'Your Bathroom',
+      'West' => 'Your Apartment'
+    },
+    'Your Bathroom' => {
+      'SouthEast' => 'Your Bedroom',
+      'SouthWest' => 'Your Apartment'
+    },
+    'Your Apartment' => {
+      'NorthEast' => 'Your Bathroom',
+      'East' => 'Your Bedroom',
+      'South' => 'Hallway'
+    },
+    'Hallway' => {
+      'NorthWest' => 'Satin\'s Apartment',
+      'North' => 'Your Apartment',
+      'NorthEast' => 'Samantha\'s Apartment',
+      'West' => 'Sophia\'s Apartment',
+      'East' => 'Jessie\'s Apartment',
+      'SouthWest' => 'Riley\'s Apartment',
+      'South' => 'City',
+      'SouthEast' => 'Supervisors Office',
+      'Up' => 'Roof Gardens',
+      'Down' => 'Gym',
+    },
+    'Satin\'s Apartment' => {
+      'SouthWest' => 'Hallway'
+    },
+    'Samantha\'s Apartment' => {
+      'SouthEast' => 'Hallway'
+    },
+    'Sophia\'s Apartment' => {
+      'East' => 'Hallway'
+    },
+    'Jessie\'s Apartment' => {
+      'West' => 'Hallway'
+    },
+    'Riley\'s Apartment' => {
+      'NorthEast' => 'Hallway'
+    },
+    'Supervisors Office' => {
+      'NorthWest' => 'Hallway'
+    },
+    'Roof Gardens' => {
+      'Down' => 'Hallway'
+    },
+    'Gym' => {
+      'Up' => 'Hallway'
+    },
+    'City' => {
+      'North' => 'Hallway',
+      'West' => 'Office',
+      'East' => 'Shop',
+      'SouthEast' => 'Restaurant'
+    },
+    'Office' => {
+      'East' => 'City'
+    },
+    'Shop' => {
+      'West' => 'City'
+    },
+    'Restaurant' => {
+      'NorthWest' => 'City'
+    }
   }
-}
 
-$navigator = Navigator.new($game_map)
-
-def go_to_room(destination_room)
-  current_room = page.find('#RoomTitle').text
-
-  unless $game_map[destination_room]
-    raise "Don't know anything about destination room (#{destination_room})"
+  def navigator
+    @navigator ||= Navigator.new(GAME_MAP)
   end
 
-  directions = $navigator.navigation_directions(current_room, destination_room)
-  directions.each do |direction|
-    go_direction(direction)
+  def go_to_room(destination_room)
+    current_room = page.find('#RoomTitle').text
+
+    unless GAME_MAP[destination_room]
+      raise "Don't know anything about destination room (#{destination_room})"
+    end
+
+    directions = navigator.navigation_directions(current_room, destination_room)
+    directions.each do |direction|
+      go_direction(direction)
+      continue_until_unpaused
+    end
+  end
+
+  def chat_with(character)
+    click_on_character(character)
+    choose_action("Chat")
+  end
+
+  def flirt_with(character)
+    click_on_character(character)
+    choose_action("Flirt")
+  end
+
+  def chat_and_flirt_with(character)
+    3.times { chat_with(character) }
+    3.times { flirt_with(character) }
+  end
+
+  def talk_with(character)
+    click_on_character(character)
+    choose_action("Talk")
     continue_until_unpaused
   end
-end
 
-def chat_with(character)
-  click_on_character(character)
-  choose_action("Chat")
-end
-
-def flirt_with(character)
-  click_on_character(character)
-  choose_action("Flirt")
-end
-
-def chat_and_flirt_with(character)
-  3.times { chat_with(character) }
-  3.times { flirt_with(character) }
-end
-
-def talk_with(character)
-  click_on_character(character)
-  choose_action("Talk")
-  continue_until_unpaused
-end
-
-def give_object(object)
-  click_on_object(object)
-  choose_action("Give")
-end
-
-def sleep_and_breakfast
-  act_on_object("Bed", "Sleep")
-
-  go_direction("West")
-  act_on_object("Kitchenette", "Cook")
-  go_direction("NorthEast")
-  act_on_object("Shower", "Use")
-  go_direction("SouthWest")
-end
-
-def buy_object(object)
-  go_to_room("Shop")
-  act_on_object(object, "Buy")
-end
-
-def buy_chocolate_and_flowers
-  go_to_room("Shop")
-  if page.first('#RoomObjectsPanel', text: 'Flowers')
-    buy_object("Flowers")
+  def give_object(object)
+    click_on_object(object)
+    choose_action("Give")
   end
-  if page.first('#RoomObjectsPanel', text: 'Chocolates')
-    buy_object("Chocolates")
+
+  def sleep_and_breakfast
+    act_on_object("Bed", "Sleep")
+
+    go_direction("West")
+    act_on_object("Kitchenette", "Cook")
+    go_direction("NorthEast")
+    act_on_object("Shower", "Use")
+    go_direction("SouthWest")
   end
-end
 
-def give_chocolate_and_flowers
-  give_object("Flowers")
-  give_object("Chocolates")
-end
-
-def do_some_work
-  go_to_room("Office")
-
-  act_on_object("Desk", "Work")
-end
-
-def standard_day
-  sleep_and_breakfast
-
-  yield if block_given?
-
-  do_some_work
-
-  buy_chocolate_and_flowers
-
-  go_to_room("Your Bedroom")
-end
-
-def standard_flirt_day(character_room, character)
-  standard_day do
-    go_to_room(character_room)
-
-    chat_and_flirt_with(character)
-    give_chocolate_and_flowers
+  def buy_object(object)
+    go_to_room("Shop")
+    act_on_object(object, "Buy")
   end
-end
 
-def standard_chat_day(character_room, character)
-  standard_day do
-    go_to_room(character_room)
-
-    3.times { chat_with(character) }
-    give_chocolate_and_flowers
+  def buy_chocolate_and_flowers
+    go_to_room("Shop")
+    if page.first('#RoomObjectsPanel', text: 'Flowers')
+      buy_object("Flowers")
+    end
+    if page.first('#RoomObjectsPanel', text: 'Chocolates')
+      buy_object("Chocolates")
+    end
   end
-end
 
-def order_shop_item(item)
-  go_to_room("Shop")
-  click_on_character("Shop Assistant Amanda")
-  choose_action("Ask About")
-  choose_input_action(item)
+  def give_chocolate_and_flowers
+    give_object("Flowers")
+    give_object("Chocolates")
+  end
+
+  def do_some_work
+    go_to_room("Office")
+
+    act_on_object("Desk", "Work")
+  end
+
+  def standard_day
+    sleep_and_breakfast
+
+    yield if block_given?
+
+    do_some_work
+
+    buy_chocolate_and_flowers
+
+    go_to_room("Your Bedroom")
+  end
+
+  def standard_flirt_day(character_room, character)
+    standard_day do
+      go_to_room(character_room)
+
+      chat_and_flirt_with(character)
+      give_chocolate_and_flowers
+    end
+  end
+
+  def standard_chat_day(character_room, character)
+    standard_day do
+      go_to_room(character_room)
+
+      3.times { chat_with(character) }
+      give_chocolate_and_flowers
+    end
+  end
+
+  def order_shop_item(item)
+    go_to_room("Shop")
+    click_on_character("Shop Assistant Amanda")
+    choose_action("Ask About")
+    choose_input_action(item)
+  end
 end
 
 describe 'the apartments', type: :feature, js: true do
+  include TheApartmentsHelper
+
   it 'can play through the game' do
     start_game('The Apartments')
 

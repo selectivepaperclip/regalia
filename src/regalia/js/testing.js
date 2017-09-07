@@ -207,7 +207,7 @@ $(function() {
         const downloadLink = $('.export-download-link')[0];
         $(downloadLink).prop('disabled', true);
         $(downloadLink).text('Loading...');
-        var filename = TheGame.Title + '-saves.json';
+        var filename = this.titleForSave() + '-saves.json';
         var exportData = retrieveExportData();
 
         const csvAsBlob = new Blob([exportData], {type: 'text/plain'});

@@ -1,9 +1,18 @@
 var SavedGames = {
+    titleForSave: function () {
+        if (TheGame.Title) {
+            return TheGame.Title;
+        }
+
+        var urlParts = window.location.href.split("/");
+        var lastUrlPart = urlParts[urlParts.length - 1];
+        return decodeURIComponent(lastUrlPart).replace(' - regalia.html', '').replace(/ /g, '_');
+    },
     keyForIndex: function () {
-        return TheGame.Title + '-Saves';
+        return this.titleForSave() + '-Saves';
     },
     keyForSave: function (n) {
-        return TheGame.Title + '-Save' + n;
+        return this.titleForSave() + '-Save' + n;
     },
     getIndex: function () {
         var rawIndex = localStorage.getItem(this.keyForIndex());

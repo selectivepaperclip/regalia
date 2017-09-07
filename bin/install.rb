@@ -32,6 +32,7 @@ File.write(File.join(rags_project_dir, "#{game_title.strip} - regalia.html"), ht
 FileUtils.rm_rf(File.join(rags_project_dir, 'regalia'))
 FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 'regalia'))
 FileUtils.copy(File.join(node_modules_dir, 'deep-diff', 'releases', 'deep-diff-0.3.8.min.js'), File.join(rags_project_dir, 'regalia', 'vendor'))
+FileUtils.copy(File.join(src_dir, 'Rags_32512.ico'), File.join(rags_project_dir, 'regalia'))
 
 puts "Copying Game.js content into Regalia folder..."
 FileUtils.mkdir_p(File.join(rags_project_dir, 'regalia', 'game'))

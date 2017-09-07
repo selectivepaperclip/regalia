@@ -27,7 +27,7 @@ puts "Copying Regalia content\n  From: '#{src_dir}'\n  To: #{rags_project_dir}"
 
 html_content = File.read(File.join(src_dir, 'regalia.html'))
 FileUtils.rm_rf(Dir[File.join(rags_project_dir, '* - regalia.html')])
-File.write(File.join(rags_project_dir, "#{game_title.strip} - regalia.html"), html_content.sub('GAME_TITLE_HERE', game_title))
+File.write(File.join(rags_project_dir, "#{game_title.strip} - regalia.html"), html_content.gsub('GAME_TITLE_HERE', game_title))
 
 FileUtils.rm_rf(File.join(rags_project_dir, 'regalia'))
 FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 'regalia'))

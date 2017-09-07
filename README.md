@@ -6,6 +6,8 @@
 
 RAGS, the '**R**apid **a**dventure **g**ame **s**ystem', is a set of tools to develop simple point and click games with text and images. There is a 'Rags Designer' used to create the games, and a 'Rags Player' to play them. Typically available only on Windows.
 
+RAGS didn't seem to get a lot of traction as a vehicle for traditional "Interactive Fiction". It's mostly around these days for pornography.
+
 ### What is Regalia?
 
 Rags 2.x has a 'Save To Web Format(BETA)' option available in the designer that produces a HTML/CSS/JavaScript version of the game for usage in your web browser. Unfortunately, since that option is 'BETA', it will only work for the simplest of games, and the design is not so great.
@@ -39,16 +41,28 @@ Just like the desktop Rags player, **saves from one version of a game will not w
 
 * Many, many bugs in the original 'Save To Web Format(BETA)' code that would stop progress in games have been fixed. (Partially/incorrectly implemented commands, race conditions, memory leaks, etc...)
 
+## Compatibility
+
+Regalia has been tested to some extent with the following games, though it's not clear if you can make it all the way to the end.
+
+* The Apartments
+* Evil, Inc
+* Mindshift, part I
+* The Sinner
+* Wife Trainer
+
 ## Installing Regalia
 
-To play a Rags game in Regalia, first you need to export the game with the Rags designer, using the 'Save To Web Format(BETA)' option. Before exporting, you will probably need to use the custom patched RagsLib.dll included on the Releases page for this project.
+To play a Rags game in Regalia, first you need to export the game with the Rags designer, using the 'Save To Web Format(BETA)' option.
 
-If you can't open the game you want to convert in the Rags designer because it's password-protected, note that you can find versions of the Rags Designer on the internet with this password protection removed.
+**Before exporting, you will probably need to use the custom patched RagsLib.dll included on the Releases page for this project.** Replace the RagsLib.dll that exists next to your RagsDesigner.exe in the Rags folder. Make a copy first, if you want.
+
+If the game you want to open is password-protected, note that you can find versions of the Rags Designer on the internet with this password protection removed.
 
 Next, you need to run the Regalia install script on your game:
 
-* Ensure you have some version of Ruby installed
-* Ensure you have some version of NodeJS/NPM installed
+* Ensure you have some version of Ruby installed - on Windows, try https://rubyinstaller.org/
+* Ensure you have some version of NodeJS/NPM installed - https://nodejs.org/en/download/
 * In the Regalia source directory, `npm install`
 * In the Regalia source directory, `./bin/install /path/to/exported/game/dir`
 

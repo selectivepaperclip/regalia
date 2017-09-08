@@ -84,6 +84,14 @@ $(function() {
         DisplayActions(TheObj.Actions, e);
     });
 
+    function onKeyupEnter(selector, fn) {
+        $(selector).on('keyup', function (e) {
+            if (e.which === 13) { // return key
+                fn();
+            }
+        });
+    }
+
     function setTextInputChoice () {
         selectedobj = $("#textinput").val();
         if (selectedobj != null) {
@@ -95,13 +103,9 @@ $(function() {
         }
     }
     $("#textbutton").click(setTextInputChoice);
-    $("#textinput").on('keyup', function (e) {
-        if (e.which === 13) { // return key
-            setTextInputChoice();
-        }
-    });
+    onKeyupEnter('#textinput', setTextInputChoice);
 
-    $("#playernamebutton").click(function(e) {
+    function setPlayerNameChoice () {
         AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");
         GameController.stopAwaitingInput();
@@ -113,7 +117,9 @@ $(function() {
         } else {
             StartGame();
         }
-    });
+    }
+    $("#playernamebutton").click(setPlayerNameChoice);
+    onKeyupEnter('#playernametext', setPlayerNameChoice);
 
     function formatDate(date) {
         var weekdays = [
@@ -326,11 +332,8 @@ $(function() {
     }
 
     $("#textactionbutton").click(setTextActionChoice);
-    $("#textactioninput").on('keyup', function (e) {
-        if (e.which === 13) { // return key
-            setTextActionChoice();
-        }
-    });
+    onKeyupEnter('#textactioninput', setTextActionChoice);
+
     $("#cmdinputchoices").change(function(e) {
         selectedobj = $("#cmdinputchoices").val();
         if (selectedobj != null) {

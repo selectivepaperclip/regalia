@@ -245,11 +245,11 @@ body {
     display: none;
 }
 
-#textchoice, #textactionchoice {
+#playernamechoice, #textchoice, #textactionchoice {
     padding: 10px;
 }
 
-#textchoice input, #textactionchoice input {
+#playernamechoice input, #textchoice input, #textactionchoice input {
     margin: 10px 0;
     font-size: 24px;
 }

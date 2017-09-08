@@ -76,6 +76,7 @@ The export code in the original 'Save To Web Format(BETA)' feature does an okay 
 
 * Custom Choice Titles
 * Timer Names
+* Character Custom Properties
 
 ## Problems
 

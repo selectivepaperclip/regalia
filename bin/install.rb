@@ -16,6 +16,7 @@ node_modules_dir = File.join(root_dir, 'node_modules')
 puts "Searching '#{rags_project_dir}' for a .html file..."
 
 html_file = Dir["#{rags_project_dir}/*.html"].reject { |path| path.match /regalia/ }[0]
+html_file ||= Dir["#{rags_project_dir}/*.html.bak"].reject { |path| path.match /regalia/ }[0]
 unless html_file
   puts "Found nothing, giving up..."
   exit 1

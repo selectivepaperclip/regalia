@@ -278,13 +278,29 @@ function GetActionCount(Actions) {
     return count;
 }
 
+var imageUrls = {};
+function imageUrl(imageName) {
+    if (imageUrls[imageName]) {
+        return imageUrls[imageName];
+    }
+    // In case the filesystem is very case-sensitive,
+    // search for the image with this name in the list
+    // of images so we can be sure to use the right case
+    var lowerCaseImageName = imageName.toLowerCase();
+    var gameImage = TheGame.Images.find(function (image) {
+        return image.TheName.toLowerCase() === lowerCaseImageName;
+    });
+    imageUrls[imageName] = "url('images/" + gameImage.TheName + "')";
+    return imageUrls[imageName];
+}
+
 function SetRoomThumb(ImageName) {
     if (ImageName == null || ImageName == "None")
         return;
 
     $("#RoomImageLayers").empty();
 
-    $("#RoomThumbImg").css("background-image", "url('images/" + ImageName + "')");
+    $("#RoomThumbImg").css("background-image", imageUrl(ImageName));
 
     var checkimg = GetGameImage(ImageName);
     if (checkimg != null) {
@@ -293,7 +309,7 @@ function SetRoomThumb(ImageName) {
             var thelayers = checkimg.LayeredImages[0].split(",");
             for (var i = 0; i < thelayers.length; i++) {
                 var img = $('<div class="RoomLayeredImage">');
-                img.css('background-image', "url('images/" + thelayers[i] + "')");
+                img.css('background-image', imageUrl(thelayers[i]));
                 img.click(function(clickEvent) {
                     TheObj = GetRoom(TheGame.Player.CurrentRoom);
                     DisplayActions(TheObj.Actions, clickEvent);
@@ -325,11 +341,11 @@ function renderMainImageAndLayers() {
     }
     layers = layers.concat(mainImageExtraLayers);
 
-    $("#MainImg").css("background-image", "url('images/" + CurrentImage + "')");
+    $("#MainImg").css("background-image", imageUrl(CurrentImage));
 
     for (var i = 0; i < layers.length; i++) {
         var img = $('<div class="MainLayeredImage"></div>');
-        img.css('background-image', "url('images/" + layers[i] + "')");
+        img.css('background-image', imageUrl(layers[i]));
         img.appendTo('#MainImageLayers');
     }
 }
@@ -339,7 +355,7 @@ function SetPortrait(ImageName) {
         return;
     $("#PortraitImageLayers").empty();
 
-    $("#PlayerImg").css("background-image", "url('images/" + ImageName + "')");
+    $("#PlayerImg").css("background-image", imageUrl(ImageName));
 
     var checkimg = GetGameImage(ImageName);
     if (checkimg != null) {
@@ -348,7 +364,7 @@ function SetPortrait(ImageName) {
             var layers = checkimg.LayeredImages[0].split(",");
             for (var i = 0; i < layers.length; i++) {
                 var img = $('<div class="PortraitLayeredImage">');
-                img.css('background-image', "url('images/" + layers[i] + "')");
+                img.css('background-image', imageUrl(layers[i]));
                 img.click(function(clickEvent) {
                     TheObj = TheGame.Player;
                     DisplayActions(TheGame.Player.Actions, clickEvent);

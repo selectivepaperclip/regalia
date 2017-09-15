@@ -483,14 +483,14 @@ function RefreshRoomObjects() {
 function GetAction(actions, name) {
     name = name.trim();
     return actions.find(function (action) {
-        return action.name.toLowerCase() === name.toLowerCase();
+        return action.name.trim().toLowerCase() === name.toLowerCase();
     });
 }
 
 function GetTimer(timerName) {
     timerName = timerName.trim();
     return TheGame.Timers.find(function (timer) {
-        return timer.Name === timerName;
+        return timer.Name.trim() === timerName;
     });
 }
 
@@ -500,7 +500,7 @@ function GetVariable(variableName) {
         variableName = variableName.substring(0, variableName.indexOf("("));
     }
     return TheGame.Variables.find(function (variable) {
-        return variable.varname.toLowerCase() === variableName.toLowerCase();
+        return variable.varname.trim().toLowerCase() === variableName.toLowerCase();
     });
 }
 

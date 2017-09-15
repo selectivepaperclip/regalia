@@ -457,10 +457,25 @@ function GetRoom(roomName) {
             return TheGame.Rooms[i];
         }
     }
+
+    var containsDash = roomName.indexOf('-') != -1;
     //check by name if we get here
     for (var j = 0; j < TheGame.Rooms.length; j++) {
-        if (TheGame.Rooms[j].Name == roomName) {
+        var room = TheGame.Rooms[j];
+        if (room.Name == roomName) {
             return TheGame.Rooms[j];
+        }
+
+        // Though it usually produces a UniqueID, sometimes
+        // when you manually edit a field in the Rags designer
+        // (instead of selecting from a dropdown) the value
+        // for a room (in e.x. CT_MOVEPLAYER) will be the
+        // room name or `%{name}-%{sdesc}`. So we need to check for that.
+        if (containsDash && room.SDesc) {
+            var joinedName = [room.Name, room.SDesc].join('-');
+            if (joinedName == roomName) {
+                return room;
+            }
         }
     }
     return null;

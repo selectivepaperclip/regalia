@@ -293,6 +293,10 @@ function imageUrl(imageName) {
     var gameImage = TheGame.Images.find(function (image) {
         return image.TheName.toLowerCase() === lowerCaseImageName;
     });
+    if (!gameImage) {
+        console.log("Unable to find any image named '" + imageName + "'");
+        return '';
+    }
     imageUrls[imageName] = "url('images/" + gameImage.TheName.replace(/'/g, '\\\'') + "')";
     return imageUrls[imageName];
 }

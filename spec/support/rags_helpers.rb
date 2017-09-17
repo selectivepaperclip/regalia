@@ -103,7 +103,9 @@ def has_action?(action)
 end
 
 def choose_room_action(action)
-  page.find('#RoomThumbImg').click
+  # RoomThumbImg gets occluded by layers when present
+  # so capy will refuse to click on it.
+  page.execute_script("$('#RoomThumbImg').trigger('click')")
   choose_action(action)
 end
 alias act_on_room choose_room_action
@@ -118,12 +120,26 @@ def choose_self_action(action)
 end
 alias act_on_self choose_self_action
 
+def fill_in_text_input(text)
+  page.fill_in 'textinput', with: text
+  page.click_on 'textbutton'
+end
+
 def choose_input_action(action)
   page.find('.inputchoices', text: action).click
 end
 
+def choose_first_input_action(action)
+  page.find('.inputchoices', text: action, match: :first).click
+end
+
 def set_game_variable(name, value)
-  page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].dNumType = #{value}")
+  dest_property = if value.class == String
+                    "sString"
+                  else
+                    "dNumType"
+  end
+  page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].#{dest_property} = #{value}")
 end
 
 def freeze_game_variable(name)

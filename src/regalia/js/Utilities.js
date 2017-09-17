@@ -50,42 +50,6 @@ var MasterLoopArray = null;
 var CurActions = undefined;
 var runningLiveTimerCommands = false;
 
-var Logger = {
-    level: 0,
-    log: function () {
-        if (this.level > 0) {
-            console.log.apply(this, arguments);
-        }
-    },
-    logExecutingAction: function (action) {
-        Logger.log(
-            'ACTION:',
-            action.name
-        );
-    },
-    logExecutingCommand: function (command, part2, part3, part4) {
-        Logger.log(
-            'COMMAND:',
-            [
-                command.cmdtype,
-                part2,
-                part3,
-                part4
-            ].join(':'),
-            'Executing'
-        );
-    },
-    logEvaluatedCondition: function (condition, passed) {
-        Logger.log(
-            'CONDITION:',
-            condition.conditionname,
-            passed ? 'Passed' : 'Failed'
-        )
-    }
-};
-
-Logger.level = 1;
-
 var GameController = {
     gamePaused: false,
     gameAwaitingInput: false,
@@ -160,6 +124,7 @@ function custom__addInputChoice($div) {
                 GameController.stopAwaitingInput();
                 $("#inputmenu").css("visibility", "hidden");
                 if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
+                    ActionRecorder.choseInputAction(selectedobj);
                     ExecuteAction(InputDataObject, true, selectedobj);
                     if (bMasterTimer)
                         RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
@@ -195,6 +160,7 @@ function custom__addCmdInputChoice($div) {
                 $("#cmdinputmenu").hide();
                 GameController.stopAwaitingInput();
                 $("#cmdinputmenu").css("visibility", "hidden");
+                ActionRecorder.choseInputAction(selectedobj);
                 SetCommandInput(VariableGettingSet, selectedobj);
                 RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
             });
@@ -349,7 +315,7 @@ function SetRoomThumb(ImageName) {
                 img.css('background-image', imageUrl(thelayers[i]));
                 img.click(function(clickEvent) {
                     TheObj = GetRoom(TheGame.Player.CurrentRoom);
-                    DisplayActions(TheObj.Actions, clickEvent);
+                    DisplayActions(TheObj.Actions, clickEvent, 'room');
                 });
                 img.appendTo('#RoomImageLayers');
             }
@@ -378,9 +344,11 @@ function renderMainImageAndLayers() {
     }
     layers = layers.concat(mainImageExtraLayers);
 
+    ImageRecorder.sawImage(CurrentImage);
     $("#MainImg").css("background-image", imageUrl(CurrentImage));
 
     for (var i = 0; i < layers.length; i++) {
+        ImageRecorder.sawImage(layers[i]);
         var img = $('<div class="MainLayeredImage"></div>');
         img.css('background-image', imageUrl(layers[i]));
         img.appendTo('#MainImageLayers');
@@ -404,7 +372,7 @@ function SetPortrait(ImageName) {
                 img.css('background-image', imageUrl(layers[i]));
                 img.click(function(clickEvent) {
                     TheObj = TheGame.Player;
-                    DisplayActions(TheGame.Player.Actions, clickEvent);
+                    DisplayActions(TheGame.Player.Actions, clickEvent, 'self');
                 });
                 img.appendTo('#PortraitImageLayers');
             }
@@ -686,7 +654,7 @@ function actionShouldBeVisible(action) {
     return action.name.substring(0, 2) !== "<<" && action.bActive && action.actionparent === "None";
 }
 
-function DisplayActions(Actions, clickEvent) {
+function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
     if (GetActionCount(Actions) === 0) {
         return;
     }
@@ -703,8 +671,16 @@ function DisplayActions(Actions, clickEvent) {
 
             $div.click(function(e) {
                 var selectionchoice = $(this).val();
+                var selectiontext = $(this).text();
                 if (selectionchoice != null) {
                     custom__executeAndRunTimers(function () {
+                        if (actionRecipientToLog == 'self') {
+                            ActionRecorder.actedOnSelf(selectiontext);
+                        } else if (actionRecipientToLog == 'room') {
+                            ActionRecorder.actedOnRoom(selectiontext);
+                        } else {
+                            ActionRecorder.actedOnObject(selectedobj, selectiontext);
+                        }
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
                             scrollTop: $("#MainText")[0].scrollHeight
@@ -1038,6 +1014,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
             $("#MainText").animate({
                 scrollTop: $("#MainText")[0].scrollHeight
             }, 0);
+            ActionRecorder.roomEntered(roomDisplayName(currentroom));
             if (bRunTimerEvents)
                 RunTimerEvents();
             RefreshRoomObjects();

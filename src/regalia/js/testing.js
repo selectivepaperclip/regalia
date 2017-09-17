@@ -67,6 +67,7 @@ $(function() {
         }
     });
     $("#Continue").click(function(e) {
+        ActionRecorder.clickedContinue();
         var bgcolor = $("#Continue").css('background-color');
         if (bgcolor == "rgb(128, 128, 128)") {} else {
             GameController.continue();
@@ -77,11 +78,11 @@ $(function() {
     });
     $("#PlayerImg").click(function(e) {
         TheObj = TheGame.Player;
-        DisplayActions(TheGame.Player.Actions,e );
+        DisplayActions(TheGame.Player.Actions, e, 'self');
     });
     $("#RoomThumbImg").click(function(e) {
         TheObj = GetRoom(TheGame.Player.CurrentRoom);
-        DisplayActions(TheObj.Actions, e);
+        DisplayActions(TheObj.Actions, e, 'room');
     });
 
     function onKeyupEnter(selector, fn) {
@@ -98,6 +99,7 @@ $(function() {
             GameController.stopAwaitingInput();
             $("#textinput").val('');
             $("#textchoice").css("visibility", "hidden");
+            ActionRecorder.filledInTextInput(selectedobj);
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
@@ -339,6 +341,7 @@ $(function() {
         if (selectedobj != null) {
             GameController.stopAwaitingInput();
             $("#cmdinputmenu").css("visibility", "hidden");
+            ActionRecorder.choseInputAction(Value);
             SetCommandInput(VariableGettingSet, selectedobj);
             RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
         }
@@ -409,6 +412,7 @@ $(function() {
         var newRoom = GetDestinationRoomName(direction);
         ResetLoopObjects();
         bCancelMove = false;
+        ActionRecorder.locationChange(direction);
         var curroom = GetRoom(TheGame.Player.CurrentRoom);
         if (curroom != null) {
             if (!curroom.bLeaveFirstTime) {

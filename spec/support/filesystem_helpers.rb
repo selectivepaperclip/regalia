@@ -14,12 +14,12 @@ def find_game_html(game_name)
     raise "Unable to find regalia HTML file in '#{game_dir}'"
   end
 
-  puts "Found HTML matching '#{game_name}': '#{html_file}'"
   html_file
 end
 
 def find_game_url(game_name)
   html_file = find_game_html(game_name)
+  puts "Found HTML matching '#{game_name}': '#{html_file}'"
   "file:///#{URI.escape(html_file)}"
 end
 

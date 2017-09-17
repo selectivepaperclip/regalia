@@ -26,6 +26,9 @@ $(function() {
     if (window.File && window.FileReader && window.FileList && window.Blob) {} else {
         alert('The File APIs are not fully supported in this browser.');
     }
+
+    $('#regalia_version').text('Regalia 0.4');
+
     $(document).keydown(function(e) {
         switch (e.keyCode) {
             case 32:

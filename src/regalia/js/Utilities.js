@@ -1,4 +1,41 @@
-var MasterCommandList = [];
+var CommandLists = {
+    stack: [
+        []
+    ],
+
+    addNestedCommandList: function () {
+        this.stack.unshift([]);
+    },
+
+    nextCommand: function () {
+        return this.stack[0][0];
+    },
+
+    shiftCommand: function () {
+        var command = this.stack[0].shift();
+        if (this.stack.length > 1 && this.stack[0].length === 0) {
+            this.stack.shift();
+        }
+        return command;
+    },
+
+    addToFront: function (command) {
+        this.stack[0].unshift(command);
+    },
+
+    addToEnd: function (command) {
+        this.stack[0].push(command);
+    },
+
+    commandCount: function () {
+        var result = 0;
+        for (var i = 0; i < this.stack.length; i++) {
+            result += this.stack[i].length;
+        }
+        return result;
+    }
+};
+
 var currenttimer = null;
 var bRunningTimers = false;
 var AdditionalInput = "";
@@ -108,7 +145,7 @@ function custom__executeAndRunTimers(fn) {
 
     fn();
 
-    if (MasterCommandList.length == 0 && GameController.shouldRunCommands() && !wasRunningTimers) {
+    if (CommandLists.commandCount() == 0 && GameController.shouldRunCommands() && !wasRunningTimers) {
         RunTimerEvents();
         UpdateStatusBars();
     }
@@ -200,14 +237,14 @@ function setAdditionalInputData(command, addinputdata) {
 function AddToMaster(commands, addinputdata) {
     for (var i = 0; i < commands.length; i++) {
         setAdditionalInputData(commands[i]);
-        MasterCommandList.push(commands[i]);
+        CommandLists.addToEnd(commands[i]);
     }
 }
 
 function InsertToMaster(commands, addinputdata) {
     for (var i = commands.length - 1; i >= 0; i--) {
         setAdditionalInputData(commands[i]);
-        MasterCommandList.splice(0, 0, commands[i]);
+        CommandLists.addToFront(commands[i]);
     }
 }
 
@@ -951,7 +988,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
 
 function runNextAfterPause(runNextPhase) {
     if (!GameController.shouldRunCommands()) {
-        MasterCommandList.unshift(runNextPhase);
+        CommandLists.addToFront(runNextPhase);
     } else {
         runNextPhase();
     }
@@ -959,13 +996,14 @@ function runNextAfterPause(runNextPhase) {
 
 function runAfterPause(runNextPhase) {
     if (!GameController.shouldRunCommands()) {
-        MasterCommandList.push(runNextPhase);
+        CommandLists.addToEnd(runNextPhase);
     } else {
         runNextPhase();
     }
 }
 
 function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
+    CommandLists.addNestedCommandList();
     var desiredRoomId = currentroom.UniqueID;
     if (currentroom == null)
         return;
@@ -1615,10 +1653,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
     pausecommandargs = arguments;
     var bResult = false;
     var i = 0;
-    while (MasterCommandList.length > 0 && (GameController.shouldRunCommands() || runningLiveTimerCommands)) {
-        if (typeof MasterCommandList[0] === "function") {
-            var callback = MasterCommandList[0];
-            MasterCommandList.splice(0, 1);
+    while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || runningLiveTimerCommands)) {
+        if (typeof CommandLists.nextCommand() === "function") {
+            var callback = CommandLists.shiftCommand();
             callback();
             continue;
         }
@@ -1627,13 +1664,12 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
         var tempcond = null;
         if (MasterLoopObject != null)
             LoopObj = MasterLoopObject;
-        var curtype = getObjectClass(MasterCommandList[0]);
-        if (curtype == "command" || "CommandName" in MasterCommandList[0]) {
-            tempcommand = MasterCommandList[0];
+        var curtype = getObjectClass(CommandLists.nextCommand());
+        if (curtype == "command" || "CommandName" in CommandLists.nextCommand()) {
+            tempcommand = CommandLists.shiftCommand();
         } else {
-            tempcond = MasterCommandList[0];
+            tempcond = CommandLists.shiftCommand();
         }
-        MasterCommandList.splice(0, 1);
         if (tempcond != null) {
             if (TestCondition(tempcond, AdditionalInputData, act, LoopObj)) {
                 if (tempcond.Checks.length === 1 && isLoopCheck(tempcond.Checks[0])) {
@@ -3913,7 +3949,7 @@ function RunTimer(temptimer, callback) {
         if (tempact != null) {
             if (temptimer.LiveTimer) {
                 runningLiveTimerCommands = true;
-                MasterCommandList.unshift(function () {
+                CommandLists.addToFront(function () {
                    runningLiveTimerCommands = false;
                 });
                 ProcessAction(tempact, true);

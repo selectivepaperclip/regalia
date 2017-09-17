@@ -290,7 +290,7 @@ function imageUrl(imageName) {
     var gameImage = TheGame.Images.find(function (image) {
         return image.TheName.toLowerCase() === lowerCaseImageName;
     });
-    imageUrls[imageName] = "url('images/" + gameImage.TheName + "')";
+    imageUrls[imageName] = "url('images/" + gameImage.TheName.replace(/'/g, '\\\'') + "')";
     return imageUrls[imageName];
 }
 

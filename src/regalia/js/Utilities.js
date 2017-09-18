@@ -13,9 +13,8 @@ var CommandLists = {
     },
 
     shiftCommand: function () {
-        var command = this.stack[0].commands.shift();
         this.unshiftEmptyStacks();
-        return command;
+        return this.stack[0].commands.shift();
     },
 
     addToFront: function (command) {
@@ -31,6 +30,7 @@ var CommandLists = {
     },
 
     commandCount: function () {
+        this.unshiftEmptyStacks();
         var result = 0;
         for (var i = 0; i < this.stack.length; i++) {
             result += this.stack[i].commands.length;
@@ -1092,6 +1092,7 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
             var step2 = PerformTextReplacements(tempcheck.ConditionStep2, loopobject);
             var step3 = PerformTextReplacements(tempcheck.ConditionStep3, loopobject);
             var step4 = PerformTextReplacements(tempcheck.ConditionStep4, loopobject);
+            var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || TheObj;
             switch (tempcheck.CondType) {
                 case "CT_Item_InGroup":
                     {
@@ -1444,8 +1445,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                             var property = splits[1];
                             var temproom = null;
                             if (roomname == "<Self>") {
-                                if (TheObj != null) {
-                                    temproom = TheObj;
+                                if (objectBeingActedUpon) {
+                                    temproom = objectBeingActedUpon;
                                 }
                             } else {
                                 temproom = GetObject(roomname);
@@ -1677,6 +1678,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
             var part3 = PerformTextReplacements(tempcommand.CommandPart3, LoopObj);
             var part4 = PerformTextReplacements(tempcommand.CommandPart4, LoopObj);
             var cmdtxt = PerformTextReplacements(tempcommand.CommandText, LoopObj);
+            var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || TheObj;
             Logger.logExecutingCommand(tempcommand, part2, part3 ,part4);
             try {
                 switch (tempcommand.cmdtype) {
@@ -1778,8 +1780,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_DISPLAYITEMDESC":
                         {
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    AddTextToRTF(TheObj.description, "Black", "Regular");
+                                if (objectBeingActedUpon)
+                                    AddTextToRTF(objectBeingActedUpon.description, "Black", "Regular");
                             } else {
                                 var tempobj = GetObject(part2);
                                 if (tempobj != null)
@@ -2024,8 +2026,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == ("00000000-0000-0000-0000-000000000004")) {
-                                if (TheObj != null) {
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon) {
+                                    Tempobj = objectBeingActedUpon;
                                 }
                             } else {
                                 Tempobj = GetObject(part2);
@@ -2040,16 +2042,16 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null) {
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon) {
+                                    Tempobj = objectBeingActedUpon;
                                 }
                             } else {
                                 Tempobj = GetObject(part2);
                             }
                             var Destobj = null;
                             if (part3 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null) {
-                                    Destobj = TheObj;
+                                if (objectBeingActedUpon) {
+                                    Destobj = objectBeingActedUpon;
                                 }
                             } else {
                                 Destobj = GetObject(part3);
@@ -2068,8 +2070,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon)
+                                    Tempobj = objectBeingActedUpon;
                             } else {
                                 Tempobj = GetObject(part2);
                             }
@@ -2184,8 +2186,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon)
+                                    Tempobj = objectBeingActedUpon;
                             } else {
                                 Tempobj = GetObject(part2);
                             }
@@ -2206,7 +2208,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_MOVEITEMTOOBJ":
                         {
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null) {
+                                if (objectBeingActedUpon) {
                                     var locationnameref = "";
                                     try {
                                         locationnameref = part3;
@@ -2216,8 +2218,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                             locationnameref = locationobj.UniqueIdentifier;
                                     }
                                     if (locationnameref != "") {
-                                        TheObj.locationtype = "LT_IN_OBJECT";
-                                        TheObj.locationname = locationnameref;
+                                        objectBeingActedUpon.locationtype = "LT_IN_OBJECT";
+                                        objectBeingActedUpon.locationname = locationnameref;
                                     }
                                 }
                             } else {
@@ -2242,9 +2244,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_MOVEITEMTOCHAR":
                         {
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null) {
-                                    TheObj.locationtype = "LT_CHARACTER";
-                                    TheObj.locationname = part3;
+                                if (objectBeingActedUpon) {
+                                    objectBeingActedUpon.locationtype = "LT_CHARACTER";
+                                    objectBeingActedUpon.locationname = part3;
                                 }
                             } else {
                                 var tempobj = GetObject(part2);
@@ -2361,8 +2363,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon)
+                                    Tempobj = objectBeingActedUpon;
                             } else {
                                 Tempobj = GetObject(part2);
                             }
@@ -2512,8 +2514,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                                     var propname = splits[1];
                                     var temproom = null;
                                     if (roomname == "<Self>") {
-                                        if (TheObj != null) {
-                                            temproom = TheObj;
+                                        if (objectBeingActedUpon) {
+                                            temproom = objectBeingActedUpon;
                                         }
                                     } else {
                                         temproom = GetObject(roomname);
@@ -2645,19 +2647,19 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var replacedstring = PerformTextReplacements(part4, null);
                             var splits = part2.split(":");
                             if (splits.length == 2) {
-                                var roomname = splits[0];
+                                var itemname = splits[0];
                                 var property = splits[1];
-                                var temproom = null;
-                                if (roomname == "<Self>") {
-                                    if (TheObj != null) {
-                                        temproom = TheObj;
+                                var tempitem = null;
+                                if (itemname == "<Self>") {
+                                    if (objectBeingActedUpon) {
+                                        tempitem = objectBeingActedUpon;
                                     }
                                 } else {
-                                    temproom = GetObject(roomname);
+                                    tempitem = GetObject(itemname);
                                 }
-                                if (temproom != null) {
-                                    for (var j = 0; j < temproom.CustomProperties.length; j++) {
-                                        var curprop = temproom.CustomProperties[j];
+                                if (tempitem != null) {
+                                    for (var j = 0; j < tempitem.CustomProperties.length; j++) {
+                                        var curprop = tempitem.CustomProperties[j];
                                         if (curprop != null) {
                                             if (curprop.Name == property) {
                                                 if (tempcommand.cmdtype == "CT_ITEM_SET_CUSTOM_PROPERTY_JS") {
@@ -2986,8 +2988,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon)
+                                    Tempobj = objectBeingActedUpon;
                             } else {
                                 Tempobj = GetObject(part2);
                             }
@@ -3004,8 +3006,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon)
+                                    Tempobj = objectBeingActedUpon;
                             } else {
                                 Tempobj = GetObject(part2);
                             }
@@ -3023,8 +3025,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             var Tempobj = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                if (TheObj != null)
-                                    Tempobj = TheObj;
+                                if (objectBeingActedUpon)
+                                    Tempobj = objectBeingActedUpon;
                             } else {
                                 Tempobj = GetObject(part2);
                             }
@@ -3776,22 +3778,22 @@ function RunEvents(EventType) {
         }
         for (var i = 0; i < TheGame.Objects.length; i++) {
             var tempobj = TheGame.Objects[i];
-            // TODO: maybe some better way of getting downstream things to know this is the selected obj
-            TheObj = tempobj;
             if (tempobj.locationtype == "LT_ROOM" && tempobj.locationname == TheGame.Player.CurrentRoom) {
+                CommandLists.addNestedCommandList(tempobj);
+
                 if (EventType.indexOf("Player Enter") > -1) {
                     if (!tempobj.bEnterFirstTime) {
                         tempact = GetAction(tempobj.Actions, "<<On Player Enter First Time>>");
                         tempobj.bEnterFirstTime = true;
                         if (tempact != null)
-                            ProcessAction(tempact, false); //tempobj);
+                            ProcessAction(tempact, false);
                     }
                 } else if (EventType.indexOf("Player Leave") > -1) {
                     if (!tempobj.bLeaveFirstTime) {
                         tempact = GetAction(tempobj.Actions, "<<On Player Leave First Time>>");
                         tempobj.bLeaveFirstTime = true;
                         if (tempact != null)
-                            ProcessAction(tempact, false); //tempobj);
+                            ProcessAction(tempact, false);
                     }
                 }
                 tempact = GetAction(tempobj.Actions, EventType);
@@ -3799,30 +3801,32 @@ function RunEvents(EventType) {
                     if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
                         if (EventType == "<<On Player Enter>>") {
                             if (startingroomid == TheGame.Player.CurrentRoom) {
-                                ProcessAction(tempact, false); //tempobj);
+                                ProcessAction(tempact, false);
                             }
                         } else
-                            ProcessAction(tempact, false); //tempobj);
+                            ProcessAction(tempact, false);
                     }
                 }
                 if (tempobj.bContainer) {
                     if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else {
                         for (var j = 0; j < TheGame.Objects.length; j++) {
                             var tempobj2 = TheGame.Objects[j];
+                            CommandLists.addNestedCommandList(tempobj2);
+
                             if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == tempobj.UniqueIdentifier)) {
                                 if (EventType.indexOf("Player Enter") > -1) {
                                     if (!tempobj2.bEnterFirstTime) {
                                         tempact = GetAction(tempobj2.Actions, "<<On Player Enter First Time>>");
                                         tempobj2.bEnterFirstTime = true;
                                         if (tempact != null)
-                                            ProcessAction(tempact, false); //tempobj2);
+                                            ProcessAction(tempact, false);
                                     }
                                 } else if (EventType.indexOf("Player Leave") > -1) {
                                     if (!tempobj2.bLeaveFirstTime) {
                                         tempact = GetAction(tempobj2.Actions, "<<On Player Leave First Time>>");
                                         tempobj2.bLeaveFirstTime = true;
                                         if (tempact != null)
-                                            ProcessAction(tempact, false); //tempobj2);
+                                            ProcessAction(tempact, false);
                                     }
                                 }
                                 tempact = GetAction(tempobj2.Actions, EventType);
@@ -3830,10 +3834,10 @@ function RunEvents(EventType) {
                                     if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
                                         if (EventType == "<<On Player Enter>>") {
                                             if (startingroomid == TheGame.Player.CurrentRoom) {
-                                                ProcessAction(tempact, false); //tempobj2);
+                                                ProcessAction(tempact, false);
                                             }
                                         } else
-                                            ProcessAction(tempact, false); //tempobj2);
+                                            ProcessAction(tempact, false);
                                     }
                                 }
                             }
@@ -3841,7 +3845,6 @@ function RunEvents(EventType) {
                     }
                 }
             }
-            TheObj = undefined;
         }
         for (var i = 0; i < TheGame.Characters.length; i++) {
             var tempchar = TheGame.Characters[i];

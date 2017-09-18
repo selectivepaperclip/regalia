@@ -17,7 +17,7 @@ function roomDisplayName(room) {
 }
 
 function hideSaveAndLoadMenus() {
-    custom__showGameElements();
+    GameUI.showGameElements();
     $(".save-menu").addClass("hidden");
     $(".load-menu").addClass("hidden");
 }
@@ -58,7 +58,7 @@ $(function() {
     $("#Actionchoices").change(function(e) {
         var selectionchoice = $("#Actionchoices").val();
         if (selectionchoice != null) {
-            custom__executeAndRunTimers(function () {
+            GameController.executeAndRunTimers(function () {
                 $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                 $("#MainText").animate({
                     scrollTop: $("#MainText")[0].scrollHeight
@@ -118,7 +118,7 @@ $(function() {
         TheGame.Player.Name = newname.trim();
         if (TheGame.Player.bPromptForGender) {
             $("#genderchoice").css("visibility", "visible");
-            custom__hideGameElements();
+            GameUI.hideGameElements();
         } else {
             StartGame();
         }
@@ -553,7 +553,7 @@ function handleFileSelect(bQuick, CurID) {
     $("#selectionmenu").css("visibility", "hidden");
     $("#genderchoice").css("visibility", "hidden");
     $("#cmdinputmenu").css("visibility", "hidden");
-    custom__showGameElements();
+    GameUI.showGameElements();
 
     if (bQuick) {
         alert("Quick Loaded");
@@ -595,12 +595,12 @@ function receivedText() {
         TheGame = SetupGameData();
         if (TheGame.Player.bPromptForName) {
             $("#playernamechoice").css("visibility", "visible");
-            custom__hideGameElements();
+            GameUI.hideGameElements();
             return;
         }
         if (TheGame.Player.bPromptForGender) {
             $("#genderchoice").css("visibility", "visible");
-            custom__hideGameElements();
+            GameUI.hideGameElements();
             return;
         }
         StartGame();

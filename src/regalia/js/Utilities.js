@@ -65,22 +65,33 @@ var GameController = {
 
     startAwaitingInput: function () {
         this.gameAwaitingInput = true;
-        custom__hideGameElements();
+        GameUI.hideGameElements();
     },
 
     stopAwaitingInput: function () {
         this.gameAwaitingInput = false;
-        custom__showGameElements();
+        GameUI.showGameElements();
+    },
+
+    executeAndRunTimers: function (fn) {
+        var wasRunningTimers = bRunningTimers;
+
+        fn();
+
+        if (CommandLists.commandCount() == 0 && this.shouldRunCommands() && !wasRunningTimers) {
+            RunTimerEvents();
+            UpdateStatusBars();
+        }
     },
 
     pause: function () {
         this.gamePaused = true;
-        custom__hideGameElements();
+        GameUI.hideGameElements();
     },
 
     continue: function () {
         this.gamePaused = false;
-        custom__showGameElements();
+        GameUI.showGameElements();
     },
 
     shouldRunCommands: function () {
@@ -88,118 +99,115 @@ var GameController = {
     }
 };
 
-function custom__setInputMenuTitle(act) {
-    $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
-    $("#inputmenu").css("visibility", "visible");
-    $("#inputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
-}
+var GameUI = {
+    setInputMenuTitle: function (act) {
+        $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
+        $("#inputmenu").css("visibility", "visible");
+        $("#inputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
+    },
 
-function custom__showGameElements() {
-    $("#RoomThumbImg").css("visibility", "visible");
-    $("#PlayerImg").css("visibility", "visible");
-    $("#RoomObjectsPanel").css("visibility", "visible");
-    $("#VisibleCharactersPanel").css("visibility", "visible");
-    $("#InventoryPanel").css("visibility", "visible");
-    $(".compass-direction").css("visibility", "visible");
-    SetExits();
-}
+    showGameElements: function () {
+        $("#RoomThumbImg").css("visibility", "visible");
+        $("#PlayerImg").css("visibility", "visible");
+        $("#RoomObjectsPanel").css("visibility", "visible");
+        $("#VisibleCharactersPanel").css("visibility", "visible");
+        $("#InventoryPanel").css("visibility", "visible");
+        $(".compass-direction").css("visibility", "visible");
+        SetExits();
+    },
 
-function custom__hideGameElements() {
-    $("#PlayerImg").css("visibility", "hidden");
-    $("#RoomThumbImg").css("visibility", "hidden");
-    $("#RoomObjectsPanel").css("visibility", "hidden");
-    $("#VisibleCharactersPanel").css("visibility", "hidden");
-    $("#InventoryPanel").css("visibility", "hidden");
-    $(".compass-direction").css("visibility", "hidden");
-}
+    hideGameElements: function () {
+        $("#PlayerImg").css("visibility", "hidden");
+        $("#RoomThumbImg").css("visibility", "hidden");
+        $("#RoomObjectsPanel").css("visibility", "hidden");
+        $("#VisibleCharactersPanel").css("visibility", "hidden");
+        $("#InventoryPanel").css("visibility", "hidden");
+        $(".compass-direction").css("visibility", "hidden");
+    },
 
-function custom__executeAndRunTimers(fn) {
-    var wasRunningTimers = bRunningTimers;
+    clearInputChoices: function () {
+        $("#inputchoices").empty();
+    },
 
-    fn();
+    clearCmdInputChoices: function () {
+        $("#cmdinputchoices").empty();
+    },
 
-    if (CommandLists.commandCount() == 0 && GameController.shouldRunCommands() && !wasRunningTimers) {
-        RunTimerEvents();
-        UpdateStatusBars();
-    }
-}
+    setCmdInputMenuTitle: function (act, title) {
+        $("#cmdInputMenuTitle").text(title);
+        $("#cmdinputmenu").css("visibility", "visible");
+        $("#cmdinputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
+    },
 
-function custom__addInputChoice($div) {
-    $div.click(function() {
-        selectedobj = $(this).val();
-        if (selectedobj != null) {
-            custom__executeAndRunTimers(function () {
-                AdditionalData = selectedobj;
-                GameController.stopAwaitingInput();
-                $("#inputmenu").css("visibility", "hidden");
-                if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-                    ActionRecorder.choseInputAction(selectedobj);
-                    ExecuteAction(InputDataObject, true, selectedobj);
-                    if (bMasterTimer)
-                        RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-                    else
-                        RunCommands(TheObj, selectedobj, InputDataObject, null);
-                }
-            });
-        }
-    });
-
-    $("#inputchoices").append($div);
-}
-
-function custom__clearInputChoices() {
-    $("#inputchoices").empty();
-}
-
-function custom__clearCmdInputChoices() {
-    $("#cmdinputchoices").empty();
-}
-
-function custom__setCmdInputMenuTitle(act, title) {
-    $("#cmdInputMenuTitle").text(title);
-    $("#cmdinputmenu").css("visibility", "visible");
-    $("#cmdinputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
-}
-
-function custom__addCmdInputChoice($div) {
-    $div.click(function () {
-        selectedobj = $(this).val();
-        if (selectedobj != null) {
-            custom__executeAndRunTimers(function () {
-                $("#cmdinputmenu").hide();
-                GameController.stopAwaitingInput();
-                $("#cmdinputmenu").css("visibility", "hidden");
-                ActionRecorder.choseInputAction(selectedobj);
-                SetCommandInput(VariableGettingSet, selectedobj);
-                RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
-            });
-        }
-    });
-
-    $("#cmdinputchoices").append($div);
-    $("#cmdinputmenu").show();
-}
-
-function custom__setCmdInputForCustomChoices(title, tempcommand) {
-    custom__clearCmdInputChoices();
-    for (var i = 0; i < tempcommand.CustomChoices.length; i++) {
-        var text = PerformTextReplacements(tempcommand.CustomChoices[i]);
+    addInputChoice: function (InputDataObject, text, value) {
         var $div = $("<div>", {
             class: "inputchoices",
             text: text,
-            value: text
+            value: value
         });
 
-        custom__addCmdInputChoice($div);
-    }
-    custom__setCmdInputMenuTitle(tempcommand, title);
-}
+        $div.click(function() {
+            selectedobj = $(this).val();
+            if (selectedobj != null) {
+                GameController.executeAndRunTimers(function () {
+                    AdditionalData = selectedobj;
+                    GameController.stopAwaitingInput();
+                    $("#inputmenu").css("visibility", "hidden");
+                    if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
+                        ActionRecorder.choseInputAction(selectedobj);
+                        ExecuteAction(InputDataObject, true, selectedobj);
+                        if (bMasterTimer)
+                            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                        else
+                            RunCommands(TheObj, selectedobj, InputDataObject, null);
+                    }
+                });
+            }
+        });
 
-function custom__showTextMenuChoice(title) {
-    $("#textMenuTitle").text(title);
-    $("#textchoice").css("visibility", "visible");
-    $("#textchoice input").focus();
-}
+        $("#inputchoices").append($div);
+    },
+
+    addCmdInputChoice: function (text, value) {
+        var $div = $("<div>", {
+            class: "inputchoices",
+            text: text,
+            value: value
+        });
+
+        $div.click(function () {
+            selectedobj = $(this).val();
+            if (selectedobj != null) {
+                GameController.executeAndRunTimers(function () {
+                    $("#cmdinputmenu").hide();
+                    GameController.stopAwaitingInput();
+                    $("#cmdinputmenu").css("visibility", "hidden");
+                    ActionRecorder.choseInputAction(selectedobj);
+                    SetCommandInput(VariableGettingSet, selectedobj);
+                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                });
+            }
+        });
+
+        $("#cmdinputchoices").append($div);
+        $("#cmdinputmenu").show();
+    },
+
+    setCmdInputForCustomChoices: function (title, tempcommand) {
+        this.clearCmdInputChoices();
+        for (var i = 0; i < tempcommand.CustomChoices.length; i++) {
+            var text = PerformTextReplacements(tempcommand.CustomChoices[i]);
+            this.addCmdInputChoice(text, text);
+        }
+        this.setCmdInputMenuTitle(tempcommand, title);
+    },
+
+    showTextMenuChoice: function (title) {
+        $("#textMenuTitle").text(title);
+        $("#textchoice").css("visibility", "visible");
+        $("#textchoice input").focus();
+    }
+};
 
 function setAdditionalInputData(command, addinputdata) {
     if (addinputdata) {
@@ -632,7 +640,7 @@ function AddChildAction(Actions, Indent, ActionName) {
             $div.click(function() {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
-                    custom__executeAndRunTimers(function () {
+                    GameController.executeAndRunTimers(function () {
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
                             scrollTop: $("#MainText")[0].scrollHeight
@@ -686,7 +694,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
                 var selectionchoice = $(this).val();
                 var selectiontext = $(this).text();
                 if (selectionchoice != null) {
-                    custom__executeAndRunTimers(function () {
+                    GameController.executeAndRunTimers(function () {
                         if (actionRecipientToLog == 'self') {
                             ActionRecorder.actedOnSelf(selectiontext);
                         } else if (actionRecipientToLog == 'room') {
@@ -761,155 +769,100 @@ function ProcessAction(Action, bTimer) {
                 actionname = selectedobj.Charname + ": " + act.name;
         } catch (err) {}
     }
-    if (!bTimer) {}
-    if (act.InputType != "None") {
-        InputDataObject = act;
-        if (act.InputType == "Custom") {
-            custom__clearInputChoices();
-            for (var i = 0; i < act.CustomChoices.length; i++) {
-                var $div = $("<div>", {
-                    class: "inputchoices",
-                    text: PerformTextReplacements(act.CustomChoices[i]),
-                    value: PerformTextReplacements(act.CustomChoices[i])
-                });
 
-                custom__addInputChoice($div);
-            }
-            custom__setInputMenuTitle(act);
-        } else if (act.InputType == "Character") {
-            custom__clearInputChoices();
-            for (var i = 0; i < TheGame.Characters.length; i++) {
-                if (TheGame.Characters[i].CurrentRoom == TheGame.Player.CurrentRoom) {
-                    var $div = $("<div>", {
-                        class: "inputchoices",
-                        text: CharToString(TheGame.Characters[i]),
-                        value: TheGame.Characters[i].Charname
-                    });
-
-                    custom__addInputChoice($div);
-                }
-            }
-            custom__setInputMenuTitle(act);
-        } else if (act.InputType == "Object") {
-            custom__clearInputChoices();
-            for (var i = 0; i < TheGame.Objects.length; i++) {
-                var obj = TheGame.Objects[i];
-                if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
-                    var $div = $("<div>", {
-                        class: "inputchoices",
-                        text: objecttostring(obj),
-                        value: obj.UniqueIdentifier
-                    });
-
-                    custom__addInputChoice($div);
-                }
-            }
-            if (TheGame.Player.CurrentRoom != null) {
-                var currentroom = GetRoom(TheGame.Player.CurrentRoom);
-                if (currentroom != null) {
-                    for (var j = 0; j < currentroom.Exits.length; j++) {
-                        var tempexit = currentroom.Exits[j];
-                        if (tempexit.PortalObjectName != "<None>") {
-                            var tempobj = GetObject(tempexit.PortalObjectName);
-                            if (tempobj != null) {
-                                if (tempobj.bVisible) {
-                                    var $div = $("<div>", {
-                                        class: "inputchoices",
-                                        text: objecttostring(tempobj),
-                                        value: tempobj.UniqueIdentifier
-                                    });
-
-                                    custom__addInputChoice($div);
-
-                                    if (tempobj.bContainer) {
-                                        if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                            AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices", selectedobj);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            custom__setInputMenuTitle(act);
-        } else if (act.InputType == "Inventory") {
-            custom__clearInputChoices();
-            for (var i = 0; i < TheGame.Objects.length; i++) {
-                var obj = TheGame.Objects[i];
-                if (obj.locationtype == "LT_PLAYER") {
-                    var $div = $("<div>", {
-                        class: "inputchoices",
-                        text: objecttostring(obj),
-                        value: obj.UniqueIdentifier
-                    });
-
-                    custom__addInputChoice($div);
-                }
-            }
-            custom__setInputMenuTitle(act);
-        } else if (act.InputType == "ObjectOrCharacter") {
-            custom__clearInputChoices();
-            for (var i = 0; i < TheGame.Objects.length; i++) {
-                var obj = TheGame.Objects[i];
-                if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
-                    var $div = $("<div>", {
-                        class: "inputchoices",
-                        text: objecttostring(obj),
-                        value: obj.UniqueIdentifier
-                    });
-
-                    custom__addInputChoice($div);
-                }
-            }
-            if (TheGame.Player.CurrentRoom != null) {
-                var currentroom = GetRoom(TheGame.Player.CurrentRoom);
-                if (currentroom != null) {
-                    for (var j = 0; j < currentroom.Exits.length; j++) {
-                        var tempexit = currentroom.Exits[j];
-                        if (tempexit.PortalObjectName != "<None>") {
-                            var tempobj = GetObject(tempexit.PortalObjectName);
-                            if (tempobj != null) {
-                                if (tempobj.bVisible) {
-                                    var $div = $("<div>", {
-                                        class: "inputchoices",
-                                        text: objecttostring(tempobj),
-                                        value: tempobj.UniqueIdentifier
-                                    });
-
-                                    custom__addInputChoice($div);
-
-                                    if (tempobj.bContainer) {
-                                        if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                            AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices", selectedobj);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            for (var i = 0; i < TheGame.Characters.length; i++) {
-                if (TheGame.Characters[i].CurrentRoom == TheGame.Player.CurrentRoom) {
-                    var $div = $("<div>", {
-                        class: "inputchoices",
-                        text: CharToString(TheGame.Characters[i]),
-                        value: TheGame.Characters[i].Charname
-                    });
-
-                    custom__addInputChoice($div);
-                }
-            }
-            custom__setInputMenuTitle(act);
-        } else if (act.InputType == "Text") {
-            $("#textactionMenuTitle").text(act.CustomChoiceTitle);
-            $("#textactionchoice").css("visibility", "visible");
-            $("#textactionchoice input").focus();
-        }
-        if (act.InputType != "Text") {}
-        GameController.startAwaitingInput();
-    } else {
+    if (act.InputType === "None") {
         ExecuteAction(act, bTimer);
+        SetBorders();
+        return;
     }
+
+    if (act.InputType == "Text") {
+        InputDataObject = act;
+        $("#textactionMenuTitle").text(act.CustomChoiceTitle);
+        $("#textactionchoice").css("visibility", "visible");
+        $("#textactionchoice input").focus();
+        GameController.startAwaitingInput();
+        SetBorders();
+        return;
+    }
+
+    GameUI.clearInputChoices();
+
+    function addObjectChoices() {
+        TheGame.Objects.filter(function (obj) {
+            return obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom);
+        }).forEach(function (obj) {
+            GameUI.addInputChoice(
+                act,
+                objecttostring(obj),
+                obj.UniqueIdentifier
+            );
+        });
+        if (TheGame.Player.CurrentRoom != null) {
+            var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+            if (!currentroom) {
+                return;
+            }
+
+            currentroom.Exits.forEach(function (roomExit) {
+                if (roomExit.PortalObjectName != "<None>") {
+                    var tempobj = GetObject(roomExit.PortalObjectName);
+                    if (tempobj && tempobj.bVisible) {
+                        GameUI.addInputChoice(
+                            act,
+                            objecttostring(tempobj),
+                            tempobj.UniqueIdentifier
+                        );
+
+                        if (tempobj.bContainer) {
+                            if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
+                                AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices", selectedobj);
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    function addCharacterChoices() {
+        TheGame.Characters.filter(function (character) {
+            return character.CurrentRoom == TheGame.Player.CurrentRoom;
+        }).forEach(function (character) {
+            GameUI.addInputChoice(
+                act,
+                CharToString(character),
+                character.Charname
+            );
+        });
+    }
+
+    if (act.InputType == "Custom") {
+        act.CustomChoices.forEach(function (customChoice) {
+            var replacedChoiceText = PerformTextReplacements(customChoice);
+            GameUI.addInputChoice(act, replacedChoiceText, replacedChoiceText);
+        });
+    } else if (act.InputType == "Character") {
+        addCharacterChoices();
+    } else if (act.InputType == "Object") {
+        addObjectChoices();
+    } else if (act.InputType == "Inventory") {
+        TheGame.Objects.filter(function (obj) {
+            return obj.locationtype == "LT_PLAYER";
+        }).forEach(function (obj) {
+            GameUI.addInputChoice(
+                act,
+                objecttostring(obj),
+                obj.UniqueIdentifier
+            );
+        });
+    } else if (act.InputType == "ObjectOrCharacter") {
+        addObjectChoices();
+        addCharacterChoices();
+    }
+
+    GameUI.setInputMenuTitle(act);
+    GameController.startAwaitingInput();
+
     SetBorders();
 }
 
@@ -2019,7 +1972,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         {
                             AddTextToRTF(cmdtxt + "\r\n", "Black", "Regular");
                             alert("EndGame");
-                            custom__hideGameElements();
+                            GameUI.hideGameElements();
                             break;
                         }
                     case "CT_MOVEITEMTOINV":
@@ -3143,9 +3096,9 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var acttype = part2;
                             var bTransparentChoice = false;
                             if (acttype == "Custom") {
-                                custom__setCmdInputForCustomChoices(part4, tempcommand);
+                                GameUI.setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Text") {
-                                custom__showTextMenuChoice(part4);
+                                GameUI.showTextMenuChoice(part4);
                             } else {}
                             GameController.startAwaitingInput();
                             VariableGettingSet = tempcommand;
@@ -3156,77 +3109,61 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                             var acttype = part2;
                             var bTransparentChoice = false;
                             if (acttype == "Custom") {
-                                custom__setCmdInputForCustomChoices(part4, tempcommand);
+                                GameUI.setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Character") {
-                                custom__clearCmdInputChoices();
+                                GameUI.clearCmdInputChoices();
                                 for (var i = 0; i < TheGame.Characters.length; i++) {
-                                    var $div = $("<div>", {
-                                        class: "inputchoices",
-                                        text: CharToString(TheGame.Character[i]),
-                                        value: TheGame.Character[i].Charname
-                                    });
-
-                                    custom__addCmdInputChoice($div)
+                                    GameUI.addCmdInputChoice(
+                                        CharToString(TheGame.Character[i]),
+                                        TheGame.Character[i].Charname
+                                    )
                                 }
-                                custom__setCmdInputMenuTitle(act, part4);
+                                GameUI.setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Object") {
-                                custom__clearCmdInputChoices();
+                                GameUI.clearCmdInputChoices();
                                 for (var i = 0; i < TheGame.Objects.length; i++) {
                                     var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
-                                        var $div = $("<div>", {
-                                            class: "inputchoices",
-                                            text: objecttostring(obj),
-                                            value: obj.UniqueIdentifier
-                                        });
-
-                                        custom__addCmdInputChoice($div)
+                                        GameUI.addCmdInputChoice(
+                                            objecttostring(obj),
+                                            obj.UniqueIdentifier
+                                        )
                                     }
                                 }
-                                custom__setCmdInputMenuTitle(act, part4);
+                                GameUI.setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Inventory") {
-                                custom__clearCmdInputChoices();
+                                GameUI.clearCmdInputChoices();
                                 for (var i = 0; i < TheGame.Objects.length; i++) {
                                     var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER") {
-                                        var $div = $("<div>", {
-                                            class: "inputchoices",
-                                            text: objecttostring(obj),
-                                            value: obj.UniqueIdentifier
-                                        });
-
-                                        custom__addCmdInputChoice($div)
+                                        GameUI.addCmdInputChoice(
+                                            objecttostring(obj),
+                                            obj.UniqueIdentifier
+                                        )
                                     }
                                 }
-                                custom__setCmdInputMenuTitle(act, part4);
+                                GameUI.setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "ObjectOrCharacter") {
-                                custom__clearCmdInputChoices();
+                                GameUI.clearCmdInputChoices();
                                 for (var i = 0; i < TheGame.Objects.length; i++) {
                                     var obj = TheGame.Objects[i];
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
-                                        var $div = $("<div>", {
-                                            class: "inputchoices",
-                                            text: objecttostring(obj),
-                                            value: obj.UniqueIdentifier
-                                        });
-
-                                        custom__addCmdInputChoice($div)
+                                        GameUI.addCmdInputChoice(
+                                            objecttostring(obj),
+                                            obj.UniqueIdentifier
+                                        )
                                     }
                                 }
                                 for (var i = 0; i < TheGame.Characters.length; i++) {
-                                    var $div = $("<div>", {
-                                        class: "inputchoices",
-                                        text: CharToString(TheGame.Character[i]),
-                                        value: TheGame.Character[i].Charname
-                                    });
-
-                                    custom__addCmdInputChoice($div)
-
+                                    GameUI.addCmdInputChoice(
+                                        CharToString(TheGame.Character[i]),
+                                        TheGame.Character[i].Charname
+                                    )
                                 }
-                                custom__setCmdInputMenuTitle(act, part4);
+                                GameUI.setCmdInputMenuTitle(act, part4);
                             } else if (acttype == "Text") {
-                                custom__showTextMenuChoice(part4);
-                            } else {}
+                                GameUI.showTextMenuChoice(part4);
+                            }
                             VariableGettingSet = tempcommand;
                             GameController.startAwaitingInput();
                             return;

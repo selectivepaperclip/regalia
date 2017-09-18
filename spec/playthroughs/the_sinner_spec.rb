@@ -1620,6 +1620,8 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'East'
 
     # See Rubi's post-seduction library pics
+    go_to_room 'Liberty Square'
+    wait_until_hour 19
     go_to_room 'Reception'
     go_direction 'NorthEast'
     act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'

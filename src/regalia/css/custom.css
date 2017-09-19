@@ -12,25 +12,24 @@ body {
     display: flex;
     flex-direction: column;
     position: absolute;
+    overflow-y: hidden;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    margin: 3px 8px 3px 8px;
+    margin: 0;
 }
 
 #menu {
     top: 0;
     height: 30px;
     display: inline-block;
-    margin-bottom: 5px;
     flex: 0 0 auto;
 }
 
 .mainrow {
     position: static;
     flex: 1 1 auto;
-    margin-bottom: 5px;
     display: flex;
 }
 
@@ -43,7 +42,7 @@ body {
 #statusbar {
     height: 30px;
     flex: 0 0 auto;
-    margin-top: 5px;
+    padding: 10px;
     position: static;
     display: flex;
     align-items: center;
@@ -60,7 +59,7 @@ body {
 }
 
 #MainText {
-    margin: 3px;
+    padding: 0 6px 10px 6px;
     height: 270px;
     flex: 1 1 auto;
     overflow-y: scroll;
@@ -330,20 +329,23 @@ body {
 
 #PlayerImg,
 #RoomThumbImg,
-#roompanel,
-#menu,
-#statusbar,
 #RoomObjects,
 #VisibleCharacters,
 #Inventory,
 #selectionmenu,
 #PlayerRow,
 #cmdinputmenu,
-#tooltip,
-#MainImg,
-.MainLayeredImage
+#tooltip
 {
     border: 1px solid grey;
+}
+
+#menu {
+    border-bottom: 1px solid grey;
+}
+
+#roompanel {
+    border-right: 1px solid grey;
 }
 
 #MainImg {

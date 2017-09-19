@@ -1,5 +1,4 @@
 ﻿
-var images = [];
 var pausecommandargs = null;
 var TheGame = null;
 var OriginalGame = null;
@@ -109,7 +108,6 @@ $(function() {
     onKeyupEnter('#textinput', setTextInputChoice);
 
     function setPlayerNameChoice () {
-        AdditionalInput = "";
         $("#playernamechoice").css("visibility", "hidden");
         GameController.stopAwaitingInput();
         var newname = $("#playernametext").val();
@@ -352,7 +350,6 @@ $(function() {
         RunCommands.apply(null, pausecommandargs);
     });
     $("#cmdCancelInput").click(function(e) {
-        AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
         RunCommands.apply(null, pausecommandargs);
@@ -587,7 +584,6 @@ function retrieveExportData() {
 
 function receivedText() {
     try {
-        images = [];
         OriginalGame = SetupGameData();
         TheGame = SetupGameData();
         if (TheGame.Player.bPromptForName) {

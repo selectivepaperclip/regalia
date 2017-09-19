@@ -47,7 +47,6 @@ var CommandLists = {
 
 var currenttimer = null;
 var bRunningTimers = false;
-var AdditionalInput = "";
 var InputDataObject = null;
 var TheObj = null;
 var bCancelMove = false;
@@ -433,8 +432,8 @@ function RefreshInventory() {
             });
             $("#Inventory").append($div);
             if (obj.bContainer) {
-                if ((obj.bOpenable) && (!obj.bOpen)) {} else {
-                    AddOpenedObjects(obj, $("#Inventory"), 'RoomObjects', selectedobj);
+                if (!obj.bOpenable || obj.bOpen) {
+                    AddOpenedObjects(obj, $("#Inventory"), 'RoomObjects');
                 }
             }
         }
@@ -463,8 +462,8 @@ function RefreshRoomObjects() {
             });
             $("#RoomObjects").append($div);
             if (obj.bContainer) {
-                if ((obj.bOpenable) && (!obj.bOpen)) {} else {
-                    AddOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects', selectedobj);
+                if (!obj.bOpenable || obj.bOpen) {
+                    AddOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects');
                 }
             }
         }
@@ -495,8 +494,9 @@ function RefreshRoomObjects() {
                             });
                             $("#RoomObjects").append($div);
                             if (tempobj.bContainer) {
-                                if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                    AddOpenedObjects(tempobj, $("#RoomObjects"), 'RoomObjects', selectedobj);
+                                if (!tempobj.bOpenable || tempobj.bOpen) {
+                                    AddOpenedObjects(tempobj, $("#RoomObjects"), 'RoomObjects');
+                                }
                             }
                         }
                     }
@@ -538,19 +538,18 @@ function characterHasObject(character, object) {
     return (object.locationtype === "LT_CHARACTER") && (object.locationname === character.Charname) && (object.bVisible);
 }
 
-function AddOpenedObjects(tempobj, thelistbox, itemclass, selitem) {
-    for (var i = 0; i < TheGame.Objects.length; i++) {
-        var tempobj2 = TheGame.Objects[i];
+function AddOpenedObjects(outerObject, thelistbox, itemclass) {
+    TheGame.Objects.forEach(function (innerObject) {
         if (
-            (objectContainsObject(tempobj, tempobj2)) ||
-            ((tempobj.constructor.name === "character") && characterHasObject(tempobj, tempobj2))
+            (objectContainsObject(outerObject, innerObject)) ||
+            ((outerObject.constructor.name === "character") && characterHasObject(outerObject, innerObject))
         ) {
             var $div = $("<div>", {
                 class: itemclass,
-                text: "--" + objecttostring(tempobj2),
-                value: tempobj2.UniqueIdentifier
+                text: "--" + objecttostring(innerObject),
+                value: innerObject.UniqueIdentifier
             });
-            $div.toggleClass('no-actions', GetActionCount(tempobj2.Actions) === 0);
+            $div.toggleClass('no-actions', GetActionCount(innerObject.Actions) === 0);
 
             $div.click(function(clickEvent) {
                 selectedobj = GetObject($(this).val());
@@ -562,11 +561,11 @@ function AddOpenedObjects(tempobj, thelistbox, itemclass, selitem) {
             });
 
             thelistbox.append($div);
-            if ((tempobj2.bOpenable) && (tempobj2.bOpen)) {
-                AddOpenedObjects(tempobj2, thelistbox, itemclass, selitem);
+            if (innerObject.bOpenable && innerObject.bOpen) {
+                AddOpenedObjects(innerObject, thelistbox, itemclass);
             }
         }
-    }
+    });
 }
 
 function RefreshCharacters() {
@@ -591,7 +590,7 @@ function RefreshCharacters() {
 
             $("#VisibleCharacters").append($div);
             if (obj.bAllowInventoryInteraction) {
-                AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters', selectedobj);
+                AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
             }
         }
     }
@@ -815,8 +814,9 @@ function ProcessAction(Action, bTimer) {
                         );
 
                         if (tempobj.bContainer) {
-                            if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else
-                                AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices", selectedobj);
+                            if (!tempobj.bOpenable || tempobj.bOpen) {
+                                AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices");
+                            }
                         }
                     }
                 }
@@ -3737,7 +3737,7 @@ function RunEvents(EventType) {
                     }
                 }
                 if (tempobj.bContainer) {
-                    if ((tempobj.bOpenable) && (!tempobj.bOpen)) {} else {
+                    if (!tempobj.bOpenable || tempobj.bOpen) {
                         for (var j = 0; j < TheGame.Objects.length; j++) {
                             var tempobj2 = TheGame.Objects[j];
                             CommandLists.addNestedCommandList(tempobj2);

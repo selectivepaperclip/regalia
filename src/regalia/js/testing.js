@@ -1,7 +1,5 @@
 ﻿
 var images = [];
-var curimage = 0;
-var pausedindex = 0;
 var pausecommandargs = null;
 var TheGame = null;
 var OriginalGame = null;
@@ -76,7 +74,7 @@ $(function() {
             GameController.continue();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
-            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+            RunCommands.apply(null, pausecommandargs);
         }
     });
     $("#PlayerImg").click(function(e) {
@@ -104,7 +102,7 @@ $(function() {
             $("#textchoice").css("visibility", "hidden");
             ActionRecorder.filledInTextInput(selectedobj);
             SetCommandInput(VariableGettingSet, selectedobj);
-            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+            RunCommands.apply(null, pausecommandargs);
         }
     }
     $("#textbutton").click(setTextInputChoice);
@@ -315,7 +313,7 @@ $(function() {
 
                 ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
                 if (bMasterTimer)
-                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                    RunCommands.apply(null, pausecommandargs);
                 else
                     RunCommands(TheObj, selectedobj, InputDataObject, null);
             }
@@ -331,7 +329,6 @@ $(function() {
             $("#textactionchoice").css("visibility", "hidden");
             if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
                 ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-
             }
         }
     }
@@ -346,19 +343,19 @@ $(function() {
             $("#cmdinputmenu").css("visibility", "hidden");
             ActionRecorder.choseInputAction(Value);
             SetCommandInput(VariableGettingSet, selectedobj);
-            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+            RunCommands.apply(null, pausecommandargs);
         }
     });
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+        RunCommands.apply(null, pausecommandargs);
     });
     $("#cmdCancelInput").click(function(e) {
         AdditionalInput = "";
         $("#cmdinputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+        RunCommands.apply(null, pausecommandargs);
     });
     $("#Inventory").change(function(e) {
         selectedobj = GetObject($("#Inventory").val());

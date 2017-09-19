@@ -157,7 +157,7 @@ var GameUI = {
                         ActionRecorder.choseInputAction(selectedobj);
                         ExecuteAction(InputDataObject, true, selectedobj);
                         if (bMasterTimer)
-                            RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                            RunCommands.apply(null, pausecommandargs);
                         else
                             RunCommands(TheObj, selectedobj, InputDataObject, null);
                     }
@@ -184,7 +184,7 @@ var GameUI = {
                     $("#cmdinputmenu").css("visibility", "hidden");
                     ActionRecorder.choseInputAction(selectedobj);
                     SetCommandInput(VariableGettingSet, selectedobj);
-                    RunCommands(pausecommandargs[0], pausecommandargs[1], pausecommandargs[2], pausecommandargs[3], pausecommandargs[4], pausedindex + 1);
+                    RunCommands.apply(null, pausecommandargs);
                 });
             }
         });
@@ -1593,10 +1593,9 @@ function movePlayerToRoom(roomName) {
     }
 }
 
-function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
+function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
     pausecommandargs = arguments;
     var bResult = false;
-    var i = 0;
     while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || runningLiveTimerCommands)) {
         if (typeof CommandLists.nextCommand() === "function") {
             var callback = CommandLists.shiftCommand();
@@ -1843,7 +1842,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                         }
                     case "CT_PAUSEGAME":
                         {
-                            pausedindex = i;
                             AddTextToRTF("--------------------------------\r\n", "Black", "Bold");
                             PauseGame();
                             return;
@@ -3094,7 +3092,6 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_SETVARIABLE_NUMERIC_BYINPUT":
                         {
                             var acttype = part2;
-                            var bTransparentChoice = false;
                             if (acttype == "Custom") {
                                 GameUI.setCmdInputForCustomChoices(part4, tempcommand);
                             } else if (acttype == "Text") {
@@ -3107,66 +3104,61 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj, lastindex) {
                     case "CT_SETVARIABLEBYINPUT":
                         {
                             var acttype = part2;
-                            var bTransparentChoice = false;
+                            VariableGettingSet = tempcommand;
                             if (acttype == "Custom") {
                                 GameUI.setCmdInputForCustomChoices(part4, tempcommand);
-                            } else if (acttype == "Character") {
-                                GameUI.clearCmdInputChoices();
-                                for (var i = 0; i < TheGame.Characters.length; i++) {
+                                GameController.startAwaitingInput();
+                                return;
+                            }
+
+                            if (acttype == "Text") {
+                                GameUI.showTextMenuChoice(part4);
+                                GameController.startAwaitingInput();
+                                return;
+                            }
+
+                            function addCharacterOptions() {
+                                TheGame.Characters.forEach(function (character) {
                                     GameUI.addCmdInputChoice(
-                                        CharToString(TheGame.Character[i]),
-                                        TheGame.Character[i].Charname
+                                        CharToString(character),
+                                        character.Charname
                                     )
-                                }
-                                GameUI.setCmdInputMenuTitle(act, part4);
-                            } else if (acttype == "Object") {
-                                GameUI.clearCmdInputChoices();
-                                for (var i = 0; i < TheGame.Objects.length; i++) {
-                                    var obj = TheGame.Objects[i];
+                                });
+                            }
+
+                            function addObjectOptions() {
+                                TheGame.Objects.forEach(function (obj) {
                                     if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
                                         GameUI.addCmdInputChoice(
                                             objecttostring(obj),
                                             obj.UniqueIdentifier
                                         )
                                     }
-                                }
-                                GameUI.setCmdInputMenuTitle(act, part4);
+                                });
+                            }
+
+                            GameUI.clearCmdInputChoices();
+
+                            if (acttype == "Character") {
+                                addCharacterOptions();
+                            } else if (acttype == "Object") {
+                                addObjectOptions();
                             } else if (acttype == "Inventory") {
-                                GameUI.clearCmdInputChoices();
-                                for (var i = 0; i < TheGame.Objects.length; i++) {
-                                    var obj = TheGame.Objects[i];
+                                TheGame.Objects.forEach(function (obj) {
                                     if (obj.locationtype == "LT_PLAYER") {
                                         GameUI.addCmdInputChoice(
                                             objecttostring(obj),
                                             obj.UniqueIdentifier
                                         )
                                     }
-                                }
-                                GameUI.setCmdInputMenuTitle(act, part4);
+                                });
                             } else if (acttype == "ObjectOrCharacter") {
-                                GameUI.clearCmdInputChoices();
-                                for (var i = 0; i < TheGame.Objects.length; i++) {
-                                    var obj = TheGame.Objects[i];
-                                    if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
-                                        GameUI.addCmdInputChoice(
-                                            objecttostring(obj),
-                                            obj.UniqueIdentifier
-                                        )
-                                    }
-                                }
-                                for (var i = 0; i < TheGame.Characters.length; i++) {
-                                    GameUI.addCmdInputChoice(
-                                        CharToString(TheGame.Character[i]),
-                                        TheGame.Character[i].Charname
-                                    )
-                                }
-                                GameUI.setCmdInputMenuTitle(act, part4);
-                            } else if (acttype == "Text") {
-                                GameUI.showTextMenuChoice(part4);
+                                addObjectOptions();
+                                addCharacterOptions();
                             }
-                            VariableGettingSet = tempcommand;
+                            GameUI.setCmdInputMenuTitle(act, part4);
                             GameController.startAwaitingInput();
-                            return;
+                            break;
                         }
                 }
             } catch (err) {

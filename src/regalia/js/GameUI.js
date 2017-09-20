@@ -55,10 +55,7 @@ var GameUI = {
                     if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
                         ActionRecorder.choseInputAction(Globals.selectedObj);
                         ExecuteAction(InputDataObject, true, Globals.selectedObj);
-                        if (Globals.bMasterTimer)
-                            RunCommands.apply(null, Globals.pauseCommandArgs);
-                        else
-                            RunCommands(Globals.theObj, Globals.selectedObj, InputDataObject, null);
+                        RunCommands(Globals.theObj, Globals.selectedObj, InputDataObject, null);
                     }
                 });
             }

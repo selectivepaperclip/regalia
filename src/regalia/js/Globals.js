@@ -3,6 +3,7 @@ var OriginalGame = null;
 
 var Globals = {
     additionalData: "",
+    additionalDataAction: null,
     bRunningTimers: false,
     bMasterTimer: false,
     bCancelMove: false,

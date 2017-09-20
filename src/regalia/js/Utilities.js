@@ -1,22 +1,24 @@
 function setAdditionalInputData(command, addinputdata) {
-    if (addinputdata) {
-        command.AdditionalInputData = addinputdata;
-    } else {
-        command.AdditionalInputData = undefined;
-    }
+    command.AdditionalInputData = addinputdata || undefined;
 }
 
-function AddToMaster(commands, addinputdata) {
+function AddToMaster(commands, addinputdata, act) {
     for (var i = 0; i < commands.length; i++) {
         setAdditionalInputData(commands[i]);
-        CommandLists.addToEnd(commands[i]);
+        CommandLists.addToEnd({
+            parentAction: act,
+            payload: commands[i]
+        });
     }
 }
 
-function InsertToMaster(commands, addinputdata) {
+function InsertToMaster(commands, addinputdata, act) {
     for (var i = commands.length - 1; i >= 0; i--) {
         setAdditionalInputData(commands[i]);
-        CommandLists.addToFront(commands[i]);
+        CommandLists.addToFront({
+            parentAction: act,
+            payload: commands[i]
+        });
     }
 }
 
@@ -538,6 +540,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
 function ProcessAction(Action, bTimer) {
     var act = null;
     Globals.bMasterTimer = bTimer;
+
     if (getObjectClass(Action) == "action" || Action.actionparent != null) //"actionparent" in Action)
         act = Action;
     else {
@@ -555,6 +558,8 @@ function ProcessAction(Action, bTimer) {
         SetBorders();
         return;
     }
+
+    Globals.additionalDataAction = act;
 
     if (act.InputType == "Text") {
         Globals.inputDataObject = act;
@@ -649,9 +654,9 @@ function ProcessAction(Action, bTimer) {
 
 function addCommands(insertFirst, commands, AdditionalInputData, act) {
     if (insertFirst) {
-        InsertToMaster(commands, AdditionalInputData);
+        InsertToMaster(commands, AdditionalInputData, act);
     } else {
-        AddToMaster(commands, AdditionalInputData);
+        AddToMaster(commands, AdditionalInputData, act);
         RunCommands(Globals.theObj, AdditionalInputData, act, null);
     }
 }
@@ -801,8 +806,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
             Globals.loopArgs.object = Globals.loopArgs.array[Globals.loopArgs.idx];
             Globals.loopArgs.idx++;
 
-            InsertToMaster([tempcond]);
-            InsertToMaster(tempcond.PassCommands);
+            InsertToMaster([tempcond], undefined, conditionAction);
+            InsertToMaster(tempcond.PassCommands, undefined, conditionAction);
         } else {
             ResetLoopObjects();
         }
@@ -821,8 +826,7 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                 }
             }
             counter++;
-            if (TheGame == null)
-                return false;
+
             var step2 = PerformTextReplacements(tempcheck.ConditionStep2, loopobject);
             var step3 = PerformTextReplacements(tempcheck.ConditionStep3, loopobject);
             var step4 = PerformTextReplacements(tempcheck.ConditionStep4, loopobject);
@@ -999,8 +1003,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     {
                         if (TestVariable(step2, step3, step4)) {
                             var condarray = [tempcond];
-                            InsertToMaster(condarray);
-                            InsertToMaster(tempcond.PassCommands);
+                            InsertToMaster(condarray, undefined, conditionAction);
+                            InsertToMaster(tempcond.PassCommands, undefined, conditionAction);
                         }
                         break;
                     }
@@ -1328,7 +1332,7 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                 case "CT_AdditionalDataCheck":
                     {
                         var datatocheck = "";
-                        if (Globals.additionalData != null)
+                        if (Globals.additionalData && Globals.additionalDataAction == conditionAction)
                             datatocheck = Globals.additionalData;
                         if (tempcond.AdditionalInputData)
                             datatocheck = tempcond.AdditionalInputData;
@@ -1374,6 +1378,18 @@ function movePlayerToRoom(roomName) {
     }
 }
 
+function ProcessCondition(conditionBeingProcessed, AdditionalInputData, act, LoopObj) {
+    if (TestCondition(conditionBeingProcessed, AdditionalInputData, act, LoopObj)) {
+        if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
+            // Do nothing?
+        } else {
+            InsertToMaster(conditionBeingProcessed.PassCommands, undefined, act);
+        }
+    } else {
+        InsertToMaster(conditionBeingProcessed.FailCommands, undefined, act);
+    }
+}
+
 function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
     Globals.pauseCommandArgs = arguments;
     var bResult = false;
@@ -1384,37 +1400,33 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
             continue;
         }
 
-        var tempcommand = null;
-        var tempcond = null;
-        if (Globals.loopArgs.object != null)
+        if (Globals.loopArgs.object != null) {
             LoopObj = Globals.loopArgs.object;
-        var curtype = getObjectClass(CommandLists.nextCommand());
-        if (curtype == "command" || "CommandName" in CommandLists.nextCommand()) {
-            tempcommand = CommandLists.shiftCommand();
-        } else {
-            tempcond = CommandLists.shiftCommand();
         }
-        if (tempcond != null) {
-            if (TestCondition(tempcond, AdditionalInputData, act, LoopObj)) {
-                if (tempcond.Checks.length === 1 && isLoopCheck(tempcond.Checks[0])) {
-                    // Do nothing?
-                } else {
-                    InsertToMaster(tempcond.PassCommands);
-                }
-            } else {
-                InsertToMaster(tempcond.FailCommands);
-            }
-        } else if (tempcommand != null) {
-            if (TheGame == null)
-                return false;
-            var part2 = PerformTextReplacements(tempcommand.CommandPart2, LoopObj);
-            var part3 = PerformTextReplacements(tempcommand.CommandPart3, LoopObj);
-            var part4 = PerformTextReplacements(tempcommand.CommandPart4, LoopObj);
-            var cmdtxt = PerformTextReplacements(tempcommand.CommandText, LoopObj);
+
+        var commandBeingProcessed = null;
+        var commandOrCondition = CommandLists.shiftCommand();
+        var curtype = getObjectClass(commandOrCondition.payload);
+        if (curtype == "command" || "CommandName" in commandOrCondition.payload) {
+            commandBeingProcessed = commandOrCondition.payload;
+        } else {
+            ProcessCondition(
+                commandOrCondition.payload,
+                AdditionalInputData,
+                commandOrCondition.parentAction,
+                LoopObj
+            );
+        }
+
+        if (commandBeingProcessed != null) {
+            var part2 = PerformTextReplacements(commandBeingProcessed.CommandPart2, LoopObj);
+            var part3 = PerformTextReplacements(commandBeingProcessed.CommandPart3, LoopObj);
+            var part4 = PerformTextReplacements(commandBeingProcessed.CommandPart4, LoopObj);
+            var cmdtxt = PerformTextReplacements(commandBeingProcessed.CommandText, LoopObj);
             var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || TheObj;
-            Logger.logExecutingCommand(tempcommand, part2, part3 ,part4);
+            Logger.logExecutingCommand(commandBeingProcessed, part2, part3 ,part4);
             try {
-                switch (tempcommand.cmdtype) {
+                switch (commandBeingProcessed.cmdtype) {
                     case "CT_LAYEREDIMAGE_ADD":
                         {
                             function uniqueArray(array) {
@@ -2304,7 +2316,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                         var curprop = temproom.CustomProperties[j];
                                         if (curprop != null) {
                                             if (curprop.Name == property) {
-                                                if (tempcommand.cmdtype == "CT_ROOM_SET_CUSTOM_PROPERTY_JS") {
+                                                if (commandBeingProcessed.cmdtype == "CT_ROOM_SET_CUSTOM_PROPERTY_JS") {
                                                     var temp = null;
                                                     temp = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
                                                     replacedstring = temp.toString();
@@ -2332,7 +2344,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                         var curprop = temproom.CustomProperties[j];
                                         if (curprop != null) {
                                             if (curprop.Name == property) {
-                                                if (tempcommand.cmdtype == "CT_TIMER_SET_CUSTOM_PROPERTY_JS") {
+                                                if (commandBeingProcessed.cmdtype == "CT_TIMER_SET_CUSTOM_PROPERTY_JS") {
                                                     var temp = null;
                                                     temp = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
                                                     replacedstring = temp.toString();
@@ -2360,7 +2372,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                         var curprop = temproom.CustomProperties[j];
                                         if (curprop != null) {
                                             if (curprop.Name == property) {
-                                                if (tempcommand.cmdtype == "CT_VARIABLE_SET_CUSTOM_PROPERTY_JS") {
+                                                if (commandBeingProcessed.cmdtype == "CT_VARIABLE_SET_CUSTOM_PROPERTY_JS") {
                                                     var temp = null;
                                                     temp = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
                                                     replacedstring = temp.toString();
@@ -2394,7 +2406,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                         var curprop = tempitem.CustomProperties[j];
                                         if (curprop != null) {
                                             if (curprop.Name == property) {
-                                                if (tempcommand.cmdtype == "CT_ITEM_SET_CUSTOM_PROPERTY_JS") {
+                                                if (commandBeingProcessed.cmdtype == "CT_ITEM_SET_CUSTOM_PROPERTY_JS") {
                                                     var temp = null;
                                                     temp = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
                                                     replacedstring = temp.toString();
@@ -2422,7 +2434,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                         var curprop = temproom.CustomProperties[j];
                                         if (curprop != null) {
                                             if (curprop.Name == property) {
-                                                if (tempcommand.cmdtype == "CT_CHAR_SET_CUSTOM_PROPERTY_JS") {
+                                                if (commandBeingProcessed.cmdtype == "CT_CHAR_SET_CUSTOM_PROPERTY_JS") {
                                                     var temp = null;
                                                     temp = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
                                                     replacedstring = temp.toString();
@@ -2444,7 +2456,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                 var curprop = TheGame.Player.CustomProperties[j];
                                 if (curprop != null) {
                                     if (curprop.Name == property) {
-                                        if (tempcommand.cmdtype == "CT_PLAYER_SET_CUSTOM_PROPERTY_JS") {
+                                        if (commandBeingProcessed.cmdtype == "CT_PLAYER_SET_CUSTOM_PROPERTY_JS") {
                                             var temp = null;
                                             temp = eval(replacedstring.replace(new RegExp("</br>", "g"), "").replace(new RegExp("<br>", "g"), ""));
                                             replacedstring = temp.toString();
@@ -2459,7 +2471,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                     case "CT_SETVARIABLE":
                         {
                             var bJavascript = false;
-                            if (tempcommand.cmdtype == "CT_VARIABLE_SET_JAVASCRIPT")
+                            if (commandBeingProcessed.cmdtype == "CT_VARIABLE_SET_JAVASCRIPT")
                                 bJavascript = true;
                             var bArraySet = false;
                             var arrayvarindex = part2.indexOf("Array:");
@@ -2874,20 +2886,20 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                         {
                             var acttype = part2;
                             if (acttype == "Custom") {
-                                GameUI.setCmdInputForCustomChoices(part4, tempcommand);
+                                GameUI.setCmdInputForCustomChoices(part4, commandBeingProcessed);
                             } else if (acttype == "Text") {
                                 GameUI.showTextMenuChoice(part4);
                             } else {}
                             GameController.startAwaitingInput();
-                            Globals.variableGettingSet = tempcommand;
+                            Globals.variableGettingSet = commandBeingProcessed;
                             return;
                         }
                     case "CT_SETVARIABLEBYINPUT":
                         {
                             var acttype = part2;
-                            Globals.variableGettingSet = tempcommand;
+                            Globals.variableGettingSet = commandBeingProcessed;
                             if (acttype == "Custom") {
-                                GameUI.setCmdInputForCustomChoices(part4, tempcommand);
+                                GameUI.setCmdInputForCustomChoices(part4, commandBeingProcessed);
                                 GameController.startAwaitingInput();
                                 return;
                             }
@@ -2944,7 +2956,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                 }
             } catch (err) {
                 alert(err.message);
-                alert("Rags can not process the command correctly.  If you are the game author," + " please correct the error in this command:" + tempcommand.cmdtype);
+                alert("Rags can not process the command correctly.  If you are the game author," + " please correct the error in this command:" + commandBeingProcessed.cmdtype);
             }
         }
     }
@@ -3472,8 +3484,6 @@ function TestVariable(step2, step3, step4) {
 
 function RunEvents(EventType) {
     try {
-        if (TheGame == null)
-            return;
         var startingroomid = TheGame.Player.CurrentRoom;
         var curroom = GetRoom(startingroomid);
         var tempact = GetAction(curroom.Actions, EventType);
@@ -3603,9 +3613,6 @@ function RunTimerEvents() {
     if (Globals.bRunningTimers) {
         return;
     }
-
-    if (TheGame == null)
-        return;
 
     Globals.bRunningTimers = true;
     Globals.bResetTimer = false;

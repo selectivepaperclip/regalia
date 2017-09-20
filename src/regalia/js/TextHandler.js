@@ -849,7 +849,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
             return TheGame.Player.Name;
         },
         '[INPUTDATA]', function () {
-            var datatoinput = AdditionalData;
+            var datatoinput = Globals.additionalData;
             if (loopobject != null && loopobject.AdditionalInputData) {
                 datatoinput = loopobject.AdditionalInputData;
             }

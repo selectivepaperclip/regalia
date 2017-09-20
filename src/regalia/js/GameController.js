@@ -13,7 +13,7 @@ var GameController = {
     },
 
     executeAndRunTimers: function (fn) {
-        var wasRunningTimers = bRunningTimers;
+        var wasRunningTimers = Globals.bRunningTimers;
 
         fn();
 

@@ -46,19 +46,19 @@ var GameUI = {
         });
 
         $div.click(function() {
-            selectedobj = $(this).val();
-            if (selectedobj != null) {
+            Globals.selectedObj = $(this).val();
+            if (Globals.selectedObj != null) {
                 GameController.executeAndRunTimers(function () {
-                    AdditionalData = selectedobj;
+                    Globals.additionalData = Globals.selectedObj;
                     GameController.stopAwaitingInput();
                     $("#inputmenu").css("visibility", "hidden");
                     if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-                        ActionRecorder.choseInputAction(selectedobj);
-                        ExecuteAction(InputDataObject, true, selectedobj);
-                        if (bMasterTimer)
-                            RunCommands.apply(null, pausecommandargs);
+                        ActionRecorder.choseInputAction(Globals.selectedObj);
+                        ExecuteAction(InputDataObject, true, Globals.selectedObj);
+                        if (Globals.bMasterTimer)
+                            RunCommands.apply(null, Globals.pauseCommandArgs);
                         else
-                            RunCommands(TheObj, selectedobj, InputDataObject, null);
+                            RunCommands(Globals.theObj, Globals.selectedObj, InputDataObject, null);
                     }
                 });
             }
@@ -75,15 +75,15 @@ var GameUI = {
         });
 
         $div.click(function () {
-            selectedobj = $(this).val();
-            if (selectedobj != null) {
+            Globals.selectedObj = $(this).val();
+            if (Globals.selectedObj != null) {
                 GameController.executeAndRunTimers(function () {
                     $("#cmdinputmenu").hide();
                     GameController.stopAwaitingInput();
                     $("#cmdinputmenu").css("visibility", "hidden");
-                    ActionRecorder.choseInputAction(selectedobj);
-                    SetCommandInput(VariableGettingSet, selectedobj);
-                    RunCommands.apply(null, pausecommandargs);
+                    ActionRecorder.choseInputAction(Globals.selectedObj);
+                    SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
+                    RunCommands.apply(null, Globals.pauseCommandArgs);
                 });
             }
         });

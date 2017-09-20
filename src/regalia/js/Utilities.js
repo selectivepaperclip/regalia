@@ -1,16 +1,3 @@
-var currenttimer = null;
-var bRunningTimers = false;
-var InputDataObject = null;
-var TheObj = null;
-var bCancelMove = false;
-var bResetTimer = false;
-var CurrentImage = "";
-var MasterLoopObject = null;
-var MasterIdx = 0;
-var MasterLoopArray = null;
-var CurActions = undefined;
-var runningLiveTimerCommands = false;
-
 function setAdditionalInputData(command, addinputdata) {
     if (addinputdata) {
         command.AdditionalInputData = addinputdata;
@@ -90,7 +77,7 @@ function SetBorders() {
 }
 
 function GetActionCount(Actions) {
-    //CurActions = Actions;
+    //Globals.curActions = Actions;
     var count = 0;
     for (var i = 0; i < Actions.length; i++) {
         if (actionShouldBeVisible(Actions[i])) {
@@ -137,8 +124,8 @@ function SetRoomThumb(ImageName) {
                 var img = $('<div class="RoomLayeredImage">');
                 img.css('background-image', imageUrl(thelayers[i]));
                 img.click(function(clickEvent) {
-                    TheObj = GetRoom(TheGame.Player.CurrentRoom);
-                    DisplayActions(TheObj.Actions, clickEvent, 'room');
+                    Globals.theObj = GetRoom(TheGame.Player.CurrentRoom);
+                    DisplayActions(Globals.theObj.Actions, clickEvent, 'room');
                 });
                 img.appendTo('#RoomImageLayers');
             }
@@ -150,7 +137,7 @@ var mainImageExtraLayers = [];
 function showImage(ImageName) {
     if (ImageName == null || ImageName == "None")
         return;
-    CurrentImage = ImageName;
+    Globals.currentImage = ImageName;
     mainImageExtraLayers = [];
     renderMainImageAndLayers();
 }
@@ -159,7 +146,7 @@ function renderMainImageAndLayers() {
     $("#MainImageLayers").empty();
 
     var layers = [];
-    var checkimg = GetGameImage(CurrentImage);
+    var checkimg = GetGameImage(Globals.currentImage);
     if (checkimg != null) {
         if (checkimg.LayeredImages[0] != "") {
             layers = layers.concat(checkimg.LayeredImages[0].split(","));
@@ -167,8 +154,8 @@ function renderMainImageAndLayers() {
     }
     layers = layers.concat(mainImageExtraLayers);
 
-    ImageRecorder.sawImage(CurrentImage);
-    $("#MainImg").css("background-image", imageUrl(CurrentImage));
+    ImageRecorder.sawImage(Globals.currentImage);
+    $("#MainImg").css("background-image", imageUrl(Globals.currentImage));
 
     for (var i = 0; i < layers.length; i++) {
         ImageRecorder.sawImage(layers[i]);
@@ -194,7 +181,7 @@ function SetPortrait(ImageName) {
                 var img = $('<div class="PortraitLayeredImage">');
                 img.css('background-image', imageUrl(layers[i]));
                 img.click(function(clickEvent) {
-                    TheObj = TheGame.Player;
+                    Globals.theObj = TheGame.Player;
                     DisplayActions(TheGame.Player.Actions, clickEvent, 'self');
                 });
                 img.appendTo('#PortraitImageLayers');
@@ -226,11 +213,11 @@ function RefreshInventory() {
             $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
             $div.click(function(clickEvent) {
-                selectedobj = GetObject($(this).val());
-                if (selectedobj != null) {
-                    TheObj = selectedobj;
+                Globals.selectedObj = GetObject($(this).val());
+                if (Globals.selectedObj != null) {
+                    Globals.theObj = Globals.selectedObj;
                     $(this).val([]);
-                    DisplayActions(selectedobj.Actions, clickEvent);
+                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
             $("#Inventory").append($div);
@@ -256,11 +243,11 @@ function RefreshRoomObjects() {
             $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
             $div.click(function(clickEvent) {
-                selectedobj = GetObject($(this).val());
-                if (selectedobj != null) {
-                    TheObj = selectedobj;
+                Globals.selectedObj = GetObject($(this).val());
+                if (Globals.selectedObj != null) {
+                    Globals.theObj = Globals.selectedObj;
                     $("#RoomObjects").val([]);
-                    DisplayActions(selectedobj.Actions, clickEvent);
+                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
             $("#RoomObjects").append($div);
@@ -288,11 +275,11 @@ function RefreshRoomObjects() {
                             $div.toggleClass('no-actions', GetActionCount(tempobj.Actions) === 0);
 
                             $div.click(function(clickEvent) {
-                                selectedobj = GetObject($(this).val());
-                                if (selectedobj != null) {
-                                    TheObj = selectedobj;
+                                Globals.selectedObj = GetObject($(this).val());
+                                if (Globals.selectedObj != null) {
+                                    Globals.theObj = Globals.selectedObj;
                                     $("#RoomObjects").val([]);
-                                    DisplayActions(selectedobj.Actions, clickEvent);
+                                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
                                 }
                             });
                             $("#RoomObjects").append($div);
@@ -355,11 +342,11 @@ function AddOpenedObjects(outerObject, thelistbox, itemclass) {
             $div.toggleClass('no-actions', GetActionCount(innerObject.Actions) === 0);
 
             $div.click(function(clickEvent) {
-                selectedobj = GetObject($(this).val());
-                if (selectedobj != null) {
-                    TheObj = selectedobj;
+                Globals.selectedObj = GetObject($(this).val());
+                if (Globals.selectedObj != null) {
+                    Globals.theObj = Globals.selectedObj;
                     $(this).val([]);
-                    DisplayActions(selectedobj.Actions, clickEvent);
+                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
 
@@ -384,10 +371,10 @@ function RefreshCharacters() {
             $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
             $div.click(function(clickEvent) {
-                selectedobj = GetCharacter($(this).val());
-                if (selectedobj != null) {
-                    TheObj = selectedobj;
-                    DisplayActions(selectedobj.Actions, clickEvent);
+                Globals.selectedObj = GetCharacter($(this).val());
+                if (Globals.selectedObj != null) {
+                    Globals.theObj = Globals.selectedObj;
+                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
 
@@ -483,7 +470,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
     }
 
     $("#Actionchoices").empty();
-    CurActions = Actions;
+    Globals.curActions = Actions;
     for (var i = 0; i < Actions.length; i++) {
         if (actionShouldBeVisible(Actions[i])) {
             var $div = $("<div>", {
@@ -502,7 +489,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
                         } else if (actionRecipientToLog == 'room') {
                             ActionRecorder.actedOnRoom(selectiontext);
                         } else {
-                            ActionRecorder.actedOnObject(selectedobj, selectiontext);
+                            ActionRecorder.actedOnObject(Globals.selectedObj, selectiontext);
                         }
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
@@ -550,27 +537,18 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
 
 function ProcessAction(Action, bTimer) {
     var act = null;
-    bMasterTimer = bTimer;
+    Globals.bMasterTimer = bTimer;
     if (getObjectClass(Action) == "action" || Action.actionparent != null) //"actionparent" in Action)
         act = Action;
     else {
-        for (var i = 0; i < CurActions.length; i++) {
-            if (CurActions[i].name == Action) {
-                act = CurActions[i];
+        for (var i = 0; i < Globals.curActions.length; i++) {
+            if (Globals.curActions[i].name == Action) {
+                act = Globals.curActions[i];
                 break;
             }
         }
     }
-    var curclass = getObjectClass(selectedobj);
-    var actionname = "";
-    if (selectedobj != null) {
-        try {
-            if (curclass == "ragsobject" || selectedobj.hasOwnProperty('bWearable'))
-                actionname = selectedobj.name + ": " + act.name;
-            else if ((curclass == "character") || (selectedobj.hasOwnProperty('Charname')))
-                actionname = selectedobj.Charname + ": " + act.name;
-        } catch (err) {}
-    }
+    var curclass = getObjectClass(Globals.selectedObj);
 
     if (act.InputType === "None") {
         ExecuteAction(act, bTimer);
@@ -579,7 +557,7 @@ function ProcessAction(Action, bTimer) {
     }
 
     if (act.InputType == "Text") {
-        InputDataObject = act;
+        Globals.inputDataObject = act;
         $("#textactionMenuTitle").text(act.CustomChoiceTitle);
         $("#textactionchoice").css("visibility", "visible");
         $("#textactionchoice input").focus();
@@ -674,7 +652,7 @@ function addCommands(insertFirst, commands, AdditionalInputData, act) {
         InsertToMaster(commands, AdditionalInputData);
     } else {
         AddToMaster(commands, AdditionalInputData);
-        RunCommands(TheObj, AdditionalInputData, act, null);
+        RunCommands(Globals.theObj, AdditionalInputData, act, null);
     }
 }
 
@@ -756,8 +734,8 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
     SetRoomThumb(currentroom.RoomPic);
     showImage(currentroom.RoomPic);
     TheGame.Player.CurrentRoom = currentroom.UniqueID;
-    if (MovingDirection) {
-        $("#MainText").append('</br><b>' + MovingDirection + "</b>");
+    if (Globals.movingDirection) {
+        $("#MainText").append('</br><b>' + Globals.movingDirection + "</b>");
     }
     if (bRunEvents && !currentroom.bEnterFirstTime) {
         currentroom.bEnterFirstTime = true;
@@ -819,9 +797,9 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
     var counter = 0;
 
     function performLoopIteration() {
-        if (MasterIdx < MasterLoopArray.length) {
-            MasterLoopObject = MasterLoopArray[MasterIdx];
-            MasterIdx++;
+        if (Globals.loopArgs.idx < Globals.loopArgs.array.length) {
+            Globals.loopArgs.object = Globals.loopArgs.array[Globals.loopArgs.idx];
+            Globals.loopArgs.idx++;
 
             InsertToMaster([tempcond]);
             InsertToMaster(tempcond.PassCommands);
@@ -848,7 +826,7 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
             var step2 = PerformTextReplacements(tempcheck.ConditionStep2, loopobject);
             var step3 = PerformTextReplacements(tempcheck.ConditionStep3, loopobject);
             var step4 = PerformTextReplacements(tempcheck.ConditionStep4, loopobject);
-            var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || TheObj;
+            var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || Globals.theObj;
             switch (tempcheck.CondType) {
                 case "CT_Item_InGroup":
                     {
@@ -879,7 +857,7 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                 case "CT_Player_Moving":
                     {
                         var tempdir = step2;
-                        bResult = (MovingDirection == tempdir);
+                        bResult = (Globals.movingDirection == tempdir);
                         break;
                     }
                 case "CT_Player_Gender":
@@ -1028,17 +1006,17 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Rooms":
                     {
-                        if (MasterLoopArray == null)
-                            MasterLoopArray = TheGame.Rooms;
+                        if (Globals.loopArgs.array == null)
+                            Globals.loopArgs.array = TheGame.Rooms;
                         performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Exits":
                     {
-                        if (MasterLoopArray == null) {
+                        if (Globals.loopArgs.array == null) {
                             var temproom = GetRoom(step2);
                             if (temproom != null) {
-                                MasterLoopArray = temproom.Exits;
+                                Globals.loopArgs.array = temproom.Exits;
                             }
                         }
                         performLoopIteration();
@@ -1046,15 +1024,15 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Characters":
                     {
-                        if (MasterLoopArray == null)
-                            MasterLoopArray = TheGame.Characters;
+                        if (Globals.loopArgs.array == null)
+                            Globals.loopArgs.array = TheGame.Characters;
                         performLoopIteration();
                         break;
                     }
                 case "CT_Loop_Item_Group":
                     {
-                        if (MasterLoopArray == null) {
-                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                        if (Globals.loopArgs.array == null) {
+                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
                                 return item.GroupName === step2;
                             });
                         }
@@ -1063,8 +1041,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Item_Char_Inventory":
                     {
-                        if (MasterLoopArray == null) {
-                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                        if (Globals.loopArgs.array == null) {
+                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
                                 return item.locationtype === "LT_CHARACTER" && item.locationname === step2;
                             });
                         }
@@ -1073,8 +1051,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Item_Container":
                     {
-                        if (MasterLoopArray == null) {
-                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                        if (Globals.loopArgs.array == null) {
+                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
                                 return item.locationtype === "LT_IN_OBJECT" && item.locationname === step2;
                             });
                         }
@@ -1083,8 +1061,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Item_Inventory":
                     {
-                        if (MasterLoopArray == null) {
-                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                        if (Globals.loopArgs.array == null) {
+                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
                                 return item.locationtype === "LT_PLAYER";
                             });
                         }
@@ -1093,8 +1071,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Item_Room":
                     {
-                        if (MasterLoopArray == null) {
-                            MasterLoopArray = TheGame.Objects.filter(function (item) {
+                        if (Globals.loopArgs.array == null) {
+                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
                                 return item.locationtype === "LT_ROOM" && item.locationname === step2;
                             });
                         }
@@ -1103,8 +1081,8 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                     }
                 case "CT_Loop_Items":
                     {
-                        if (MasterLoopArray == null) {
-                            MasterLoopArray = TheGame.Objects;
+                        if (Globals.loopArgs.array == null) {
+                            Globals.loopArgs.array = TheGame.Objects;
                         }
                         performLoopIteration();
                         break;
@@ -1350,10 +1328,10 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                 case "CT_AdditionalDataCheck":
                     {
                         var datatocheck = "";
-                        if (AdditionalData != null)
-                            datatocheck = AdditionalData; //AdditionalData[0];
+                        if (Globals.additionalData != null)
+                            datatocheck = Globals.additionalData;
                         if (tempcond.AdditionalInputData)
-                            datatocheck = tempcond.AdditionalInputData; //tempcond.AdditionalInputData[0];
+                            datatocheck = tempcond.AdditionalInputData;
                         if (conditionAction.InputType == "Text") {
                             if (step4.toLowerCase() == datatocheck.toLowerCase())
                                 bResult = true;
@@ -1375,21 +1353,21 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                 tempcheck.ConditionStep3 + " - " + tempcheck.ConditionStep4);
         }
     }
-    if (!MasterLoopArray) {
+    if (!Globals.loopArgs.array) {
         Logger.logEvaluatedCondition(tempcond, bResult);
     }
     return bResult;
 }
 
 function RefreshPictureBoxes() {
-    showImage(CurrentImage);
+    showImage(Globals.currentImage);
     SetPortrait(TheGame.Player.PlayerPortrait);
 
     SetRoomThumb(GetRoom(TheGame.Player.CurrentRoom).RoomPic);
 }
 
 function movePlayerToRoom(roomName) {
-    MovingDirection = "";
+    Globals.movingDirection = "";
     TheGame.Player.CurrentRoom = roomName;
     if (TheGame.Player.CurrentRoom) {
         RoomChange(false, true);
@@ -1397,9 +1375,9 @@ function movePlayerToRoom(roomName) {
 }
 
 function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
-    pausecommandargs = arguments;
+    Globals.pauseCommandArgs = arguments;
     var bResult = false;
-    while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || runningLiveTimerCommands)) {
+    while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || Globals.runningLiveTimerCommands)) {
         if (typeof CommandLists.nextCommand() === "function") {
             var callback = CommandLists.shiftCommand();
             callback();
@@ -1408,8 +1386,8 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
 
         var tempcommand = null;
         var tempcond = null;
-        if (MasterLoopObject != null)
-            LoopObj = MasterLoopObject;
+        if (Globals.loopArgs.object != null)
+            LoopObj = Globals.loopArgs.object;
         var curtype = getObjectClass(CommandLists.nextCommand());
         if (curtype == "command" || "CommandName" in CommandLists.nextCommand()) {
             tempcommand = CommandLists.shiftCommand();
@@ -1575,7 +1553,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                         }
                     case "CT_CANCELMOVE":
                         {
-                            bCancelMove = true;
+                            Globals.bCancelMove = true;
                             break;
                         }
                     case "CT_ACTION_CLEAR_CUSTOMCHOICE":
@@ -2067,25 +2045,25 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                         }
                     case "CT_EXECUTETIMER":
                         {
-                            var bRunningTimersOriginal = bRunningTimers;
-                            var currentTimerOriginal = currenttimer;
-                            bRunningTimers = true;
-                            bResetTimer = false;
-                            currenttimer = "";
+                            var bRunningTimersOriginal = Globals.bRunningTimers;
+                            var currentTimerOriginal = Globals.currentTimer;
+                            Globals.bRunningTimers = true;
+                            Globals.bResetTimer = false;
+                            Globals.currentTimer = "";
                             var temptimer = GetTimer(part2);
                             if (temptimer != null) {
-                                currenttimer = temptimer.Name;
+                                Globals.currentTimer = temptimer.Name;
                                 var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
                                 if (tempact != null) {
                                     ProcessAction(tempact, true);
-                                    while (bResetTimer) {
-                                        bResetTimer = false;
+                                    while (Globals.bResetTimer) {
+                                        Globals.bResetTimer = false;
                                         ProcessAction(tempact, true);
                                     }
                                 }
                             }
-                            bRunningTimers = bRunningTimersOriginal;
-                            currenttimer = currentTimerOriginal;
+                            Globals.bRunningTimers = bRunningTimersOriginal;
+                            Globals.currentTimer = currentTimerOriginal;
                             break;
                         }
                     case "CT_RESETTIMER":
@@ -2093,10 +2071,10 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                             var temptimer = GetTimer(part2);
                             if (temptimer != null) {
                                 temptimer.TurnNumber = 0;
-                                if (bRunningTimers && currenttimer == temptimer.Name) {
-                                    bResetTimer = true;
+                                if (Globals.bRunningTimers && Globals.currentTimer == temptimer.Name) {
+                                    Globals.bResetTimer = true;
                                 } else {
-                                    bResetTimer = false;
+                                    Globals.bResetTimer = false;
                                 }
                             }
                             break;
@@ -2634,7 +2612,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                             var tempobj = null;
                             var actionlist = null;
                             if (part2 == "00000000-0000-0000-0000-000000000004") {
-                                actionlist = CurActions;
+                                actionlist = Globals.curActions;
                             } else {
                                 tempobj = GetObject(part2);
                                 if (tempobj) {
@@ -2901,13 +2879,13 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                 GameUI.showTextMenuChoice(part4);
                             } else {}
                             GameController.startAwaitingInput();
-                            VariableGettingSet = tempcommand;
+                            Globals.variableGettingSet = tempcommand;
                             return;
                         }
                     case "CT_SETVARIABLEBYINPUT":
                         {
                             var acttype = part2;
-                            VariableGettingSet = tempcommand;
+                            Globals.variableGettingSet = tempcommand;
                             if (acttype == "Custom") {
                                 GameUI.setCmdInputForCustomChoices(part4, tempcommand);
                                 GameController.startAwaitingInput();
@@ -3111,23 +3089,21 @@ function getObjectClass(obj) {
 }
 
 function CheckItemInInventory(tempobj) {
-    var theobj = null;
-    for (var i = 0; i < TheGame.Objects; i++) {
-        var newobject = TheGame.Objects[i];
-        if (newobject.name == tempobj.locationname) {
-            theobj = newobject;
-            break;
-        }
-    }
-    if (theobj != null) {
-        if (theobj.locationtype == "LT_PLAYER")
-            return true;
-        else if (theobj.locationtype == "LT_IN_OBJECT") {
-            return CheckItemInInventory(theobj);
-        } else
-            return false;
-    } else
+    var foundObj = TheGame.Objects.filter(function (obj) {
+        return obj.name == tempobj.locationname;
+    })[0];
+
+    if (!foundObj) {
         return false;
+    }
+
+    if (foundObj.locationtype == "LT_PLAYER") {
+        return true;
+    } else if (foundObj.locationtype == "LT_IN_OBJECT") {
+        return CheckItemInInventory(foundObj);
+    } else {
+        return false;
+    }
 }
 
 function GetCustomChoiceAction(type, name, actionname) {
@@ -3615,25 +3591,25 @@ function RunEvents(EventType) {
 }
 
 function runSingleTimer(temptimer) {
-    currenttimer = temptimer.Name;
+    Globals.currentTimer = temptimer.Name;
     RunTimer(temptimer, function () {
-        if (bResetTimer) {
+        if (Globals.bResetTimer) {
             runSingleTimer(temptimer);
         }
     });
 }
 
 function RunTimerEvents() {
-    if (bRunningTimers) {
+    if (Globals.bRunningTimers) {
         return;
     }
 
     if (TheGame == null)
         return;
 
-    bRunningTimers = true;
-    bResetTimer = false;
-    currenttimer = "";
+    Globals.bRunningTimers = true;
+    Globals.bResetTimer = false;
+    Globals.currentTimer = "";
     for (var i = 0; i < TheGame.Timers.length; i++) {
         var timer = TheGame.Timers[i];
         var lastTimer = (i === TheGame.Timers - 1);
@@ -3648,7 +3624,7 @@ function RunTimerEvents() {
         }
     }
     runAfterPause(function () {
-        bRunningTimers = false;
+        Globals.bRunningTimers = false;
         RefreshInventory();
         RefreshRoomObjects();
         RefreshCharacters();
@@ -3660,7 +3636,7 @@ function RunTimer(temptimer, callback) {
         callback = function () { };
     }
 
-    bResetTimer = false;
+    Globals.bResetTimer = false;
     if (temptimer.Active) {
         temptimer.TurnNumber++;
         if (temptimer.TurnNumber > temptimer.Length && temptimer.TType == "TT_LENGTH") {
@@ -3673,12 +3649,12 @@ function RunTimer(temptimer, callback) {
         var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
         if (tempact != null) {
             if (temptimer.LiveTimer) {
-                runningLiveTimerCommands = true;
+                Globals.runningLiveTimerCommands = true;
                 CommandLists.addToFront(function () {
-                   runningLiveTimerCommands = false;
+                   Globals.runningLiveTimerCommands = false;
                 });
                 ProcessAction(tempact, true);
-                RunCommands(TheObj, null, null, null);
+                RunCommands(Globals.theObj, null, null, null);
                 return;
             } else {
                 ProcessAction(tempact, false);
@@ -3687,7 +3663,7 @@ function RunTimer(temptimer, callback) {
 
         UpdateStatusBars();
         runNextAfterPause(function () {
-            if (bResetTimer)
+            if (Globals.bResetTimer)
                 return callback();
             tempact = GetAction(temptimer.Actions, "<<On Turn " +
                 temptimer.TurnNumber.toString() + ">>");
@@ -3696,7 +3672,7 @@ function RunTimer(temptimer, callback) {
             UpdateStatusBars();
 
             runNextAfterPause(function () {
-                if (bResetTimer)
+                if (Globals.bResetTimer)
                     return callback();
                 if (temptimer.TurnNumber == temptimer.Length) {
                     tempact = GetAction(temptimer.Actions, "<<On Last Turn>>");

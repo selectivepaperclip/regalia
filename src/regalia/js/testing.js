@@ -1,15 +1,4 @@
-﻿
-var pausecommandargs = null;
-var TheGame = null;
-var OriginalGame = null;
-var GameData = null;
-var selectedobj = null;
-var VariableGettingSet = null;
-var AdditionalData = "";
-var MovingDirection = "";
-var bMasterTimer = false;
-
-function roomDisplayName(room) {
+﻿function roomDisplayName(room) {
     return room.SDesc || room.Name;
 }
 
@@ -73,16 +62,16 @@ $(function() {
             GameController.continue();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
-            RunCommands.apply(null, pausecommandargs);
+            RunCommands.apply(null, Globals.pauseCommandArgs);
         }
     });
     $("#PlayerImg").click(function(e) {
-        TheObj = TheGame.Player;
+        Globals.theObj = TheGame.Player;
         DisplayActions(TheGame.Player.Actions, e, 'self');
     });
     $("#RoomThumbImg").click(function(e) {
-        TheObj = GetRoom(TheGame.Player.CurrentRoom);
-        DisplayActions(TheObj.Actions, e, 'room');
+        Globals.theObj = GetRoom(TheGame.Player.CurrentRoom);
+        DisplayActions(Globals.theObj.Actions, e, 'room');
     });
 
     function onKeyupEnter(selector, fn) {
@@ -94,14 +83,14 @@ $(function() {
     }
 
     function setTextInputChoice () {
-        selectedobj = $("#textinput").val();
-        if (selectedobj != null) {
+        Globals.selectedObj = $("#textinput").val();
+        if (Globals.selectedObj != null) {
             GameController.stopAwaitingInput();
             $("#textinput").val('');
             $("#textchoice").css("visibility", "hidden");
-            ActionRecorder.filledInTextInput(selectedobj);
-            SetCommandInput(VariableGettingSet, selectedobj);
-            RunCommands.apply(null, pausecommandargs);
+            ActionRecorder.filledInTextInput(Globals.selectedObj);
+            SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
+            RunCommands.apply(null, Globals.pauseCommandArgs);
         }
     }
     $("#textbutton").click(setTextInputChoice);
@@ -294,39 +283,23 @@ $(function() {
         handleFileSave(false, false, saveId, saveName);
     }));
     $("div.genderchoiceSelect").click(function() {
-        selectedobj = $(this).val();
-        if (selectedobj != null) {
+        Globals.selectedObj = $(this).val();
+        if (Globals.selectedObj != null) {
             GameController.stopAwaitingInput();
             $("#genderchoice").css("visibility", "hidden");
             StartGame();
         }
     });
-    $("#inputchoices").change(function(e) {
-        selectedobj = $("#inputchoices").val();
-        if (selectedobj != null) {
-            AdditionalData = selectedobj;
-            GameController.stopAwaitingInput();
-            $("#inputmenu").css("visibility", "hidden");
-            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-
-                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
-                if (bMasterTimer)
-                    RunCommands.apply(null, pausecommandargs);
-                else
-                    RunCommands(TheObj, selectedobj, InputDataObject, null);
-            }
-        }
-    });
 
     function setTextActionChoice() {
-        selectedobj = $("#textactioninput").val();
-        if (selectedobj != null) {
+        Globals.selectedObj = $("#textactioninput").val();
+        if (Globals.selectedObj != null) {
             $("#textactioninput").val('');
-            AdditionalData = selectedobj;
+            Globals.additionalData = Globals.selectedObj;
             GameController.stopAwaitingInput();
             $("#textactionchoice").css("visibility", "hidden");
-            if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
-                ExecuteAction(InputDataObject, bMasterTimer, selectedobj);
+            if (getObjectClass(Globals.inputDataObject) == "action" || "actionparent" in Globals.inputDataObject) {
+                ExecuteAction(Globals.inputDataObject, Globals.bMasterTimer, Globals.selectedObj);
             }
         }
     }
@@ -335,50 +308,50 @@ $(function() {
     onKeyupEnter('#textactioninput', setTextActionChoice);
 
     $("#cmdinputchoices").change(function(e) {
-        selectedobj = $("#cmdinputchoices").val();
-        if (selectedobj != null) {
+        Globals.selectedObj = $("#cmdinputchoices").val();
+        if (Globals.selectedObj != null) {
             GameController.stopAwaitingInput();
             $("#cmdinputmenu").css("visibility", "hidden");
             ActionRecorder.choseInputAction(Value);
-            SetCommandInput(VariableGettingSet, selectedobj);
-            RunCommands.apply(null, pausecommandargs);
+            SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
+            RunCommands.apply(null, Globals.pauseCommandArgs);
         }
     });
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        RunCommands.apply(null, pausecommandargs);
+        RunCommands.apply(null, Globals.pauseCommandArgs);
     });
     $("#cmdCancelInput").click(function(e) {
         $("#cmdinputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        RunCommands.apply(null, pausecommandargs);
+        RunCommands.apply(null, Globals.pauseCommandArgs);
     });
     $("#Inventory").change(function(e) {
-        selectedobj = GetObject($("#Inventory").val());
-        if (selectedobj != null) {
-            TheObj = selectedobj;
+        Globals.selectedObj = GetObject($("#Inventory").val());
+        if (Globals.selectedObj != null) {
+            Globals.theObj = Globals.selectedObj;
             $("#Inventory").val([]);
-            DisplayActions(selectedobj.Actions);
+            DisplayActions(Globals.selectedObj.Actions);
         }
     });
     $("#VisibleCharacters").change(function(e) {
-        selectedobj = GetCharacter($("#VisibleCharacters").val());
-        if (selectedobj != null) {
-            TheObj = selectedobj;
+        Globals.selectedObj = GetCharacter($("#VisibleCharacters").val());
+        if (Globals.selectedObj != null) {
+            Globals.theObj = Globals.selectedObj;
             $("#VisibleCharacters").val([]);
-            DisplayActions(selectedobj.Actions);
+            DisplayActions(Globals.selectedObj.Actions);
         }
     });
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
     });
     $("#RoomObjects").change(function(e) {
-        selectedobj = GetObject($("#RoomObjects").val());
-        if (selectedobj != null) {
-            TheObj = selectedobj;
+        Globals.selectedObj = GetObject($("#RoomObjects").val());
+        if (Globals.selectedObj != null) {
+            Globals.theObj = Globals.selectedObj;
             $("#RoomObjects").val([]);
-            DisplayActions(selectedobj.Actions);
+            DisplayActions(Globals.selectedObj.Actions);
         }
     });
     setInterval(function() {
@@ -408,7 +381,7 @@ $(function() {
         var direction = $el.data('direction');
         var newRoom = GetDestinationRoomName(direction);
         ResetLoopObjects();
-        bCancelMove = false;
+        Globals.bCancelMove = false;
         ActionRecorder.locationChange(direction);
         var curroom = GetRoom(TheGame.Player.CurrentRoom);
         if (curroom != null) {
@@ -422,7 +395,7 @@ $(function() {
                 RunEvents("<<On Player Leave>>");
             }
             runAfterPause(function () {
-                if (!bCancelMove) {
+                if (!Globals.bCancelMove) {
                     ChangeRoom(GetRoom(newRoom), true, true);
                 }
             });
@@ -492,10 +465,9 @@ function GetGameImage(ImageName) {
 }
 
 function GetDestinationRoomName(CurDirection) {
-    MovingDirection = CurDirection;
+    Globals.movingDirection = CurDirection;
     var CurrentRoom = GetRoom(TheGame.Player.CurrentRoom);
     if (CurrentRoom != null) {
-
         for (var i = 0; i < CurrentRoom.Exits.length; i++) {
             if (CurrentRoom.Exits[i].Direction == CurDirection) {
                 return CurrentRoom.Exits[i].DestinationRoom;
@@ -503,13 +475,6 @@ function GetDestinationRoomName(CurDirection) {
         }
     }
 }
-
-function ResetLoopObjects() {
-    MasterLoopArray = null;
-    MasterIdx = 0;
-    MasterLoopObject = null;
-}
-
 function onError(tx, error) {}
 
 function handleFileSave(bQuick, bNew, CurID, oldSaveName) {

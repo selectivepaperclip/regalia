@@ -7,6 +7,7 @@ function AddToMaster(commands, addinputdata, act) {
         setAdditionalInputData(commands[i]);
         CommandLists.addToEnd({
             parentAction: act,
+            timerInvocation: Globals.timerInvocation,
             payload: commands[i]
         });
     }
@@ -17,6 +18,7 @@ function InsertToMaster(commands, addinputdata, act) {
         setAdditionalInputData(commands[i]);
         CommandLists.addToFront({
             parentAction: act,
+            timerInvocation: Globals.timerInvocation,
             payload: commands[i]
         });
     }
@@ -559,7 +561,10 @@ function ProcessAction(Action, bTimer) {
         return;
     }
 
-    Globals.additionalDataAction = act;
+    Globals.additionalDataContext = {
+        action: act,
+        timerInvocation: Globals.timerInvocation
+    };
 
     if (act.InputType == "Text") {
         Globals.inputDataObject = act;
@@ -577,11 +582,7 @@ function ProcessAction(Action, bTimer) {
         TheGame.Objects.filter(function (obj) {
             return obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom);
         }).forEach(function (obj) {
-            GameUI.addInputChoice(
-                act,
-                objecttostring(obj),
-                obj.UniqueIdentifier
-            );
+            GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
         });
         if (TheGame.Player.CurrentRoom != null) {
             var currentroom = GetRoom(TheGame.Player.CurrentRoom);
@@ -593,11 +594,7 @@ function ProcessAction(Action, bTimer) {
                 if (roomExit.PortalObjectName != "<None>") {
                     var tempobj = GetObject(roomExit.PortalObjectName);
                     if (tempobj && tempobj.bVisible) {
-                        GameUI.addInputChoice(
-                            act,
-                            objecttostring(tempobj),
-                            tempobj.UniqueIdentifier
-                        );
+                        GameUI.addInputChoice(act, objecttostring(tempobj), tempobj.UniqueIdentifier);
 
                         if (tempobj.bContainer) {
                             if (!tempobj.bOpenable || tempobj.bOpen) {
@@ -614,11 +611,7 @@ function ProcessAction(Action, bTimer) {
         TheGame.Characters.filter(function (character) {
             return character.CurrentRoom == TheGame.Player.CurrentRoom;
         }).forEach(function (character) {
-            GameUI.addInputChoice(
-                act,
-                CharToString(character),
-                character.Charname
-            );
+            GameUI.addInputChoice(act, CharToString(character), character.Charname);
         });
     }
 
@@ -635,11 +628,7 @@ function ProcessAction(Action, bTimer) {
         TheGame.Objects.filter(function (obj) {
             return obj.locationtype == "LT_PLAYER";
         }).forEach(function (obj) {
-            GameUI.addInputChoice(
-                act,
-                objecttostring(obj),
-                obj.UniqueIdentifier
-            );
+            GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
         });
     } else if (act.InputType == "ObjectOrCharacter") {
         addObjectChoices();
@@ -683,7 +672,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
     if (act.bConditionFailOnFirst) {
         for (var i = 0; i < act.Conditions.length; i++) {
             var tempcond = act.Conditions[i];
-            if (TestCondition(tempcond, AdditionalInputData, act, null)) {
+            if (TestCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null)) {
                 if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
                     // Do nothing?
                 } else {
@@ -698,7 +687,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
         bPassed = (act.Conditions.length === 0);
         for (var i = 0; i < act.Conditions.length; i++) {
             var tempcond = act.Conditions[i];
-            var btestresult = TestCondition(tempcond, AdditionalInputData, act, null);
+            var btestresult = TestCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null);
             if (btestresult) {
                 bPassed = btestresult;
                 addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
@@ -797,7 +786,7 @@ function SetExits() {
     }
 }
 
-function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobject) {
+function TestCondition(tempcond, AdditionalInputData, conditionAction, conditionTimerInvocation, loopobject) {
     var bResult = true;
     var counter = 0;
 
@@ -1332,7 +1321,9 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, loopobjec
                 case "CT_AdditionalDataCheck":
                     {
                         var datatocheck = "";
-                        if (Globals.additionalData && Globals.additionalDataAction == conditionAction)
+                        if (Globals.additionalData &&
+                            Globals.additionalDataContext.action == conditionAction &&
+                            Globals.additionalDataContext.timerInvocation == conditionTimerInvocation)
                             datatocheck = Globals.additionalData;
                         if (tempcond.AdditionalInputData)
                             datatocheck = tempcond.AdditionalInputData;
@@ -1378,8 +1369,11 @@ function movePlayerToRoom(roomName) {
     }
 }
 
-function ProcessCondition(conditionBeingProcessed, AdditionalInputData, act, LoopObj) {
-    if (TestCondition(conditionBeingProcessed, AdditionalInputData, act, LoopObj)) {
+function ProcessCondition(wrappedCondition, AdditionalInputData, LoopObj) {
+    var conditionBeingProcessed = wrappedCondition.payload;
+    var act = wrappedCondition.parentAction;
+    var timerInvocation = wrappedCondition.timerInvocation;
+    if (TestCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, LoopObj)) {
         if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
             // Do nothing?
         } else {
@@ -1410,12 +1404,7 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
         if (curtype == "command" || "CommandName" in commandOrCondition.payload) {
             commandBeingProcessed = commandOrCondition.payload;
         } else {
-            ProcessCondition(
-                commandOrCondition.payload,
-                AdditionalInputData,
-                commandOrCondition.parentAction,
-                LoopObj
-            );
+            ProcessCondition(commandOrCondition, AdditionalInputData, LoopObj);
         }
 
         if (commandBeingProcessed != null) {
@@ -2067,8 +2056,10 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
                                 Globals.currentTimer = temptimer.Name;
                                 var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
                                 if (tempact != null) {
+                                    Globals.timerInvocation += 1;
                                     ProcessAction(tempact, true);
                                     while (Globals.bResetTimer) {
+                                        Globals.timerInvocation += 1;
                                         Globals.bResetTimer = false;
                                         ProcessAction(tempact, true);
                                     }

@@ -2,7 +2,8 @@ var GameUI = {
     setInputMenuTitle: function (act) {
         $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
         $("#inputmenu").css("visibility", "visible");
-        $("#inputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
+        var cancellable = (act.EnhInputData && act.EnhInputData.bAllowCancel) || act.CustomChoices.length === 0;
+        $("#inputmenu").toggleClass('cancellable', cancellable);
     },
 
     showGameElements: function () {

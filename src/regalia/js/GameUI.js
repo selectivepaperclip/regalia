@@ -38,7 +38,7 @@ var GameUI = {
         $("#cmdinputmenu").toggleClass('cancellable', act.EnhInputData && act.EnhInputData.bAllowCancel);
     },
 
-    addInputChoice: function (InputDataObject, text, value) {
+    addInputChoice: function (act, text, value) {
         var $div = $("<div>", {
             class: "inputchoices",
             text: text,
@@ -52,10 +52,10 @@ var GameUI = {
                     Globals.additionalData = Globals.selectedObj;
                     GameController.stopAwaitingInput();
                     $("#inputmenu").css("visibility", "hidden");
-                    if (getObjectClass(InputDataObject) == "action" || "actionparent" in InputDataObject) {
+                    if (getObjectClass(act) == "action" || "actionparent" in act) {
                         ActionRecorder.choseInputAction(Globals.selectedObj);
-                        ExecuteAction(InputDataObject, true, Globals.selectedObj);
-                        RunCommands(Globals.theObj, Globals.selectedObj, InputDataObject, null);
+                        ExecuteAction(act, true, Globals.selectedObj);
+                        RunCommands(Globals.theObj, Globals.selectedObj, act, null);
                     }
                 });
             }

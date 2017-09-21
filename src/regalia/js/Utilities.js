@@ -2600,6 +2600,13 @@ function RunCommands(TheObj, AdditionalInputData, act) {
                             mplayer.play();
                             break;
                         }
+                    case "CT_MM_SET_UD_COMPASS":
+                        {
+                            $('#CustomUDCompass').off('load');
+                            $('#CustomUDCompass').attr('src', 'images/' + part2);
+                            $('#UDCompass').hide();
+                            break;
+                        }
                     case "CT_MM_SET_MAIN_COMPASS":
                         {
                             $('#CustomCompass').off('load');

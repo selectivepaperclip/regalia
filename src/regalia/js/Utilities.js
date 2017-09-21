@@ -646,7 +646,7 @@ function addCommands(insertFirst, commands, AdditionalInputData, act) {
         InsertToMaster(commands, AdditionalInputData, act);
     } else {
         AddToMaster(commands, AdditionalInputData, act);
-        RunCommands(Globals.theObj, AdditionalInputData, act, null);
+        RunCommands(Globals.theObj, AdditionalInputData, act);
     }
 }
 
@@ -786,7 +786,7 @@ function SetExits() {
     }
 }
 
-function TestCondition(tempcond, AdditionalInputData, conditionAction, conditionTimerInvocation, loopobject) {
+function TestCondition(tempcond, AdditionalInputData, conditionAction, conditionTimerInvocation, loopObj) {
     var bResult = true;
     var counter = 0;
 
@@ -816,9 +816,9 @@ function TestCondition(tempcond, AdditionalInputData, conditionAction, condition
             }
             counter++;
 
-            var step2 = PerformTextReplacements(tempcheck.ConditionStep2, loopobject);
-            var step3 = PerformTextReplacements(tempcheck.ConditionStep3, loopobject);
-            var step4 = PerformTextReplacements(tempcheck.ConditionStep4, loopobject);
+            var step2 = PerformTextReplacements(tempcheck.ConditionStep2, loopObj);
+            var step3 = PerformTextReplacements(tempcheck.ConditionStep3, loopObj);
+            var step4 = PerformTextReplacements(tempcheck.ConditionStep4, loopObj);
             var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || Globals.theObj;
             switch (tempcheck.CondType) {
                 case "CT_Item_InGroup":
@@ -1369,11 +1369,11 @@ function movePlayerToRoom(roomName) {
     }
 }
 
-function ProcessCondition(wrappedCondition, AdditionalInputData, LoopObj) {
+function ProcessCondition(wrappedCondition, AdditionalInputData, loopObj) {
     var conditionBeingProcessed = wrappedCondition.payload;
     var act = wrappedCondition.parentAction;
     var timerInvocation = wrappedCondition.timerInvocation;
-    if (TestCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, LoopObj)) {
+    if (TestCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, loopObj)) {
         if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
             // Do nothing?
         } else {
@@ -1384,7 +1384,7 @@ function ProcessCondition(wrappedCondition, AdditionalInputData, LoopObj) {
     }
 }
 
-function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
+function RunCommands(TheObj, AdditionalInputData, act) {
     Globals.pauseCommandArgs = arguments;
     var bResult = false;
     while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || Globals.runningLiveTimerCommands)) {
@@ -1394,24 +1394,21 @@ function RunCommands(TheObj, AdditionalInputData, act, LoopObj) {
             continue;
         }
 
-        if (Globals.loopArgs.object != null) {
-            LoopObj = Globals.loopArgs.object;
-        }
-
+        var loopObj = Globals.loopArgs.object;
         var commandBeingProcessed = null;
         var commandOrCondition = CommandLists.shiftCommand();
         var curtype = getObjectClass(commandOrCondition.payload);
         if (curtype == "command" || "CommandName" in commandOrCondition.payload) {
             commandBeingProcessed = commandOrCondition.payload;
         } else {
-            ProcessCondition(commandOrCondition, AdditionalInputData, LoopObj);
+            ProcessCondition(commandOrCondition, AdditionalInputData, loopObj);
         }
 
         if (commandBeingProcessed != null) {
-            var part2 = PerformTextReplacements(commandBeingProcessed.CommandPart2, LoopObj);
-            var part3 = PerformTextReplacements(commandBeingProcessed.CommandPart3, LoopObj);
-            var part4 = PerformTextReplacements(commandBeingProcessed.CommandPart4, LoopObj);
-            var cmdtxt = PerformTextReplacements(commandBeingProcessed.CommandText, LoopObj);
+            var part2 = PerformTextReplacements(commandBeingProcessed.CommandPart2, loopObj);
+            var part3 = PerformTextReplacements(commandBeingProcessed.CommandPart3, loopObj);
+            var part4 = PerformTextReplacements(commandBeingProcessed.CommandPart4, loopObj);
+            var cmdtxt = PerformTextReplacements(commandBeingProcessed.CommandText, loopObj);
             var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || TheObj;
             Logger.logExecutingCommand(commandBeingProcessed, part2, part3 ,part4);
             try {
@@ -3652,7 +3649,7 @@ function RunTimer(temptimer, callback) {
                    Globals.runningLiveTimerCommands = false;
                 });
                 ProcessAction(tempact, true);
-                RunCommands(Globals.theObj, null, null, null);
+                RunCommands(Globals.theObj, null, null);
                 return;
             } else {
                 ProcessAction(tempact, false);

@@ -421,7 +421,7 @@ function GetCharacter(characterName) {
     }
 }
 
-function AddChildAction(Actions, Indent, ActionName) {
+function AddChildAction(Actions, Indent, ActionName, actionRecipientToLog) {
     for (var i = 0; i < Actions.length; i++) {
         if (Actions[i].name.substring(0, 2) != "<<" && Actions[i].bActive && Actions[i].actionparent == ActionName) {
             var $div = $("<div>", {
@@ -434,6 +434,7 @@ function AddChildAction(Actions, Indent, ActionName) {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
                     GameController.executeAndRunTimers(function () {
+                        logSelectedAction(actionRecipientToLog, selectionchoice);
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
                             scrollTop: $("#MainText")[0].scrollHeight
@@ -451,7 +452,7 @@ function AddChildAction(Actions, Indent, ActionName) {
             
             newopt.Action = Actions[i];
             $("#Actionchoices").append(newopt);*/
-            AddChildAction(Actions, "--" + Indent, Actions[i].name);
+            AddChildAction(Actions, "--" + Indent, Actions[i].name, actionRecipientToLog);
         }
     }
 }
@@ -466,6 +467,16 @@ function nameForAction(action) {
 
 function actionShouldBeVisible(action) {
     return action.name.substring(0, 2) !== "<<" && action.bActive && action.actionparent === "None";
+}
+
+function logSelectedAction(actionRecipientToLog, selectiontext) {
+    if (actionRecipientToLog == 'self') {
+        ActionRecorder.actedOnSelf(selectiontext);
+    } else if (actionRecipientToLog == 'room') {
+        ActionRecorder.actedOnRoom(selectiontext);
+    } else {
+        ActionRecorder.actedOnObject(Globals.selectedObj, selectiontext);
+    }
 }
 
 function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
@@ -488,13 +499,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
                 var selectiontext = $(this).text();
                 if (selectionchoice != null) {
                     GameController.executeAndRunTimers(function () {
-                        if (actionRecipientToLog == 'self') {
-                            ActionRecorder.actedOnSelf(selectiontext);
-                        } else if (actionRecipientToLog == 'room') {
-                            ActionRecorder.actedOnRoom(selectiontext);
-                        } else {
-                            ActionRecorder.actedOnObject(Globals.selectedObj, selectiontext);
-                        }
+                        logSelectedAction(actionRecipientToLog, selectiontext);
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
                             scrollTop: $("#MainText")[0].scrollHeight
@@ -507,7 +512,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
             });
 
             $("#Actionchoices").append($div);
-            AddChildAction(Actions, "--", Actions[i].name);
+            AddChildAction(Actions, "--", Actions[i].name, actionRecipientToLog);
         }
     }
 

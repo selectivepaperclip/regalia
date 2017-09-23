@@ -103,5 +103,86 @@ var GameUI = {
         $("#textMenuTitle").text(title);
         $("#textchoice").css("visibility", "visible");
         $("#textchoice input").focus();
+    },
+
+    addActionChoice: function (action, text, actionRecipientToLog) {
+        var $div = $("<div>", {
+            class: "ActionChoices",
+            text: text,
+            value: action.name
+        });
+
+        $div.click(function (e) {
+            var selectionchoice = $(this).val();
+            var selectiontext = $(this).text();
+            if (selectionchoice != null) {
+                GameController.executeAndRunTimers(function () {
+                    ActionRecorder.actedOnSomething(actionRecipientToLog, selectiontext);
+                    $("#MainText").append('</br><b>' + selectionchoice + "</b>");
+                    $("#MainText").animate({
+                        scrollTop: $("#MainText")[0].scrollHeight
+                    });
+                    $("#selectionmenu").css("visibility", "hidden");
+                    ResetLoopObjects();
+                    GameActions.processAction(selectionchoice);
+                });
+            }
+        });
+
+        $("#Actionchoices").append($div);
+        return $div;
+    },
+
+    displayActions: function (actions, clickEvent, actionRecipientToLog) {
+        if (GetActionCount(actions) === 0) {
+            return;
+        }
+
+        $("#Actionchoices").empty();
+        Globals.curActions = actions;
+        for (var i = 0; i < actions.length; i++) {
+            var action = actions[i];
+            if (actionShouldBeVisible(action)) {
+                this.addActionChoice(action, nameForAction(action), actionRecipientToLog);
+                this.addChildActions(actions, "--", action.name, actionRecipientToLog);
+            }
+        }
+
+        $("#selectionmenu").click(function (e) {
+            e.stopPropagation();
+        });
+
+        $('body').off('click.selectionmenu');
+        setTimeout(function () {
+            $('body').on('click.selectionmenu', function (e) {
+                $("#selectionmenu").css("visibility", "hidden");
+            });
+        });
+
+        var leftposition, topposition;
+        if (clickEvent) {
+            leftposition = clickEvent.clientX;
+            topposition = clickEvent.clientY;
+        } else {
+            topposition = window.y - 50;
+            leftposition = window.x;
+            if (window.x + $("#selectionmenu").width() > $(window).width())
+                leftposition = $(window).width() - $("#selectionmenu").width();
+        }
+
+        $("#selectionmenu").css("top", topposition + "px");
+        $("#selectionmenu").css("left", leftposition + "px");
+        $("#selectionmenu").css("visibility", "visible");
+        $("#Actionchoices").focus();
+    },
+
+    addChildActions: function (actions, Indent, ActionName, actionRecipientToLog) {
+        for (var i = 0; i < actions.length; i++) {
+            var action = actions[i];
+            if (action.name.substring(0, 2) != "<<" && action.bActive && action.actionparent == ActionName) {
+                this.addActionChoice(action, Indent + nameForAction(action), actionRecipientToLog);
+                this.addChildActions(actions, "--" + Indent, action.name, actionRecipientToLog);
+            }
+        }
     }
 };

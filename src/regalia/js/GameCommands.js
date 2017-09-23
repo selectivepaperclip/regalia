@@ -596,11 +596,11 @@ var GameCommands = {
                     var tempact = Finder.action(temptimer.Actions, "<<On Each Turn>>");
                     if (tempact != null) {
                         Globals.timerInvocation += 1;
-                        ProcessAction(tempact, true);
+                        GameActions.processAction(tempact, true);
                         while (Globals.bResetTimer) {
                             Globals.timerInvocation += 1;
                             Globals.bResetTimer = false;
-                            ProcessAction(tempact, true);
+                            GameActions.processAction(tempact, true);
                         }
                     }
                 }
@@ -1288,13 +1288,13 @@ var GameCommands = {
                 if (tempchar.CurrentRoom == TheGame.Player.CurrentRoom) {
                     var tempact = Finder.action(tempchar.Actions, "<<On Character Leave>>");
                     if (tempact != null)
-                        ProcessAction(tempact, true);
+                        GameActions.processAction(tempact, true);
                 }
                 if (part3 == CurrentRoomGuid) {
                     tempchar.CurrentRoom = TheGame.Player.CurrentRoom;
                     var tempact = Finder.action(tempchar.Actions, "<<On Character Enter>>");
                     if (tempact != null)
-                        ProcessAction(tempact, true);
+                        GameActions.processAction(tempact, true);
                 } else if (part3 == VoidRoomGuid) {
                     Finder.character(part2).CurrentRoom = VoidRoomGuid;
                 } else {
@@ -1306,7 +1306,7 @@ var GameCommands = {
                     if (part3 == TheGame.Player.CurrentRoom) {
                         var tempact = Finder.action(tempchar.Actions, "<<On Character Enter>>");
                         if (tempact != null)
-                            ProcessAction(tempact, true);
+                            GameActions.processAction(tempact, true);
                     }
                 }
                 RefreshCharacters();

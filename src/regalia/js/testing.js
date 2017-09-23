@@ -51,7 +51,7 @@ $(function() {
                 });
                 $("#selectionmenu").css("visibility", "hidden");
                 ResetLoopObjects();
-                ProcessAction(selectionchoice);
+                GameActions.processAction(selectionchoice);
             });
         }
     });
@@ -67,11 +67,11 @@ $(function() {
     });
     $("#PlayerImg").click(function(e) {
         Globals.theObj = TheGame.Player;
-        DisplayActions(TheGame.Player.Actions, e, 'self');
+        GameUI.displayActions(TheGame.Player.Actions, e, 'self');
     });
     $("#RoomThumbImg").click(function(e) {
         Globals.theObj = Finder.room(TheGame.Player.CurrentRoom);
-        DisplayActions(Globals.theObj.Actions, e, 'room');
+        GameUI.displayActions(Globals.theObj.Actions, e, 'room');
     });
 
     function onKeyupEnter(selector, fn) {
@@ -353,12 +353,12 @@ $(function() {
         if (curroom != null) {
             if (!curroom.bLeaveFirstTime) {
                 curroom.bLeaveFirstTime = true;
-                RunEvents("<<On Player Leave First Time>>");
+                GameActions.runEvents("<<On Player Leave First Time>>");
             }
         }
         runAfterPause(function () {
             if (curroom != null) {
-                RunEvents("<<On Player Leave>>");
+                GameActions.runEvents("<<On Player Leave>>");
             }
             runAfterPause(function () {
                 if (!Globals.bCancelMove) {
@@ -507,7 +507,7 @@ function StartGame() {
         ChangeRoom(currentroom, true, true);
     }
     SetPortrait(TheGame.Player.PlayerPortrait);
-    RunEvents("<<On Game Start>>");
+    GameActions.runEvents("<<On Game Start>>");
 }
 
 function GetImageMimeType(lastthree) {

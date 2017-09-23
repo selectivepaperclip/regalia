@@ -140,7 +140,7 @@ describe 'mindshift', type: :feature, js: true do
 
     act_on_character 'Bree', "What's going on?"
     act_on_character 'Bree', "How were your first classes"
-    act_on_character 'Bree', "What's with the landlady"
+    act_on_character 'Bree', "What's with that landlady"
     act_on_object 'lunch special', 'Purchase'
     continue_until_unpaused
 

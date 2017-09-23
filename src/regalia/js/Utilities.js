@@ -136,7 +136,7 @@ function SetRoomThumb(ImageName) {
                 img.css('background-image', imageUrl(thelayers[i]));
                 img.click(function(clickEvent) {
                     Globals.theObj = Finder.room(TheGame.Player.CurrentRoom);
-                    DisplayActions(Globals.theObj.Actions, clickEvent, 'room');
+                    GameUI.displayActions(Globals.theObj.Actions, clickEvent, 'room');
                 });
                 img.appendTo('#RoomImageLayers');
             }
@@ -193,7 +193,7 @@ function SetPortrait(ImageName) {
                 img.css('background-image', imageUrl(layers[i]));
                 img.click(function(clickEvent) {
                     Globals.theObj = TheGame.Player;
-                    DisplayActions(TheGame.Player.Actions, clickEvent, 'self');
+                    GameUI.displayActions(TheGame.Player.Actions, clickEvent, 'self');
                 });
                 img.appendTo('#PortraitImageLayers');
             }
@@ -225,7 +225,7 @@ function RefreshInventory() {
             Globals.selectedObj = Finder.object($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
-                DisplayActions(Globals.selectedObj.Actions, clickEvent);
+                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
             }
         });
         $("#Inventory").append($div);
@@ -251,7 +251,7 @@ function RefreshRoomObjects() {
             Globals.selectedObj = Finder.object($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
-                DisplayActions(Globals.selectedObj.Actions, clickEvent);
+                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
             }
         });
         $("#RoomObjects").append($div);
@@ -281,7 +281,7 @@ function RefreshRoomObjects() {
                                 Globals.selectedObj = Finder.object($(this).val());
                                 if (Globals.selectedObj != null) {
                                     Globals.theObj = Globals.selectedObj;
-                                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
+                                    GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
                                 }
                             });
                             $("#RoomObjects").append($div);
@@ -323,7 +323,7 @@ function AddOpenedObjects(outerObject, thelistbox, itemclass) {
                 Globals.selectedObj = Finder.object($(this).val());
                 if (Globals.selectedObj != null) {
                     Globals.theObj = Globals.selectedObj;
-                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
+                    GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
 
@@ -349,7 +349,7 @@ function RefreshCharacters() {
             Globals.selectedObj = Finder.character($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
-                DisplayActions(Globals.selectedObj.Actions, clickEvent);
+                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
             }
         });
 
@@ -358,42 +358,6 @@ function RefreshCharacters() {
             AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
         }
     });
-}
-
-function AddChildAction(Actions, Indent, ActionName, actionRecipientToLog) {
-    for (var i = 0; i < Actions.length; i++) {
-        if (Actions[i].name.substring(0, 2) != "<<" && Actions[i].bActive && Actions[i].actionparent == ActionName) {
-            var $div = $("<div>", {
-                class: "ActionChoices",
-                text: Indent + Actions[i].name,
-                value: Actions[i].name
-            });
-
-            $div.click(function() {
-                var selectionchoice = $(this).val();
-                if (selectionchoice != null) {
-                    GameController.executeAndRunTimers(function () {
-                        ActionRecorder.actedOnSomething(actionRecipientToLog, selectionchoice);
-                        $("#MainText").append('</br><b>' + selectionchoice + "</b>");
-                        $("#MainText").animate({
-                            scrollTop: $("#MainText")[0].scrollHeight
-                        });
-                        $("#selectionmenu").css("visibility", "hidden");
-                        ResetLoopObjects();
-                        ProcessAction(selectionchoice);
-                    });
-                }
-            });
-
-            $("#Actionchoices").append($div);
-
-            /* var newopt = new Option(Indent + Actions[i].name, Actions[i].name);
-            
-            newopt.Action = Actions[i];
-            $("#Actionchoices").append(newopt);*/
-            AddChildAction(Actions, "--" + Indent, Actions[i].name, actionRecipientToLog);
-        }
-    }
 }
 
 function nameForAction(action) {
@@ -406,167 +370,6 @@ function nameForAction(action) {
 
 function actionShouldBeVisible(action) {
     return action.name.substring(0, 2) !== "<<" && action.bActive && action.actionparent === "None";
-}
-
-function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
-    if (GetActionCount(Actions) === 0) {
-        return;
-    }
-
-    $("#Actionchoices").empty();
-    Globals.curActions = Actions;
-    for (var i = 0; i < Actions.length; i++) {
-        if (actionShouldBeVisible(Actions[i])) {
-            var $div = $("<div>", {
-                class: "ActionChoices",
-                text: nameForAction(Actions[i]),
-                value: Actions[i].name
-            });
-
-            $div.click(function(e) {
-                var selectionchoice = $(this).val();
-                var selectiontext = $(this).text();
-                if (selectionchoice != null) {
-                    GameController.executeAndRunTimers(function () {
-                        ActionRecorder.actedOnSomething(actionRecipientToLog, selectiontext);
-                        $("#MainText").append('</br><b>' + selectionchoice + "</b>");
-                        $("#MainText").animate({
-                            scrollTop: $("#MainText")[0].scrollHeight
-                        });
-                        $("#selectionmenu").css("visibility", "hidden");
-                        ResetLoopObjects();
-                        ProcessAction(selectionchoice);
-                    });
-                }
-            });
-
-            $("#Actionchoices").append($div);
-            AddChildAction(Actions, "--", Actions[i].name, actionRecipientToLog);
-        }
-    }
-
-    $("#selectionmenu").click(function (e) {
-      e.stopPropagation();
-    });
-
-    $('body').off('click.selectionmenu');
-    setTimeout(function () {
-        $('body').on('click.selectionmenu', function (e) {
-            $("#selectionmenu").css("visibility", "hidden");
-        });
-    });
-
-    var leftposition, topposition;
-    if (clickEvent) {
-        leftposition = clickEvent.clientX;
-        topposition = clickEvent.clientY;
-    } else {
-        topposition = window.y - 50;
-        leftposition = window.x;
-        if (window.x + $("#selectionmenu").width() > $(window).width())
-            leftposition = $(window).width() - $("#selectionmenu").width();
-    }
-
-    $("#selectionmenu").css("top", topposition + "px");
-    $("#selectionmenu").css("left", leftposition + "px");
-    $("#selectionmenu").css("visibility", "visible");
-    $("#Actionchoices").focus();
-}
-
-function ProcessAction(Action, bTimer) {
-    var act = null;
-    Globals.bMasterTimer = bTimer;
-
-    if (getObjectClass(Action) == "action" || Action.actionparent != null) //"actionparent" in Action)
-        act = Action;
-    else {
-        for (var i = 0; i < Globals.curActions.length; i++) {
-            if (Globals.curActions[i].name == Action) {
-                act = Globals.curActions[i];
-                break;
-            }
-        }
-    }
-    var curclass = getObjectClass(Globals.selectedObj);
-
-    if (act.InputType === "None") {
-        GameActions.executeAction(act, bTimer);
-        SetBorders();
-        return;
-    }
-
-    Globals.additionalDataContext = {
-        action: act,
-        timerInvocation: Globals.timerInvocation
-    };
-
-    if (act.InputType == "Text") {
-        Globals.inputDataObject = act;
-        $("#textactionMenuTitle").text(act.CustomChoiceTitle);
-        $("#textactionchoice").css("visibility", "visible");
-        $("#textactionchoice input").focus();
-        GameController.startAwaitingInput();
-        SetBorders();
-        return;
-    }
-
-    GameUI.clearInputChoices();
-
-    function addObjectChoices() {
-        Interactables.roomAndInventoryObjects().forEach(function (obj) {
-            GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
-        });
-        if (TheGame.Player.CurrentRoom != null) {
-            var currentroom = Finder.room(TheGame.Player.CurrentRoom);
-            if (!currentroom) {
-                return;
-            }
-
-            currentroom.Exits.forEach(function (roomExit) {
-                if (roomExit.PortalObjectName != "<None>") {
-                    var tempobj = Finder.object(roomExit.PortalObjectName);
-                    if (tempobj && tempobj.bVisible) {
-                        GameUI.addInputChoice(act, objecttostring(tempobj), tempobj.UniqueIdentifier);
-
-                        if (tempobj.bContainer) {
-                            if (!tempobj.bOpenable || tempobj.bOpen) {
-                                AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices");
-                            }
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    function addCharacterChoices() {
-        Interactables.characters().forEach(function (character) {
-            GameUI.addInputChoice(act, CharToString(character), character.Charname);
-        });
-    }
-
-    if (act.InputType == "Custom") {
-        act.CustomChoices.forEach(function (customChoice) {
-            var replacedChoiceText = PerformTextReplacements(customChoice);
-            GameUI.addInputChoice(act, replacedChoiceText, replacedChoiceText);
-        });
-    } else if (act.InputType == "Character") {
-        addCharacterChoices();
-    } else if (act.InputType == "Object") {
-        addObjectChoices();
-    } else if (act.InputType == "Inventory") {
-        Interactables.inventoryObjects().forEach(function (obj) {
-            GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
-        });
-    } else if (act.InputType == "ObjectOrCharacter") {
-        addObjectChoices();
-        addCharacterChoices();
-    }
-
-    GameUI.setInputMenuTitle(act);
-    GameController.startAwaitingInput();
-
-    SetBorders();
 }
 
 function isLoopCheck(check) {
@@ -615,7 +418,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
     }
     if (bRunEvents && !currentroom.bEnterFirstTime) {
         currentroom.bEnterFirstTime = true;
-        RunEvents("<<On Player Enter First Time>>");
+        GameActions.runEvents("<<On Player Enter First Time>>");
     }
     runAfterPause(function () {
         // Handle situations where one of the "Enter First Time" events triggers a new ChangeRoom
@@ -623,7 +426,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
             return;
         }
         if (bRunEvents) {
-            RunEvents("<<On Player Enter>>");
+            GameActions.runEvents("<<On Player Enter>>");
         }
         runAfterPause(function () {
             // Handle situations where one of the "Enter" events triggers a new ChangeRoom
@@ -1138,118 +941,6 @@ function SetCustomProperty(curprop, part3, replacedstring) {
     }
 }
 
-function RunEvents(EventType) {
-    try {
-        var startingroomid = TheGame.Player.CurrentRoom;
-        var curroom = Finder.room(startingroomid);
-        var tempact = Finder.action(curroom.Actions, EventType);
-        if (tempact != null) {
-            ProcessAction(tempact, false);
-        }
-        tempact = Finder.action(TheGame.Player.Actions, EventType);
-        if (tempact != null) {
-            ProcessAction(tempact, false);
-        }
-        Interactables.roomObjects().forEach(function (obj) {
-            CommandLists.addNestedCommandList(obj);
-
-            if (EventType.indexOf("Player Enter") > -1) {
-                if (!obj.bEnterFirstTime) {
-                    tempact = Finder.action(obj.Actions, "<<On Player Enter First Time>>");
-                    obj.bEnterFirstTime = true;
-                    if (tempact != null)
-                        ProcessAction(tempact, false);
-                }
-            } else if (EventType.indexOf("Player Leave") > -1) {
-                if (!obj.bLeaveFirstTime) {
-                    tempact = Finder.action(obj.Actions, "<<On Player Leave First Time>>");
-                    obj.bLeaveFirstTime = true;
-                    if (tempact != null)
-                        ProcessAction(tempact, false);
-                }
-            }
-            tempact = Finder.action(obj.Actions, EventType);
-            if (tempact != null) {
-                if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                    if (EventType == "<<On Player Enter>>") {
-                        if (startingroomid == TheGame.Player.CurrentRoom) {
-                            ProcessAction(tempact, false);
-                        }
-                    } else
-                        ProcessAction(tempact, false);
-                }
-            }
-            if (obj.bContainer) {
-                if (!obj.bOpenable || obj.bOpen) {
-                    for (var j = 0; j < TheGame.Objects.length; j++) {
-                        var tempobj2 = TheGame.Objects[j];
-                        CommandLists.addNestedCommandList(tempobj2);
-
-                        if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == obj.UniqueIdentifier)) {
-                            if (EventType.indexOf("Player Enter") > -1) {
-                                if (!tempobj2.bEnterFirstTime) {
-                                    tempact = Finder.action(tempobj2.Actions, "<<On Player Enter First Time>>");
-                                    tempobj2.bEnterFirstTime = true;
-                                    if (tempact != null)
-                                        ProcessAction(tempact, false);
-                                }
-                            } else if (EventType.indexOf("Player Leave") > -1) {
-                                if (!tempobj2.bLeaveFirstTime) {
-                                    tempact = Finder.action(tempobj2.Actions, "<<On Player Leave First Time>>");
-                                    tempobj2.bLeaveFirstTime = true;
-                                    if (tempact != null)
-                                        ProcessAction(tempact, false);
-                                }
-                            }
-                            tempact = Finder.action(tempobj2.Actions, EventType);
-                            if (tempact != null) {
-                                if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                                    if (EventType == "<<On Player Enter>>") {
-                                        if (startingroomid == TheGame.Player.CurrentRoom) {
-                                            ProcessAction(tempact, false);
-                                        }
-                                    } else
-                                        ProcessAction(tempact, false);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        Interactables.characters().forEach(function (character) {
-            if (EventType.indexOf("Player Enter") > -1) {
-                if (!character.bEnterFirstTime) {
-                    tempact = Finder.action(character.Actions, "<<On Player Enter First Time>>");
-                    character.bEnterFirstTime = true;
-                    if (tempact != null)
-                        ProcessAction(tempact, false); //null);
-                }
-            } else if (EventType.indexOf("Player Leave") > -1) {
-                if (!character.bLeaveFirstTime) {
-                    tempact = Finder.action(character.Actions, "<<On Player Leave First Time>>");
-                    character.bLeaveFirstTime = true;
-                    if (tempact != null)
-                        ProcessAction(tempact, false); //null);
-                }
-            }
-            tempact = Finder.action(character.Actions, EventType);
-            if (tempact != null) {
-                if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                    if (EventType == "<<On Player Enter>>") {
-                        if (startingroomid == TheGame.Player.CurrentRoom) {
-                            ProcessAction(tempact, null);
-                        }
-                    } else
-                        ProcessAction(tempact, false); //null);
-                }
-            }
-        });
-    } catch (err) {
-        var themsg = err.message;
-    }
-}
-
 function runSingleTimer(temptimer) {
     Globals.currentTimer = temptimer.Name;
     RunTimer(temptimer, function () {
@@ -1310,11 +1001,11 @@ function RunTimer(temptimer, callback) {
                 CommandLists.addToFront(function () {
                    Globals.runningLiveTimerCommands = false;
                 });
-                ProcessAction(tempact, true);
+                GameActions.processAction(tempact, true);
                 GameCommands.runCommands(Globals.theObj, null, null);
                 return;
             } else {
-                ProcessAction(tempact, false);
+                GameActions.processAction(tempact, false);
             }
         }
 
@@ -1325,7 +1016,7 @@ function RunTimer(temptimer, callback) {
             tempact = Finder.action(temptimer.Actions, "<<On Turn " +
                 temptimer.TurnNumber.toString() + ">>");
             if (tempact != null)
-                ProcessAction(tempact, false); //null);
+                GameActions.processAction(tempact, false); //null);
             UpdateStatusBars();
 
             runNextAfterPause(function () {
@@ -1334,7 +1025,7 @@ function RunTimer(temptimer, callback) {
                 if (temptimer.TurnNumber == temptimer.Length) {
                     tempact = Finder.action(temptimer.Actions, "<<On Last Turn>>");
                     if (tempact != null)
-                        ProcessAction(tempact, false); //null);
+                        GameActions.processAction(tempact, false); //null);
                 }
                 UpdateStatusBars();
                 callback();

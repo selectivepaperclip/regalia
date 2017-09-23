@@ -31,13 +31,9 @@ var Interactables = {
     }
 };
 
-function setAdditionalInputData(command, addinputdata) {
-    command.AdditionalInputData = addinputdata || undefined;
-}
-
 function AddToMaster(commands, addinputdata, act) {
     for (var i = 0; i < commands.length; i++) {
-        setAdditionalInputData(commands[i]);
+        command.AdditionalInputData = addinputdata || undefined;
         CommandLists.addToEnd({
             parentAction: act,
             timerInvocation: Globals.timerInvocation,
@@ -48,7 +44,7 @@ function AddToMaster(commands, addinputdata, act) {
 
 function InsertToMaster(commands, addinputdata, act) {
     for (var i = commands.length - 1; i >= 0; i--) {
-        setAdditionalInputData(commands[i]);
+        command.AdditionalInputData = addinputdata || undefined;
         CommandLists.addToFront({
             parentAction: act,
             timerInvocation: Globals.timerInvocation,
@@ -454,7 +450,7 @@ function AddChildAction(Actions, Indent, ActionName, actionRecipientToLog) {
                 var selectionchoice = $(this).val();
                 if (selectionchoice != null) {
                     GameController.executeAndRunTimers(function () {
-                        logSelectedAction(actionRecipientToLog, selectionchoice);
+                        ActionRecorder.actedOnSomething(actionRecipientToLog, selectionchoice);
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
                             scrollTop: $("#MainText")[0].scrollHeight
@@ -489,16 +485,6 @@ function actionShouldBeVisible(action) {
     return action.name.substring(0, 2) !== "<<" && action.bActive && action.actionparent === "None";
 }
 
-function logSelectedAction(actionRecipientToLog, selectiontext) {
-    if (actionRecipientToLog == 'self') {
-        ActionRecorder.actedOnSelf(selectiontext);
-    } else if (actionRecipientToLog == 'room') {
-        ActionRecorder.actedOnRoom(selectiontext);
-    } else {
-        ActionRecorder.actedOnObject(Globals.selectedObj, selectiontext);
-    }
-}
-
 function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
     if (GetActionCount(Actions) === 0) {
         return;
@@ -519,7 +505,7 @@ function DisplayActions(Actions, clickEvent, actionRecipientToLog) {
                 var selectiontext = $(this).text();
                 if (selectionchoice != null) {
                     GameController.executeAndRunTimers(function () {
-                        logSelectedAction(actionRecipientToLog, selectiontext);
+                        ActionRecorder.actedOnSomething(actionRecipientToLog, selectiontext);
                         $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                         $("#MainText").animate({
                             scrollTop: $("#MainText")[0].scrollHeight
@@ -691,7 +677,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
     if (act.bConditionFailOnFirst) {
         for (var i = 0; i < act.Conditions.length; i++) {
             var tempcond = act.Conditions[i];
-            if (TestCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null)) {
+            if (GameConditions.testCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null)) {
                 if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
                     // Do nothing?
                 } else {
@@ -706,7 +692,7 @@ function ExecuteAction(act, runNext, AdditionalInputData) {
         bPassed = (act.Conditions.length === 0);
         for (var i = 0; i < act.Conditions.length; i++) {
             var tempcond = act.Conditions[i];
-            var btestresult = TestCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null);
+            var btestresult = GameConditions.testCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null);
             if (btestresult) {
                 bPassed = btestresult;
                 addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
@@ -805,574 +791,6 @@ function SetExits() {
     }
 }
 
-function TestCondition(tempcond, AdditionalInputData, conditionAction, conditionTimerInvocation, loopObj) {
-    var bResult = true;
-    var counter = 0;
-
-    function performLoopIteration() {
-        if (Globals.loopArgs.idx < Globals.loopArgs.array.length) {
-            Globals.loopArgs.object = Globals.loopArgs.array[Globals.loopArgs.idx];
-            Globals.loopArgs.idx++;
-
-            InsertToMaster([tempcond], undefined, conditionAction);
-            InsertToMaster(tempcond.PassCommands, undefined, conditionAction);
-        } else {
-            ResetLoopObjects();
-        }
-    }
-
-    for (var icond = 0; icond < tempcond.Checks.length; icond++) {
-        try {
-            var tempcheck = tempcond.Checks[icond];
-            if (counter > 0) {
-                if (tempcheck.CkType == "Or") {
-                    if (bResult == true)
-                        break;
-                } else if (tempcheck.CkType == "And") {
-                    if (bResult == false)
-                        continue;
-                }
-            }
-            counter++;
-
-            var step2 = PerformTextReplacements(tempcheck.ConditionStep2, loopObj);
-            var step3 = PerformTextReplacements(tempcheck.ConditionStep3, loopObj);
-            var step4 = PerformTextReplacements(tempcheck.ConditionStep4, loopObj);
-            var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || Globals.theObj;
-            switch (tempcheck.CondType) {
-                case "CT_Item_InGroup":
-                    {
-                        var tempitem = GetObject(step2);
-                        bResult = tempitem.GroupName == step3;
-                        break;
-                    }
-                case "CT_MultiMedia_InGroup":
-                    {
-                        throw new Error("CT_MultiMedia_InGroup not implemented!");
-                    }
-                case "CT_Item_Held_By_Player":
-                    {
-                        var tempobj = GetObject(step2);
-                        if (tempobj != null) {
-                            if (tempobj.locationtype == "LT_PLAYER")
-                                bResult = true;
-                            else {
-                                if (tempobj.locationtype == "LT_IN_OBJECT")
-                                    bResult = CheckItemInInventory(tempobj);
-                                else
-                                    bResult = false;
-                            }
-                        } else
-                            bResult = false;
-                        break;
-                    }
-                case "CT_Player_Moving":
-                    {
-                        var tempdir = step2;
-                        bResult = (Globals.movingDirection == tempdir);
-                        break;
-                    }
-                case "CT_Player_Gender":
-                    {
-                        if (step2 == "Male")
-                            bResult = TheGame.Player.PlayerGender == "Male";
-                        else if (step2 == "Female")
-                            bResult = TheGame.Player.PlayerGender == "Female";
-                        else
-                            bResult = TheGame.Player.PlayerGender == "Other";
-                        break;
-                    }
-                case "CT_Character_Gender":
-                    {
-                        var tempchar = GetCharacter(step2);
-                        if (tempchar != null) {
-                            if (step3 == "Male")
-                                bResult = tempchar.CharGender == "Male";
-                            else if (step3 == "Female")
-                                bResult = tempchar.CharGender == "Female";
-                            else
-                                bResult = tempchar.CharGender == "Other";
-                        }
-                        break;
-                    }
-                case "CT_Character_In_Room":
-                    {
-                        var tempchar = GetCharacter(step2);
-                        if (step3 == CurrentRoomGuid) {
-                            var currentroom = GetRoom(TheGame.Player.CurrentRoom);
-                            bResult = tempchar.CurrentRoom == currentroom.UniqueID;
-                        } else {
-                            bResult = (tempchar.CurrentRoom == step3);
-                        }
-                        break;
-                    }
-                case "CT_Character_In_RoomGroup":
-                    {
-                        bResult = false;
-                        var tempchar = GetCharacter(step2);
-                        var temproom = GetRoom(tempchar.CurrentRoom);
-                        if (temproom != null) {
-                            if (temproom.Group == step3)
-                                bResult = true;
-                        }
-                        break;
-                    }
-                case "CT_Item_Held_By_Character":
-                    {
-                        var tempobj = GetObject(step3);
-                        if (tempobj != null) {
-                            if (tempobj.locationtype == "LT_CHARACTER" && tempobj.locationname == step2)
-                                bResult = true;
-                            else
-                                bResult = false;
-                        } else
-                            bResult = false;
-                        break;
-                    }
-                case "CT_Item_Not_Held_By_Player":
-                    {
-                        var tempobj = GetObject(step2);
-                        if (tempobj != null)
-                            bResult = tempobj.locationtype != "LT_PLAYER";
-                        else
-                            bResult = false;
-                        break;
-                    }
-                case "CT_Item_In_Object":
-                    {
-                        var tempobj = GetObject(step2);
-                        if (tempobj != null)
-                            bResult = tempobj.locationtype == "LT_IN_OBJECT" && tempobj.locationname == step3;
-                        else
-                            bResult = false;
-                        break;
-                    }
-                case "CT_Item_Not_In_Object":
-                    {
-                        var tempobj = GetObject(step2);
-                        if (tempobj != null) {
-                            var iteminobject = tempobj.locationtype == "LT_IN_OBJECT" && tempobj.locationname == step3;
-                            bResult = !iteminobject;
-                        } else
-                            bResult = true;
-                        break;
-                    }
-                case "CT_Item_In_Room":
-                    {
-                        if (step3 == CurrentRoomGuid) {
-                            var tempobj = GetObject(step2);
-                            var currentroom = GetRoom(TheGame.Player.CurrentRoom);
-                            if (tempobj != null)
-                                bResult = ((tempobj.locationtype == "LT_ROOM") && (tempobj.locationname == currentroom.UniqueID));
-                            else
-                                bResult = false;
-                        } else {
-                            var tempobj = GetObject(step2);
-                            if (tempobj != null)
-                                bResult = tempobj.locationtype == "LT_ROOM" && (
-                                    (tempobj.locationname === step3) || (tempobj.locationname === GetRoom(step3).UniqueID)
-                                );
-                            else
-                                bResult = false;
-                        }
-                        break;
-                    }
-                case "CT_Item_In_RoomGroup":
-                    {
-                        bResult = false;
-                        var tempobj = GetObject(step2);
-                        if (tempobj != null && tempobj.locationtype == "LT_ROOM") {
-                            var temproom = GetRoom(tempobj.locationname);
-                            if (temproom != null) {
-                                if (temproom.Group == step3)
-                                    bResult = true;
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Player_In_Room":
-                    {
-                        bResult = TheGame.Player.CurrentRoom == step2;
-                        break;
-                    }
-                case "CT_Player_In_RoomGroup":
-                    {
-                        var testroom = GetRoom(TheGame.Player.CurrentRoom);
-                        bResult = (testroom.Group == step2);
-                        break;
-                    }
-                case "CT_Player_In_Same_Room_As":
-                    {
-                        var curchar = GetCharacter(step2);
-                        bResult = TheGame.Player.CurrentRoom == curchar.CurrentRoom;
-                        break;
-                    }
-                case "CT_Loop_While":
-                    {
-                        if (TestVariable(step2, step3, step4)) {
-                            var condarray = [tempcond];
-                            InsertToMaster(condarray, undefined, conditionAction);
-                            InsertToMaster(tempcond.PassCommands, undefined, conditionAction);
-                        }
-                        break;
-                    }
-                case "CT_Loop_Rooms":
-                    {
-                        if (Globals.loopArgs.array == null)
-                            Globals.loopArgs.array = TheGame.Rooms;
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Exits":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            var temproom = GetRoom(step2);
-                            if (temproom != null) {
-                                Globals.loopArgs.array = temproom.Exits;
-                            }
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Characters":
-                    {
-                        if (Globals.loopArgs.array == null)
-                            Globals.loopArgs.array = TheGame.Characters;
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Item_Group":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
-                                return item.GroupName === step2;
-                            });
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Item_Char_Inventory":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
-                                return item.locationtype === "LT_CHARACTER" && item.locationname === step2;
-                            });
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Item_Container":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
-                                return item.locationtype === "LT_IN_OBJECT" && item.locationname === step2;
-                            });
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Item_Inventory":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
-                                return item.locationtype === "LT_PLAYER";
-                            });
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Item_Room":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            Globals.loopArgs.array = TheGame.Objects.filter(function (item) {
-                                return item.locationtype === "LT_ROOM" && item.locationname === step2;
-                            });
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Loop_Items":
-                    {
-                        if (Globals.loopArgs.array == null) {
-                            Globals.loopArgs.array = TheGame.Objects;
-                        }
-                        performLoopIteration();
-                        break;
-                    }
-                case "CT_Room_CustomPropertyCheck":
-                    {
-                        var splits = step2.split(":");
-                        if (splits.length == 2) {
-                            var roomname = splits[0];
-                            var property = splits[1];
-                            var temproom = null;
-                            if (roomname == "<CurrentRoom>") {
-                                temproom = GetRoom(TheGame.Player.CurrentRoom);
-                            } else {
-                                temproom = GetRoom(roomname);
-                            }
-                            if (temproom != null) {
-                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                                    var curprop = temproom.CustomProperties[i];
-                                    if (curprop.Name == property) {
-                                        bResult = TestCustomProperty(curprop.Value, step3, step4);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Character_CustomPropertyCheck":
-                    {
-                        var splits = step2.split(":");
-                        if (splits.length == 2) {
-                            var roomname = splits[0];
-                            var property = splits[1];
-                            var temproom = null;
-                            temproom = GetCharacter(roomname);
-                            if (temproom != null) {
-                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                                    var curprop = temproom.CustomProperties[i];
-                                    if (curprop.Name == property) {
-                                        bResult = TestCustomProperty(curprop.Value, step3, step4);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Timer_CustomPropertyCheck":
-                    {
-                        var splits = step2.split(":");
-                        if (splits.length == 2) {
-                            var roomname = splits[0];
-                            var property = splits[1];
-                            var temproom = null;
-                            temproom = GetTimer(roomname);
-                            if (temproom != null) {
-                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                                    var curprop = temproom.CustomProperties[i];
-                                    if (curprop.Name == property) {
-                                        bResult = TestCustomProperty(curprop.Value, step3, step4);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Variable_CustomPropertyCheck":
-                    {
-                        var splits = step2.split(":");
-                        if (splits.length == 2) {
-                            var roomname = splits[0];
-                            var property = splits[1];
-                            var temproom = null;
-                            temproom = GetVariable(roomname);
-                            if (temproom != null) {
-                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                                    var curprop = temproom.CustomProperties[i];
-                                    if (curprop.Name == property) {
-                                        bResult = TestCustomProperty(curprop.Value, step3, step4);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Item_CustomPropertyCheck":
-                    {
-                        var splits = step2.split(":");
-                        if (splits.length == 2) {
-                            var roomname = splits[0];
-                            var property = splits[1];
-                            var temproom = null;
-                            if (roomname == "<Self>") {
-                                if (objectBeingActedUpon) {
-                                    temproom = objectBeingActedUpon;
-                                }
-                            } else {
-                                temproom = GetObject(roomname);
-                            }
-                            if (temproom != null) {
-                                for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                                    var curprop = temproom.CustomProperties[i];
-                                    if (curprop.Name == property) {
-                                        bResult = TestCustomProperty(curprop.Value, step3, step4);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Player_CustomPropertyCheck":
-                    {
-                        var property = step2;
-                        for (var i = 0; i < TheGame.Player.CustomProperties.length; i++) {
-                            var curprop = TheGame.Player.CustomProperties[i];
-                            if (curprop.Name == property) {
-                                bResult = TestCustomProperty(curprop.Value, step3, step4);
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Variable_Comparison":
-                    {
-                        bResult = TestVariable(step2, step3, step4);
-                        break;
-                    }
-                case "CT_Variable_To_Variable_Comparison":
-                    {
-                        var tempvar = GetVariable(step2);
-                        var checkvar = GetVariable(step4);
-                        var varindex1 = GetArrayIndex(step2, 0);
-                        var varindex1a = GetArrayIndex(step2, 1);
-                        var varindex2 = GetArrayIndex(step4, 0);
-                        var varindex2a = GetArrayIndex(step4, 1);
-                        var compareval = "";
-                        if (checkvar.vartype == "VT_NUMBERARRAY" || checkvar.vartype == "VT_NUMBER") {
-                            if (varindex2 == -1)
-                                compareval = checkvar.dNumType.toString();
-                            else {
-                                if (varindex2a != -1)
-                                    compareval = checkvar.VarArray[varindex2][varindex2a];
-                                else
-                                    compareval = checkvar.VarArray[varindex2];
-                            }
-                        } else if (checkvar.vartype == "VT_STRINGARRAY" || checkvar.vartype == "VT_STRING") {
-                            if (varindex2 == -1)
-                                compareval = checkvar.sString;
-                            else {
-                                if (varindex2a != -1)
-                                    compareval = checkvar.VarArray[varindex2][varindex2a];
-                                else
-                                    compareval = checkvar.VarArray[varindex2];
-                            }
-                        }
-                        if (tempvar != null) {
-                            if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
-
-                                {
-                                    if (varindex1 != -1) {
-                                        if (varindex1a != -1)
-                                            tempvar.dNumType = tempvar.VarArray[varindex1][varindex1a];
-                                        else
-                                            tempvar.dNumType = tempvar.VarArray[varindex1];
-                                    }
-                                    var num1 = 0.0;
-                                    var num2 = 0.0;
-                                    num2 = compareval;
-                                    num1 = tempvar.dNumType;
-                                    if (step3 == "Equals") {
-                                        bResult = num1 == num2;
-                                    } else if (step3 == "Not Equals") {
-                                        bResult = num1 != num2;
-                                    } else if (step3 == "Greater Than") {
-                                        bResult = num1 > num2;
-                                    } else if (step3 == "Greater Than or Equals") {
-                                        bResult = num1 >= num2;
-                                    } else if (step3 == "Less Than") {
-                                        bResult = num1 < num2;
-                                    } else if (step3 == "Less Than or Equals") {
-                                        bResult = num1 <= num2;
-                                    }
-                                }
-                            } else if (tempvar.vartype == "VT_STRINGARRAY" || tempvar.vartype == "VT_STRING") {
-                                var tempvarvalue = tempvar.sString;
-                                if (varindex1 != -1) {
-                                    if (varindex1a != -1)
-                                        tempvarvalue = tempvar.VarArray[varindex1][varindex1a];
-                                    else
-                                        tempvarvalue = tempvar.VarArray[varindex1];
-                                }
-                                if (step3 == "Equals") {
-                                    bResult = (compareval == tempvarvalue);
-                                } else if (step3 == "Not Equals") {
-                                    bResult = (compareval != tempvarvalue);
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case "CT_Item_State_Check":
-                    {
-                        var tempobj = GetObject(step2);
-                        if (tempobj != null) {
-                            if (step3 == "Open") {
-                                bResult = tempobj.bOpen == true;
-                            }
-                            if (step3 == "Closed") {
-                                bResult = tempobj.bOpen == false;
-                            }
-                            if (step3 == "Locked") {
-                                bResult = tempobj.bLocked == true;
-                            }
-                            if (step3 == "Unlocked") {
-                                bResult = tempobj.bLocked == false;
-                            }
-                            if (step3 == "Worn") {
-                                bResult = tempobj.bWorn == true;
-                            }
-                            if (step3 == "Removed") {
-                                bResult = tempobj.bWorn == false;
-                            }
-                            if (step3 == "Read") {
-                                bResult = tempobj.bRead == true;
-                            }
-                            if (step3 == "Unread") {
-                                bResult = tempobj.bRead == false;
-                            }
-                            if (step3 == "Visible") {
-                                bResult = tempobj.bVisible == true;
-                            }
-                            if (step3 == "Invisible") {
-                                bResult = tempobj.bVisible == false;
-                            }
-                        } else {
-                            bResult = false;
-                        }
-                        break;
-                    }
-                case "CT_AdditionalDataCheck":
-                    {
-                        var datatocheck = "";
-                        if (Globals.additionalData &&
-                            Globals.additionalDataContext.action == conditionAction &&
-                            Globals.additionalDataContext.timerInvocation == conditionTimerInvocation)
-                            datatocheck = Globals.additionalData;
-                        if (tempcond.AdditionalInputData)
-                            datatocheck = tempcond.AdditionalInputData;
-                        if (conditionAction.InputType == "Text") {
-                            if (step4.toLowerCase() == datatocheck.toLowerCase())
-                                bResult = true;
-                            else
-                                bResult = false;
-                        } else {
-                            if (step2.toLowerCase() == datatocheck.toLowerCase())
-                                bResult = true;
-                            else {
-                                bResult = false;
-                            }
-                        }
-                        break;
-                    }
-            }
-        } catch (err) {
-            alert("Rags can not process the condition check correctly.  If you are the game author," + " please correct the error in this conditon:" + tempcond.conditionname + " check:" +
-                tempcheck.CondType + " - " + tempcheck.ConditionStep2 + " - " +
-                tempcheck.ConditionStep3 + " - " + tempcheck.ConditionStep4);
-        }
-    }
-    if (!Globals.loopArgs.array) {
-        Logger.logEvaluatedCondition(tempcond, bResult);
-    }
-    return bResult;
-}
-
 function RefreshPictureBoxes() {
     showImage(Globals.currentImage);
     SetPortrait(TheGame.Player.PlayerPortrait);
@@ -1392,7 +810,7 @@ function ProcessCondition(wrappedCondition, AdditionalInputData, loopObj) {
     var conditionBeingProcessed = wrappedCondition.payload;
     var act = wrappedCondition.parentAction;
     var timerInvocation = wrappedCondition.timerInvocation;
-    if (TestCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, loopObj)) {
+    if (GameConditions.testCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, loopObj)) {
         if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
             // Do nothing?
         } else {

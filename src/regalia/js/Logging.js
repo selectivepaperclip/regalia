@@ -98,6 +98,16 @@ var ActionRecorder = {
             objectName = object.sdesc || object.name;
         }
         this.addAction(method, objectName, action);
+    },
+
+    actedOnSomething: function (thing, selectiontext) {
+        if (thing == 'self') {
+            this.actedOnSelf(selectiontext);
+        } else if (thing == 'room') {
+            this.actedOnRoom(selectiontext);
+        } else {
+            this.actedOnObject(Globals.selectedObj, selectiontext);
+        }
     }
 };
 

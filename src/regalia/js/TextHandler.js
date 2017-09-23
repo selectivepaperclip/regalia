@@ -863,12 +863,9 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
         },
         '[CURRENTCARRY]', function () {
             var totalweight = 0;
-            for (var i = 0; i < TheGame.Objects.length; i++) {
-                var obj = ObjectList[i];
-                if (obj.locationtype == "LT_PLAYER") {
-                    totalweight += GetItemWeight(obj.UniqueIdentifier);
-                }
-            }
+            Interactables.inventoryObjects().forEach(function (obj) {
+                totalweight += GetItemWeight(obj.UniqueIdentifier);
+            });
             return totalweight;
         },
         '[MAN/WOMAN]', function () {

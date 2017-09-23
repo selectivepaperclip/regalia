@@ -1,3 +1,36 @@
+var Interactables = {
+    inventoryObjects: function () {
+        return TheGame.Objects.filter(function (obj) {
+            return obj.locationtype == "LT_PLAYER";
+        });
+    },
+    visibleInventoryObjects: function () {
+        return this.inventoryObjects().filter(function (obj) {
+            return obj.bVisible;
+        });
+    },
+    roomObjects: function () {
+        return TheGame.Objects.filter(function (obj) {
+            return obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom;
+        });
+    },
+    visibleRoomObjects: function () {
+        return this.roomObjects().filter(function (obj) {
+            return obj.bVisible;
+        });
+    },
+    roomAndInventoryObjects: function () {
+        return TheGame.Objects.filter(function (obj) {
+            return (obj.locationtype == "LT_PLAYER") || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom);
+        });
+    },
+    characters: function () {
+        return TheGame.Characters.filter(function (obj) {
+            return obj.CurrentRoom == TheGame.Player.CurrentRoom;
+        });
+    }
+};
+
 function setAdditionalInputData(command, addinputdata) {
     command.AdditionalInputData = addinputdata || undefined;
 }
@@ -206,60 +239,54 @@ function SetupStatusBars() {
 
 function RefreshInventory() {
     $("#Inventory").empty();
-    for (var i = 0; i < TheGame.Objects.length; i++) {
-        var obj = TheGame.Objects[i];
-        if (obj.locationtype == "LT_PLAYER" && obj.bVisible) {
-            var $div = $("<div>", {
-                class: "RoomObjects",
-                text: objecttostring(obj),
-                value: obj.UniqueIdentifier
-            });
-            $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
+    Interactables.visibleInventoryObjects().forEach(function (obj) {
+        var $div = $("<div>", {
+            class: "RoomObjects",
+            text: objecttostring(obj),
+            value: obj.UniqueIdentifier
+        });
+        $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
-            $div.click(function(clickEvent) {
-                Globals.selectedObj = GetObject($(this).val());
-                if (Globals.selectedObj != null) {
-                    Globals.theObj = Globals.selectedObj;
-                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
-                }
-            });
-            $("#Inventory").append($div);
-            if (obj.bContainer) {
-                if (!obj.bOpenable || obj.bOpen) {
-                    AddOpenedObjects(obj, $("#Inventory"), 'RoomObjects');
-                }
+        $div.click(function(clickEvent) {
+            Globals.selectedObj = GetObject($(this).val());
+            if (Globals.selectedObj != null) {
+                Globals.theObj = Globals.selectedObj;
+                DisplayActions(Globals.selectedObj.Actions, clickEvent);
+            }
+        });
+        $("#Inventory").append($div);
+        if (obj.bContainer) {
+            if (!obj.bOpenable || obj.bOpen) {
+                AddOpenedObjects(obj, $("#Inventory"), 'RoomObjects');
             }
         }
-    }
+    });
 }
 
 function RefreshRoomObjects() {
     $("#RoomObjects").empty();
-    for (var i = 0; i < TheGame.Objects.length; i++) {
-        var obj = TheGame.Objects[i];
-        if (obj.locationtype == "LT_ROOM" && obj.bVisible && obj.locationname == TheGame.Player.CurrentRoom) {
-            var $div = $("<div>", {
-                class: "RoomObjects",
-                text: objecttostring(obj),
-                value: obj.UniqueIdentifier
-            });
-            $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
+    Interactables.visibleRoomObjects().forEach(function (obj) {
+        var $div = $("<div>", {
+            class: "RoomObjects",
+            text: objecttostring(obj),
+            value: obj.UniqueIdentifier
+        });
+        $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
-            $div.click(function(clickEvent) {
-                Globals.selectedObj = GetObject($(this).val());
-                if (Globals.selectedObj != null) {
-                    Globals.theObj = Globals.selectedObj;
-                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
-                }
-            });
-            $("#RoomObjects").append($div);
-            if (obj.bContainer) {
-                if (!obj.bOpenable || obj.bOpen) {
-                    AddOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects');
-                }
+        $div.click(function(clickEvent) {
+            Globals.selectedObj = GetObject($(this).val());
+            if (Globals.selectedObj != null) {
+                Globals.theObj = Globals.selectedObj;
+                DisplayActions(Globals.selectedObj.Actions, clickEvent);
+            }
+        });
+        $("#RoomObjects").append($div);
+        if (obj.bContainer) {
+            if (!obj.bOpenable || obj.bOpen) {
+                AddOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects');
             }
         }
-    }
+    });
     if (TheGame.Player.CurrentRoom != null) {
         var currentroom = GetRoom(TheGame.Player.CurrentRoom);
         if (currentroom != null) {
@@ -360,30 +387,27 @@ function AddOpenedObjects(outerObject, thelistbox, itemclass) {
 
 function RefreshCharacters() {
     $("#VisibleCharacters").empty();
-    for (var i = 0; i < TheGame.Characters.length; i++) {
-        var obj = TheGame.Characters[i];
-        if (obj.CurrentRoom == TheGame.Player.CurrentRoom) {
-            var $div = $("<div>", {
-                class: "VisibleCharacters",
-                text: CharToString(obj),
-                value: obj.Charname
-            });
-            $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
+    Interactables.characters().forEach(function (obj) {
+        var $div = $("<div>", {
+            class: "VisibleCharacters",
+            text: CharToString(obj),
+            value: obj.Charname
+        });
+        $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
-            $div.click(function(clickEvent) {
-                Globals.selectedObj = GetCharacter($(this).val());
-                if (Globals.selectedObj != null) {
-                    Globals.theObj = Globals.selectedObj;
-                    DisplayActions(Globals.selectedObj.Actions, clickEvent);
-                }
-            });
-
-            $("#VisibleCharacters").append($div);
-            if (obj.bAllowInventoryInteraction) {
-                AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
+        $div.click(function(clickEvent) {
+            Globals.selectedObj = GetCharacter($(this).val());
+            if (Globals.selectedObj != null) {
+                Globals.theObj = Globals.selectedObj;
+                DisplayActions(Globals.selectedObj.Actions, clickEvent);
             }
+        });
+
+        $("#VisibleCharacters").append($div);
+        if (obj.bAllowInventoryInteraction) {
+            AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
         }
-    }
+    });
 }
 
 function GetObject(uidOrName) {
@@ -580,9 +604,7 @@ function ProcessAction(Action, bTimer) {
     GameUI.clearInputChoices();
 
     function addObjectChoices() {
-        TheGame.Objects.filter(function (obj) {
-            return obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom);
-        }).forEach(function (obj) {
+        Interactables.roomAndInventoryObjects().forEach(function (obj) {
             GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
         });
         if (TheGame.Player.CurrentRoom != null) {
@@ -609,9 +631,7 @@ function ProcessAction(Action, bTimer) {
     }
 
     function addCharacterChoices() {
-        TheGame.Characters.filter(function (character) {
-            return character.CurrentRoom == TheGame.Player.CurrentRoom;
-        }).forEach(function (character) {
+        Interactables.characters().forEach(function (character) {
             GameUI.addInputChoice(act, CharToString(character), character.Charname);
         });
     }
@@ -626,9 +646,7 @@ function ProcessAction(Action, bTimer) {
     } else if (act.InputType == "Object") {
         addObjectChoices();
     } else if (act.InputType == "Inventory") {
-        TheGame.Objects.filter(function (obj) {
-            return obj.locationtype == "LT_PLAYER";
-        }).forEach(function (obj) {
+        Interactables.inventoryObjects().forEach(function (obj) {
             GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
         });
     } else if (act.InputType == "ObjectOrCharacter") {
@@ -1819,31 +1837,25 @@ function RunCommands(TheObj, AdditionalInputData, act) {
                         }
                     case "CT_MOVEINVENTORYTOCHAR":
                         {
-                            for (var i = 0; i < TheGame.Objects.length; i++) {
-                                var obj = TheGame.Objects[i];
-                                if (obj.locationtype == "LT_PLAYER") {
-                                    obj.locationtype = "LT_CHARACTER";
-                                    obj.locationname = part2;
-                                }
-                            }
+                            Interactables.inventoryObjects().forEach(function (obj) {
+                                obj.locationtype = "LT_CHARACTER";
+                                obj.locationname = part2;
+                            });
                             break;
                         }
                     case "CT_MOVEINVENTORYTOROOM":
                         {
-                            for (var i = 0; i < TheGame.Objects.length; i++) {
-                                var obj = TheGame.Objects[i];
-                                if (obj.locationtype == "LT_PLAYER") {
-                                    if (part2 == CurrentRoomGuid) {
-                                        obj.locationtype = "LT_ROOM";
-                                        obj.locationname = TheGame.Player.CurrentRoom;
-                                    } else if (part2 == VoidRoomGuid) {
-                                        obj.locationtype = "LT_NULL";
-                                    } else {
-                                        obj.locationtype = "LT_ROOM";
-                                        obj.locationname = part2;
-                                    }
+                            Interactables.inventoryObjects().forEach(function(obj) {
+                                if (part2 == CurrentRoomGuid) {
+                                    obj.locationtype = "LT_ROOM";
+                                    obj.locationname = TheGame.Player.CurrentRoom;
+                                } else if (part2 == VoidRoomGuid) {
+                                    obj.locationtype = "LT_NULL";
+                                } else {
+                                    obj.locationtype = "LT_ROOM";
+                                    obj.locationname = part2;
                                 }
-                            }
+                            });
                             break;
                         }
                     case "CT_MOVECHARINVTOPLAYER":
@@ -2916,13 +2928,11 @@ function RunCommands(TheObj, AdditionalInputData, act) {
                             }
 
                             function addObjectOptions() {
-                                TheGame.Objects.forEach(function (obj) {
-                                    if (obj.locationtype == "LT_PLAYER" || (obj.locationtype == "LT_ROOM" && obj.locationname == TheGame.Player.CurrentRoom)) {
-                                        GameUI.addCmdInputChoice(
-                                            objecttostring(obj),
-                                            obj.UniqueIdentifier
-                                        )
-                                    }
+                                Interactables.roomAndInventoryObjects().forEach(function (obj) {
+                                    GameUI.addCmdInputChoice(
+                                        objecttostring(obj),
+                                        obj.UniqueIdentifier
+                                    )
                                 });
                             }
 
@@ -3490,107 +3500,101 @@ function RunEvents(EventType) {
         if (tempact != null) {
             ProcessAction(tempact, false);
         }
-        for (var i = 0; i < TheGame.Objects.length; i++) {
-            var tempobj = TheGame.Objects[i];
-            if (tempobj.locationtype == "LT_ROOM" && tempobj.locationname == TheGame.Player.CurrentRoom) {
-                CommandLists.addNestedCommandList(tempobj);
+        Interactables.roomObjects().forEach(function (obj) {
+            CommandLists.addNestedCommandList(obj);
 
-                if (EventType.indexOf("Player Enter") > -1) {
-                    if (!tempobj.bEnterFirstTime) {
-                        tempact = GetAction(tempobj.Actions, "<<On Player Enter First Time>>");
-                        tempobj.bEnterFirstTime = true;
-                        if (tempact != null)
-                            ProcessAction(tempact, false);
-                    }
-                } else if (EventType.indexOf("Player Leave") > -1) {
-                    if (!tempobj.bLeaveFirstTime) {
-                        tempact = GetAction(tempobj.Actions, "<<On Player Leave First Time>>");
-                        tempobj.bLeaveFirstTime = true;
-                        if (tempact != null)
-                            ProcessAction(tempact, false);
-                    }
+            if (EventType.indexOf("Player Enter") > -1) {
+                if (!obj.bEnterFirstTime) {
+                    tempact = GetAction(obj.Actions, "<<On Player Enter First Time>>");
+                    obj.bEnterFirstTime = true;
+                    if (tempact != null)
+                        ProcessAction(tempact, false);
                 }
-                tempact = GetAction(tempobj.Actions, EventType);
-                if (tempact != null) {
-                    if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                        if (EventType == "<<On Player Enter>>") {
-                            if (startingroomid == TheGame.Player.CurrentRoom) {
-                                ProcessAction(tempact, false);
-                            }
-                        } else
-                            ProcessAction(tempact, false);
-                    }
+            } else if (EventType.indexOf("Player Leave") > -1) {
+                if (!obj.bLeaveFirstTime) {
+                    tempact = GetAction(obj.Actions, "<<On Player Leave First Time>>");
+                    obj.bLeaveFirstTime = true;
+                    if (tempact != null)
+                        ProcessAction(tempact, false);
                 }
-                if (tempobj.bContainer) {
-                    if (!tempobj.bOpenable || tempobj.bOpen) {
-                        for (var j = 0; j < TheGame.Objects.length; j++) {
-                            var tempobj2 = TheGame.Objects[j];
-                            CommandLists.addNestedCommandList(tempobj2);
+            }
+            tempact = GetAction(obj.Actions, EventType);
+            if (tempact != null) {
+                if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
+                    if (EventType == "<<On Player Enter>>") {
+                        if (startingroomid == TheGame.Player.CurrentRoom) {
+                            ProcessAction(tempact, false);
+                        }
+                    } else
+                        ProcessAction(tempact, false);
+                }
+            }
+            if (obj.bContainer) {
+                if (!obj.bOpenable || obj.bOpen) {
+                    for (var j = 0; j < TheGame.Objects.length; j++) {
+                        var tempobj2 = TheGame.Objects[j];
+                        CommandLists.addNestedCommandList(tempobj2);
 
-                            if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == tempobj.UniqueIdentifier)) {
-                                if (EventType.indexOf("Player Enter") > -1) {
-                                    if (!tempobj2.bEnterFirstTime) {
-                                        tempact = GetAction(tempobj2.Actions, "<<On Player Enter First Time>>");
-                                        tempobj2.bEnterFirstTime = true;
-                                        if (tempact != null)
-                                            ProcessAction(tempact, false);
-                                    }
-                                } else if (EventType.indexOf("Player Leave") > -1) {
-                                    if (!tempobj2.bLeaveFirstTime) {
-                                        tempact = GetAction(tempobj2.Actions, "<<On Player Leave First Time>>");
-                                        tempobj2.bLeaveFirstTime = true;
-                                        if (tempact != null)
-                                            ProcessAction(tempact, false);
-                                    }
+                        if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == obj.UniqueIdentifier)) {
+                            if (EventType.indexOf("Player Enter") > -1) {
+                                if (!tempobj2.bEnterFirstTime) {
+                                    tempact = GetAction(tempobj2.Actions, "<<On Player Enter First Time>>");
+                                    tempobj2.bEnterFirstTime = true;
+                                    if (tempact != null)
+                                        ProcessAction(tempact, false);
                                 }
-                                tempact = GetAction(tempobj2.Actions, EventType);
-                                if (tempact != null) {
-                                    if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                                        if (EventType == "<<On Player Enter>>") {
-                                            if (startingroomid == TheGame.Player.CurrentRoom) {
-                                                ProcessAction(tempact, false);
-                                            }
-                                        } else
+                            } else if (EventType.indexOf("Player Leave") > -1) {
+                                if (!tempobj2.bLeaveFirstTime) {
+                                    tempact = GetAction(tempobj2.Actions, "<<On Player Leave First Time>>");
+                                    tempobj2.bLeaveFirstTime = true;
+                                    if (tempact != null)
+                                        ProcessAction(tempact, false);
+                                }
+                            }
+                            tempact = GetAction(tempobj2.Actions, EventType);
+                            if (tempact != null) {
+                                if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
+                                    if (EventType == "<<On Player Enter>>") {
+                                        if (startingroomid == TheGame.Player.CurrentRoom) {
                                             ProcessAction(tempact, false);
-                                    }
+                                        }
+                                    } else
+                                        ProcessAction(tempact, false);
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-        for (var i = 0; i < TheGame.Characters.length; i++) {
-            var tempchar = TheGame.Characters[i];
-            if (tempchar.CurrentRoom == TheGame.Player.CurrentRoom) {
-                if (EventType.indexOf("Player Enter") > -1) {
-                    if (!tempchar.bEnterFirstTime) {
-                        tempact = GetAction(tempchar.Actions, "<<On Player Enter First Time>>");
-                        tempchar.bEnterFirstTime = true;
-                        if (tempact != null)
-                            ProcessAction(tempact, false); //null);
-                    }
-                } else if (EventType.indexOf("Player Leave") > -1) {
-                    if (!tempchar.bLeaveFirstTime) {
-                        tempact = GetAction(tempchar.Actions, "<<On Player Leave First Time>>");
-                        tempchar.bLeaveFirstTime = true;
-                        if (tempact != null)
-                            ProcessAction(tempact, false); //null);
-                    }
+        });
+        Interactables.characters().forEach(function (character) {
+            if (EventType.indexOf("Player Enter") > -1) {
+                if (!character.bEnterFirstTime) {
+                    tempact = GetAction(character.Actions, "<<On Player Enter First Time>>");
+                    character.bEnterFirstTime = true;
+                    if (tempact != null)
+                        ProcessAction(tempact, false); //null);
                 }
-                tempact = GetAction(tempchar.Actions, EventType);
-                if (tempact != null) {
-                    if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                        if (EventType == "<<On Player Enter>>") {
-                            if (startingroomid == TheGame.Player.CurrentRoom) {
-                                ProcessAction(tempact, null);
-                            }
-                        } else
-                            ProcessAction(tempact, false); //null);
-                    }
+            } else if (EventType.indexOf("Player Leave") > -1) {
+                if (!character.bLeaveFirstTime) {
+                    tempact = GetAction(character.Actions, "<<On Player Leave First Time>>");
+                    character.bLeaveFirstTime = true;
+                    if (tempact != null)
+                        ProcessAction(tempact, false); //null);
                 }
             }
-        }
+            tempact = GetAction(character.Actions, EventType);
+            if (tempact != null) {
+                if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
+                    if (EventType == "<<On Player Enter>>") {
+                        if (startingroomid == TheGame.Player.CurrentRoom) {
+                            ProcessAction(tempact, null);
+                        }
+                    } else
+                        ProcessAction(tempact, false); //null);
+                }
+            }
+        });
     } catch (err) {
         var themsg = err.message;
     }

@@ -123,7 +123,7 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                         dtformat = varname.substring(varname.indexOf(":") + 1);
                         varname = varname.substring(0, varname.indexOf(":"));
                     }
-                    var tempvar = GetVariable(varname);
+                    var tempvar = Finder.variable(varname);
                     if (tempvar != null) {
                         var lengthtoremove = 0;
                         if (endindex4 > -1)
@@ -192,7 +192,7 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                 dtformat = varname.substring(varname.indexOf(":") + 1);
                 varname = varname.substring(0, varname.indexOf(":"));
             }
-            var tempvar = GetVariable(varname);
+            var tempvar = Finder.variable(varname);
             if (tempvar != null) {
                 var newval = "";
                 if (tempvar.vartype == "VT_NUMBER") {
@@ -243,7 +243,7 @@ function ReplaceJSA(text, tempindex) {
         if (endindex > -1) {
             var varname = text.substring(tempindex, endindex).trim();
             text = text.slice(0, tempindex) + text.slice(endindex + 1);
-            var tempvar = GetVariable(varname);
+            var tempvar = Finder.variable(varname);
             if (tempvar != null) {
                 var newval = JavaScriptArray(tempvar);
                 //newval = tempvar.VarArray.toString();
@@ -288,15 +288,15 @@ function ReplaceProperty(property, text, tempindex, replacementvalue) {
             }
             if (parts.length > 1) {
                 if (property == "rp") {
-                    tempobj = GetRoom(parts[0]);
+                    tempobj = Finder.room(parts[0]);
                 } else if (property == "ip") {
-                    tempobj = GetObject(parts[0]);
+                    tempobj = Finder.object(parts[0]);
                 } else if (property == "cp") {
-                    tempobj = GetCharacter(parts[0]);
+                    tempobj = Finder.character(parts[0]);
                 } else if (property == "vp") {
-                    tempobj = GetVariable(parts[0]);
+                    tempobj = Finder.variable(parts[0]);
                 } else if (property == "tp") {
-                    tempobj = GetTimer(parts[0]);
+                    tempobj = Finder.timer(parts[0]);
                 }
             }
             if (tempobj != null) {
@@ -335,13 +335,13 @@ function ReplaceAttribute(AttType, text, tempindex, replacementvalue) {
             if (parts.length >= 1) {
                 parts[0] = parts[0].trim();
                 if (AttType == "ia") {
-                    tempobject = GetObject(parts[0]);
+                    tempobject = Finder.object(parts[0]);
                 } else if (AttType == "ta") {
-                    tempobject = GetTimer(parts[0]);
+                    tempobject = Finder.timer(parts[0]);
                 } else if (AttType == "ca") {
-                    tempobject = GetCharacter(parts[0]);
+                    tempobject = Finder.character(parts[0]);
                 } else if (AttType == "ra") {
-                    tempobject = GetRoom(parts[0]);
+                    tempobject = Finder.room(parts[0]);
                 } else if (AttType == "pa") {
                     tempobject = TheGame.Player;
                 }
@@ -402,7 +402,7 @@ function ReplaceAttribute(AttType, text, tempindex, replacementvalue) {
                             }
                         case "ACTION":
                             {
-                                var tempact = GetAction(tempobject.Actions, parts[2]);
+                                var tempact = Finder.action(tempobject.Actions, parts[2]);
                                 if (tempact != null) {
                                     text = GetActionData(tempact, parts[3], text, tempindex, replacementvalue);
                                 }
@@ -526,7 +526,7 @@ function ReplaceAttribute(AttType, text, tempindex, replacementvalue) {
                                     } else if (parts[3].toUpperCase() == "DESTINATIONNAME") {
                                         text = text.slice(0, tempindex) + tempexit.DestinationRoom + text.slice(tempindex);
                                         if (bReplacement) {
-                                            tempexit.DestinationRoom = GetRoom(replacementvalue).UniqueID;
+                                            tempexit.DestinationRoom = Finder.room(replacementvalue).UniqueID;
                                         }
                                     } else if (parts[3].toUpperCase() == "PORTAL") {
                                         text = text.slice(0, tempindex) + tempexit.PortalObjectName + text.slice(tempindex);
@@ -909,7 +909,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
                 return roomDisplayName(temproom);
             else {
                 if (TheGame.Player.CurrentRoom != null) {
-                    return roomDisplayName(GetRoom(TheGame.Player.CurrentRoom));
+                    return roomDisplayName(Finder.room(TheGame.Player.CurrentRoom));
                 }
             }
         },
@@ -919,7 +919,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
                 return temproom.UniqueID;
             else {
                 if (TheGame.Player.CurrentRoom != null) {
-                    return GetRoom(TheGame.Player.CurrentRoom).UniqueID;
+                    return Finder.room(TheGame.Player.CurrentRoom).UniqueID;
                 }
             }
         },
@@ -938,7 +938,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
         },
         '[EXIT.DESTNAME]', function () {
             if (loopobject != null) {
-                return GetRoom(loopobject.DestinationRoom).Name;
+                return Finder.room(loopobject.DestinationRoom).Name;
             }
         },
         '[EXIT.DESTID]', function () {
@@ -987,7 +987,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
         if (endlenindex >= 0) {
             tempindex += 5;
             var varname = text.substring(tempindex, endlenindex);
-            tempvar = GetVariable(varname);
+            tempvar = Finder.variable(varname);
         }
         if (tempvar != null) {
             text = text.slice(0, tempindex - 5) + text.slice(endlenindex + 2);
@@ -1016,7 +1016,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
 
 function GetItemWeight(objid) {
     var retval = 0;
-    var tempobj = GetObject(objid);
+    var tempobj = Finder.object(objid);
     if (tempobj != null) {
         retval += tempobj.dWeight;
         if (tempobj.bContainer) {

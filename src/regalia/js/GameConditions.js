@@ -50,7 +50,7 @@ var GameConditions = {
                     }
                     case "CT_Loop_Exits": {
                         if (Globals.loopArgs.array == null) {
-                            var temproom = GetRoom(step2);
+                            var temproom = Finder.room(step2);
                             if (temproom != null) {
                                 Globals.loopArgs.array = temproom.Exits;
                             }
@@ -134,7 +134,7 @@ var GameConditions = {
 
     testVariable: function (step2, step3, step4) {
         var bResult = true;
-        var tempvar = GetVariable(step2);
+        var tempvar = Finder.variable(step2);
         if (tempvar != null) {
             var varindex = GetArrayIndex(step2, 0);
             var varindex2 = GetArrayIndex(step2, 1);
@@ -196,13 +196,13 @@ var GameConditions = {
     booleanConditionResult: function (tempcond, tempcheck, step2, step3, step4, objectBeingActedUpon, conditionAction, conditionTimerInvocation) {
         switch (tempcheck.CondType) {
             case "CT_Item_InGroup": {
-                return GetObject(step2).GroupName == step3;
+                return Finder.object(step2).GroupName == step3;
             }
             case "CT_MultiMedia_InGroup": {
                 throw new Error("CT_MultiMedia_InGroup not implemented!");
             }
             case "CT_Item_Held_By_Player": {
-                var tempobj = GetObject(step2);
+                var tempobj = Finder.object(step2);
                 if (!tempobj) {
                     return false;
                 }
@@ -227,7 +227,7 @@ var GameConditions = {
                     return TheGame.Player.PlayerGender == "Other";
             }
             case "CT_Character_Gender": {
-                var tempchar = GetCharacter(step2);
+                var tempchar = Finder.character(step2);
                 if (tempchar != null) {
                     if (step3 == "Male")
                         return tempchar.CharGender == "Male";
@@ -239,17 +239,17 @@ var GameConditions = {
                 break;
             }
             case "CT_Character_In_Room": {
-                var tempchar = GetCharacter(step2);
+                var tempchar = Finder.character(step2);
                 if (step3 == CurrentRoomGuid) {
-                    var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+                    var currentroom = Finder.room(TheGame.Player.CurrentRoom);
                     return tempchar.CurrentRoom == currentroom.UniqueID;
                 } else {
                     return (tempchar.CurrentRoom == step3);
                 }
             }
             case "CT_Character_In_RoomGroup": {
-                var tempchar = GetCharacter(step2);
-                var temproom = GetRoom(tempchar.CurrentRoom);
+                var tempchar = Finder.character(step2);
+                var temproom = Finder.room(tempchar.CurrentRoom);
                 if (temproom != null) {
                     if (temproom.Group == step3)
                         return true;
@@ -257,7 +257,7 @@ var GameConditions = {
                 return false;
             }
             case "CT_Item_Held_By_Character": {
-                var tempobj = GetObject(step3);
+                var tempobj = Finder.object(step3);
                 if (tempobj != null) {
                     if (tempobj.locationtype == "LT_CHARACTER" && tempobj.locationname == step2)
                         return true;
@@ -267,21 +267,21 @@ var GameConditions = {
                     return false;
             }
             case "CT_Item_Not_Held_By_Player": {
-                var tempobj = GetObject(step2);
+                var tempobj = Finder.object(step2);
                 if (tempobj != null)
                     return tempobj.locationtype != "LT_PLAYER";
                 else
                     return false;
             }
             case "CT_Item_In_Object": {
-                var tempobj = GetObject(step2);
+                var tempobj = Finder.object(step2);
                 if (tempobj != null)
                     return tempobj.locationtype == "LT_IN_OBJECT" && tempobj.locationname == step3;
                 else
                     return false;
             }
             case "CT_Item_Not_In_Object": {
-                var tempobj = GetObject(step2);
+                var tempobj = Finder.object(step2);
                 if (tempobj != null) {
                     var iteminobject = tempobj.locationtype == "LT_IN_OBJECT" && tempobj.locationname == step3;
                     return !iteminobject;
@@ -290,26 +290,26 @@ var GameConditions = {
             }
             case "CT_Item_In_Room": {
                 if (step3 == CurrentRoomGuid) {
-                    var tempobj = GetObject(step2);
-                    var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+                    var tempobj = Finder.object(step2);
+                    var currentroom = Finder.room(TheGame.Player.CurrentRoom);
                     if (tempobj != null)
                         return ((tempobj.locationtype == "LT_ROOM") && (tempobj.locationname == currentroom.UniqueID));
                     else
                         return false;
                 } else {
-                    var tempobj = GetObject(step2);
+                    var tempobj = Finder.object(step2);
                     if (tempobj != null)
                         return tempobj.locationtype == "LT_ROOM" && (
-                            (tempobj.locationname === step3) || (tempobj.locationname === GetRoom(step3).UniqueID)
+                            (tempobj.locationname === step3) || (tempobj.locationname === Finder.room(step3).UniqueID)
                         );
                     else
                         return false;
                 }
             }
             case "CT_Item_In_RoomGroup": {
-                var tempobj = GetObject(step2);
+                var tempobj = Finder.object(step2);
                 if (tempobj != null && tempobj.locationtype == "LT_ROOM") {
-                    var temproom = GetRoom(tempobj.locationname);
+                    var temproom = Finder.room(tempobj.locationname);
                     if (temproom != null) {
                         if (temproom.Group == step3)
                             return true;
@@ -321,11 +321,11 @@ var GameConditions = {
                 return TheGame.Player.CurrentRoom == step2;
             }
             case "CT_Player_In_RoomGroup": {
-                var testroom = GetRoom(TheGame.Player.CurrentRoom);
+                var testroom = Finder.room(TheGame.Player.CurrentRoom);
                 return (testroom.Group == step2);
             }
             case "CT_Player_In_Same_Room_As": {
-                var curchar = GetCharacter(step2);
+                var curchar = Finder.character(step2);
                 return TheGame.Player.CurrentRoom == curchar.CurrentRoom;
             }
             case "CT_Room_CustomPropertyCheck": {
@@ -335,9 +335,9 @@ var GameConditions = {
                     var property = splits[1];
                     var temproom = null;
                     if (roomname == "<CurrentRoom>") {
-                        temproom = GetRoom(TheGame.Player.CurrentRoom);
+                        temproom = Finder.room(TheGame.Player.CurrentRoom);
                     } else {
-                        temproom = GetRoom(roomname);
+                        temproom = Finder.room(roomname);
                     }
                     if (temproom != null) {
                         for (var i = 0; i < temproom.CustomProperties.length; i++) {
@@ -356,7 +356,7 @@ var GameConditions = {
                     var roomname = splits[0];
                     var property = splits[1];
                     var temproom = null;
-                    temproom = GetCharacter(roomname);
+                    temproom = Finder.character(roomname);
                     if (temproom != null) {
                         for (var i = 0; i < temproom.CustomProperties.length; i++) {
                             var curprop = temproom.CustomProperties[i];
@@ -374,7 +374,7 @@ var GameConditions = {
                     var roomname = splits[0];
                     var property = splits[1];
                     var temproom = null;
-                    temproom = GetTimer(roomname);
+                    temproom = Finder.timer(roomname);
                     if (temproom != null) {
                         for (var i = 0; i < temproom.CustomProperties.length; i++) {
                             var curprop = temproom.CustomProperties[i];
@@ -392,7 +392,7 @@ var GameConditions = {
                     var roomname = splits[0];
                     var property = splits[1];
                     var temproom = null;
-                    temproom = GetVariable(roomname);
+                    temproom = Finder.variable(roomname);
                     if (temproom != null) {
                         for (var i = 0; i < temproom.CustomProperties.length; i++) {
                             var curprop = temproom.CustomProperties[i];
@@ -415,7 +415,7 @@ var GameConditions = {
                             temproom = objectBeingActedUpon;
                         }
                     } else {
-                        temproom = GetObject(roomname);
+                        temproom = Finder.object(roomname);
                     }
                     if (temproom != null) {
                         for (var i = 0; i < temproom.CustomProperties.length; i++) {
@@ -442,8 +442,8 @@ var GameConditions = {
                 return this.testVariable(step2, step3, step4);
             }
             case "CT_Variable_To_Variable_Comparison": {
-                var tempvar = GetVariable(step2);
-                var checkvar = GetVariable(step4);
+                var tempvar = Finder.variable(step2);
+                var checkvar = Finder.variable(step4);
                 var varindex1 = GetArrayIndex(step2, 0);
                 var varindex1a = GetArrayIndex(step2, 1);
                 var varindex2 = GetArrayIndex(step4, 0);
@@ -509,7 +509,7 @@ var GameConditions = {
                 break;
             }
             case "CT_Item_State_Check": {
-                var tempobj = GetObject(step2);
+                var tempobj = Finder.object(step2);
                 if (!tempobj) {
                     return false;
                 }

@@ -161,13 +161,13 @@ $(document).ready(function () {
 
         $('.cheat-menu-variables-body').on('keyup', 'input', function (e) {
             var $variableInput = $(e.target);
-            var variableToSet = GetVariable($variableInput.data('varname'));
+            var variableToSet = Finder.variable($variableInput.data('varname'));
             setValueForVariable(variableToSet, $variableInput.val(), $variableInput.data('index'));
         });
 
         $('.cheat-menu-variables-body').on('click', '.freeze-button', function (e) {
             var $freezeButton = $(e.target);
-            var variableToFreeze = GetVariable($freezeButton.data('varname'));
+            var variableToFreeze = Finder.variable($freezeButton.data('varname'));
             if (isFrozenVariable(variableToFreeze)) {
                 delete cheatFreezes.variables[variableToFreeze.varname];
                 $freezeButton.removeClass('frozen');

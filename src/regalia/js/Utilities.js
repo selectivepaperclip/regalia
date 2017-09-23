@@ -74,7 +74,7 @@ function evalJankyJavascript(str) {
 }
 
 function SetBorders() {
-    if (GetActionCount(GetRoom(TheGame.Player.CurrentRoom).Actions) > 0) {
+    if (GetActionCount(Finder.room(TheGame.Player.CurrentRoom).Actions) > 0) {
         //set green border on room thumb
         $("#RoomThumbImg").addClass('has-actions');
     } else {
@@ -135,7 +135,7 @@ function SetRoomThumb(ImageName) {
                 var img = $('<div class="RoomLayeredImage">');
                 img.css('background-image', imageUrl(thelayers[i]));
                 img.click(function(clickEvent) {
-                    Globals.theObj = GetRoom(TheGame.Player.CurrentRoom);
+                    Globals.theObj = Finder.room(TheGame.Player.CurrentRoom);
                     DisplayActions(Globals.theObj.Actions, clickEvent, 'room');
                 });
                 img.appendTo('#RoomImageLayers');
@@ -222,7 +222,7 @@ function RefreshInventory() {
         $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
         $div.click(function(clickEvent) {
-            Globals.selectedObj = GetObject($(this).val());
+            Globals.selectedObj = Finder.object($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
                 DisplayActions(Globals.selectedObj.Actions, clickEvent);
@@ -248,7 +248,7 @@ function RefreshRoomObjects() {
         $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
         $div.click(function(clickEvent) {
-            Globals.selectedObj = GetObject($(this).val());
+            Globals.selectedObj = Finder.object($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
                 DisplayActions(Globals.selectedObj.Actions, clickEvent);
@@ -262,12 +262,12 @@ function RefreshRoomObjects() {
         }
     });
     if (TheGame.Player.CurrentRoom != null) {
-        var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+        var currentroom = Finder.room(TheGame.Player.CurrentRoom);
         if (currentroom != null) {
             for (var j = 0; j < currentroom.Exits.length; j++) {
                 var tempexit = currentroom.Exits[j];
                 if (tempexit.PortalObjectName != "<None>") {
-                    var tempobj = GetObject(tempexit.PortalObjectName);
+                    var tempobj = Finder.object(tempexit.PortalObjectName);
                     if (tempobj != null) {
                         if (tempobj.bVisible) {
                             var $div = $("<div>", {
@@ -278,7 +278,7 @@ function RefreshRoomObjects() {
                             $div.toggleClass('no-actions', GetActionCount(tempobj.Actions) === 0);
 
                             $div.click(function(clickEvent) {
-                                Globals.selectedObj = GetObject($(this).val());
+                                Globals.selectedObj = Finder.object($(this).val());
                                 if (Globals.selectedObj != null) {
                                     Globals.theObj = Globals.selectedObj;
                                     DisplayActions(Globals.selectedObj.Actions, clickEvent);
@@ -296,30 +296,6 @@ function RefreshRoomObjects() {
             }
         }
     }
-}
-
-function GetAction(actions, name) {
-    name = name.trim();
-    return actions.find(function (action) {
-        return action.name.trim().toLowerCase() === name.toLowerCase();
-    });
-}
-
-function GetTimer(timerName) {
-    timerName = timerName.trim();
-    return TheGame.Timers.find(function (timer) {
-        return timer.Name.trim() === timerName;
-    });
-}
-
-function GetVariable(variableName) {
-    variableName = variableName.trim();
-    if (variableName.indexOf("(") > -1) {
-        variableName = variableName.substring(0, variableName.indexOf("("));
-    }
-    return TheGame.Variables.find(function (variable) {
-        return variable.varname.trim().toLowerCase() === variableName.toLowerCase();
-    });
 }
 
 function objectContainsObject(container, object) {
@@ -344,7 +320,7 @@ function AddOpenedObjects(outerObject, thelistbox, itemclass) {
             $div.toggleClass('no-actions', GetActionCount(innerObject.Actions) === 0);
 
             $div.click(function(clickEvent) {
-                Globals.selectedObj = GetObject($(this).val());
+                Globals.selectedObj = Finder.object($(this).val());
                 if (Globals.selectedObj != null) {
                     Globals.theObj = Globals.selectedObj;
                     DisplayActions(Globals.selectedObj.Actions, clickEvent);
@@ -370,7 +346,7 @@ function RefreshCharacters() {
         $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
 
         $div.click(function(clickEvent) {
-            Globals.selectedObj = GetCharacter($(this).val());
+            Globals.selectedObj = Finder.character($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
                 DisplayActions(Globals.selectedObj.Actions, clickEvent);
@@ -382,37 +358,6 @@ function RefreshCharacters() {
             AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
         }
     });
-}
-
-function GetObject(uidOrName) {
-    if (!uidOrName) {
-        return null;
-    }
-    uidOrName = uidOrName.trim();
-
-    for (var i = 0; i < TheGame.Objects.length; i++) {
-        if (TheGame.Objects[i].UniqueIdentifier === uidOrName) {
-            return TheGame.Objects[i];
-        }
-    }
-    for (var j = 0; j < TheGame.Objects.length; j++) {
-        if (TheGame.Objects[j].name && TheGame.Objects[j].name.toLowerCase() === uidOrName.toLowerCase()) {
-            return TheGame.Objects[j];
-        }
-    }
-}
-
-function GetCharacter(characterName) {
-    if (characterName == null) {
-        return null;
-    }
-
-    characterName = characterName.trim();
-    for (var i = 0; i < TheGame.Characters.length; i++) {
-        if (TheGame.Characters[i].Charname.toLowerCase() == characterName.toLowerCase()) {
-            return TheGame.Characters[i];
-        }
-    }
 }
 
 function AddChildAction(Actions, Indent, ActionName, actionRecipientToLog) {
@@ -572,14 +517,14 @@ function ProcessAction(Action, bTimer) {
             GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
         });
         if (TheGame.Player.CurrentRoom != null) {
-            var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+            var currentroom = Finder.room(TheGame.Player.CurrentRoom);
             if (!currentroom) {
                 return;
             }
 
             currentroom.Exits.forEach(function (roomExit) {
                 if (roomExit.PortalObjectName != "<None>") {
-                    var tempobj = GetObject(roomExit.PortalObjectName);
+                    var tempobj = Finder.object(roomExit.PortalObjectName);
                     if (tempobj && tempobj.bVisible) {
                         GameUI.addInputChoice(act, objecttostring(tempobj), tempobj.UniqueIdentifier);
 
@@ -706,12 +651,12 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
 }
 
 function RoomChange(bRunTimerEvents, bRunEvents) {
-    var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+    var currentroom = Finder.room(TheGame.Player.CurrentRoom);
     ChangeRoom(currentroom, bRunTimerEvents, bRunEvents);
 }
 
 function SetExits() {
-    var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+    var currentroom = Finder.room(TheGame.Player.CurrentRoom);
     $(".compass-direction").removeClass("active");
     if (currentroom != null) {
         for (var i = 0; i < currentroom.Exits.length; i++) {
@@ -727,7 +672,7 @@ function RefreshPictureBoxes() {
     showImage(Globals.currentImage);
     SetPortrait(TheGame.Player.PlayerPortrait);
 
-    SetRoomThumb(GetRoom(TheGame.Player.CurrentRoom).RoomPic);
+    SetRoomThumb(Finder.room(TheGame.Player.CurrentRoom).RoomPic);
 }
 
 function movePlayerToRoom(roomName) {
@@ -893,21 +838,21 @@ function CheckItemInInventory(tempobj) {
 function GetCustomChoiceAction(type, name, actionname) {
     var tempact = null;
     if (type == "Chr") {
-        tempact = GetAction(GetCharacter(name).Actions, actionname);
+        tempact = Finder.action(Finder.character(name).Actions, actionname);
     } else if (type == "Obj") {
-        var tempobj = GetObject(name);
+        var tempobj = Finder.object(name);
         if (tempobj != null)
-            tempact = GetAction(tempobj.Actions, actionname);
+            tempact = Finder.action(tempobj.Actions, actionname);
     } else if (type == "Player") {
-        tempact = GetAction(TheGame.Player.Actions, actionname);
+        tempact = Finder.action(TheGame.Player.Actions, actionname);
     } else if (type == "Room") {
-        var temproom = GetRoom(name);
+        var temproom = Finder.room(name);
         if (temproom != null)
-            tempact = GetAction(temproom.Actions, actionname);
+            tempact = Finder.action(temproom.Actions, actionname);
     } else if (type == "Timer") {
-        var temptimer = GetTimer(name);
+        var temptimer = Finder.timer(name);
         if (temptimer != null)
-            tempact = GetAction(temptimer.Actions, actionname);
+            tempact = Finder.action(temptimer.Actions, actionname);
     }
     return tempact;
 }
@@ -1122,7 +1067,7 @@ function SetCommandInput(tempcommand, Value) {
     var part3 = PerformTextReplacements(tempcommand.CommandPart3, null);
     var part4 = PerformTextReplacements(tempcommand.CommandPart4, null);
     var cmdtxt = PerformTextReplacements(tempcommand.CommandText, null);
-    var tempvar = GetVariable(part3);
+    var tempvar = Finder.variable(part3);
     var varindex = GetArrayIndex(part3, 0);
     var varindex3a = GetArrayIndex(part3, 1);
     if (tempvar != null) {
@@ -1144,7 +1089,7 @@ function SetCommandInput(tempcommand, Value) {
                 }
             case "CT_SETVARIABLEBYINPUT":
                 {
-                    var tempvar = GetVariable(part3);
+                    var tempvar = Finder.variable(part3);
                     var varindex = GetArrayIndex(part3, 0);
                     var varindex3a = GetArrayIndex(part3, 1);
                     if (tempvar != null) {
@@ -1196,12 +1141,12 @@ function SetCustomProperty(curprop, part3, replacedstring) {
 function RunEvents(EventType) {
     try {
         var startingroomid = TheGame.Player.CurrentRoom;
-        var curroom = GetRoom(startingroomid);
-        var tempact = GetAction(curroom.Actions, EventType);
+        var curroom = Finder.room(startingroomid);
+        var tempact = Finder.action(curroom.Actions, EventType);
         if (tempact != null) {
             ProcessAction(tempact, false);
         }
-        tempact = GetAction(TheGame.Player.Actions, EventType);
+        tempact = Finder.action(TheGame.Player.Actions, EventType);
         if (tempact != null) {
             ProcessAction(tempact, false);
         }
@@ -1210,20 +1155,20 @@ function RunEvents(EventType) {
 
             if (EventType.indexOf("Player Enter") > -1) {
                 if (!obj.bEnterFirstTime) {
-                    tempact = GetAction(obj.Actions, "<<On Player Enter First Time>>");
+                    tempact = Finder.action(obj.Actions, "<<On Player Enter First Time>>");
                     obj.bEnterFirstTime = true;
                     if (tempact != null)
                         ProcessAction(tempact, false);
                 }
             } else if (EventType.indexOf("Player Leave") > -1) {
                 if (!obj.bLeaveFirstTime) {
-                    tempact = GetAction(obj.Actions, "<<On Player Leave First Time>>");
+                    tempact = Finder.action(obj.Actions, "<<On Player Leave First Time>>");
                     obj.bLeaveFirstTime = true;
                     if (tempact != null)
                         ProcessAction(tempact, false);
                 }
             }
-            tempact = GetAction(obj.Actions, EventType);
+            tempact = Finder.action(obj.Actions, EventType);
             if (tempact != null) {
                 if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
                     if (EventType == "<<On Player Enter>>") {
@@ -1243,20 +1188,20 @@ function RunEvents(EventType) {
                         if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == obj.UniqueIdentifier)) {
                             if (EventType.indexOf("Player Enter") > -1) {
                                 if (!tempobj2.bEnterFirstTime) {
-                                    tempact = GetAction(tempobj2.Actions, "<<On Player Enter First Time>>");
+                                    tempact = Finder.action(tempobj2.Actions, "<<On Player Enter First Time>>");
                                     tempobj2.bEnterFirstTime = true;
                                     if (tempact != null)
                                         ProcessAction(tempact, false);
                                 }
                             } else if (EventType.indexOf("Player Leave") > -1) {
                                 if (!tempobj2.bLeaveFirstTime) {
-                                    tempact = GetAction(tempobj2.Actions, "<<On Player Leave First Time>>");
+                                    tempact = Finder.action(tempobj2.Actions, "<<On Player Leave First Time>>");
                                     tempobj2.bLeaveFirstTime = true;
                                     if (tempact != null)
                                         ProcessAction(tempact, false);
                                 }
                             }
-                            tempact = GetAction(tempobj2.Actions, EventType);
+                            tempact = Finder.action(tempobj2.Actions, EventType);
                             if (tempact != null) {
                                 if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
                                     if (EventType == "<<On Player Enter>>") {
@@ -1275,20 +1220,20 @@ function RunEvents(EventType) {
         Interactables.characters().forEach(function (character) {
             if (EventType.indexOf("Player Enter") > -1) {
                 if (!character.bEnterFirstTime) {
-                    tempact = GetAction(character.Actions, "<<On Player Enter First Time>>");
+                    tempact = Finder.action(character.Actions, "<<On Player Enter First Time>>");
                     character.bEnterFirstTime = true;
                     if (tempact != null)
                         ProcessAction(tempact, false); //null);
                 }
             } else if (EventType.indexOf("Player Leave") > -1) {
                 if (!character.bLeaveFirstTime) {
-                    tempact = GetAction(character.Actions, "<<On Player Leave First Time>>");
+                    tempact = Finder.action(character.Actions, "<<On Player Leave First Time>>");
                     character.bLeaveFirstTime = true;
                     if (tempact != null)
                         ProcessAction(tempact, false); //null);
                 }
             }
-            tempact = GetAction(character.Actions, EventType);
+            tempact = Finder.action(character.Actions, EventType);
             if (tempact != null) {
                 if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
                     if (EventType == "<<On Player Enter>>") {
@@ -1358,7 +1303,7 @@ function RunTimer(temptimer, callback) {
             return;
         }
 
-        var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
+        var tempact = Finder.action(temptimer.Actions, "<<On Each Turn>>");
         if (tempact != null) {
             if (temptimer.LiveTimer) {
                 Globals.runningLiveTimerCommands = true;
@@ -1377,7 +1322,7 @@ function RunTimer(temptimer, callback) {
         runNextAfterPause(function () {
             if (Globals.bResetTimer)
                 return callback();
-            tempact = GetAction(temptimer.Actions, "<<On Turn " +
+            tempact = Finder.action(temptimer.Actions, "<<On Turn " +
                 temptimer.TurnNumber.toString() + ">>");
             if (tempact != null)
                 ProcessAction(tempact, false); //null);
@@ -1387,7 +1332,7 @@ function RunTimer(temptimer, callback) {
                 if (Globals.bResetTimer)
                     return callback();
                 if (temptimer.TurnNumber == temptimer.Length) {
-                    tempact = GetAction(temptimer.Actions, "<<On Last Turn>>");
+                    tempact = Finder.action(temptimer.Actions, "<<On Last Turn>>");
                     if (tempact != null)
                         ProcessAction(tempact, false); //null);
                 }

@@ -70,7 +70,7 @@ $(function() {
         DisplayActions(TheGame.Player.Actions, e, 'self');
     });
     $("#RoomThumbImg").click(function(e) {
-        Globals.theObj = GetRoom(TheGame.Player.CurrentRoom);
+        Globals.theObj = Finder.room(TheGame.Player.CurrentRoom);
         DisplayActions(Globals.theObj.Actions, e, 'room');
     });
 
@@ -349,7 +349,7 @@ $(function() {
         ResetLoopObjects();
         Globals.bCancelMove = false;
         ActionRecorder.locationChange(direction);
-        var curroom = GetRoom(TheGame.Player.CurrentRoom);
+        var curroom = Finder.room(TheGame.Player.CurrentRoom);
         if (curroom != null) {
             if (!curroom.bLeaveFirstTime) {
                 curroom.bLeaveFirstTime = true;
@@ -362,7 +362,7 @@ $(function() {
             }
             runAfterPause(function () {
                 if (!Globals.bCancelMove) {
-                    ChangeRoom(GetRoom(newRoom), true, true);
+                    ChangeRoom(Finder.room(newRoom), true, true);
                 }
             });
         });
@@ -373,7 +373,7 @@ $(function() {
             return;
         }
         var direction = $el.data('direction');
-        var destRoom = GetRoom(GetDestinationRoomName(direction));
+        var destRoom = Finder.room(GetDestinationRoomName(direction));
         $("#tooltip").text(roomDisplayName(destRoom));
         $("#tooltip").css({
             "left": (window.x + 10) + "px",
@@ -386,41 +386,6 @@ $(function() {
     receivedText();
 });
 
-function GetRoom(roomName) {
-    if (roomName == null) {
-        return null;
-    }
-
-    roomName = roomName.trim();
-    for (var i = 0; i < TheGame.Rooms.length; i++) {
-        if (TheGame.Rooms[i].UniqueID == roomName) {
-            return TheGame.Rooms[i];
-        }
-    }
-
-    var containsDash = roomName.indexOf('-') != -1;
-    //check by name if we get here
-    for (var j = 0; j < TheGame.Rooms.length; j++) {
-        var room = TheGame.Rooms[j];
-        if (room.Name == roomName) {
-            return TheGame.Rooms[j];
-        }
-
-        // Though it usually produces a UniqueID, sometimes
-        // when you manually edit a field in the Rags designer
-        // (instead of selecting from a dropdown) the value
-        // for a room (in e.x. CT_MOVEPLAYER) will be the
-        // room name or `%{name}-%{sdesc}`. So we need to check for that.
-        if (containsDash && room.SDesc) {
-            var joinedName = [room.Name, room.SDesc].join('-');
-            if (joinedName == roomName) {
-                return room;
-            }
-        }
-    }
-    return null;
-}
-
 function GetGameImage(ImageName) {
     for (var i = 0; i < TheGame.Images.length; i++) {
         if (TheGame.Images[i].TheName == ImageName) {
@@ -432,7 +397,7 @@ function GetGameImage(ImageName) {
 
 function GetDestinationRoomName(CurDirection) {
     Globals.movingDirection = CurDirection;
-    var CurrentRoom = GetRoom(TheGame.Player.CurrentRoom);
+    var CurrentRoom = Finder.room(TheGame.Player.CurrentRoom);
     if (CurrentRoom != null) {
         for (var i = 0; i < CurrentRoom.Exits.length; i++) {
             if (CurrentRoom.Exits[i].Direction == CurDirection) {
@@ -534,7 +499,7 @@ function receivedText() {
 }
 
 function StartGame() {
-    var currentroom = GetRoom(TheGame.Player.StartingRoom);
+    var currentroom = Finder.room(TheGame.Player.StartingRoom);
     SetupStatusBars();
     RefreshInventory();
     AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");

@@ -94,7 +94,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         AddTextToRTF(objectBeingActedUpon.description, "Black", "Regular");
                 } else {
-                    var tempobj = GetObject(part2);
+                    var tempobj = Finder.object(part2);
                     if (tempobj != null)
                         AddTextToRTF(tempobj.description, "Black", "Regular");
                 }
@@ -110,7 +110,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_RANDOMLY": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var index = GetArrayIndex(part2, 0);
                     var index1a = GetArrayIndex(part2, 1);
@@ -205,7 +205,7 @@ var GameCommands = {
                 break;
             }
             case "CT_ITEM_LAYERED_REMOVE": {
-                var tempobj = GetObject(part2);
+                var tempobj = Finder.object(part2);
                 if (tempobj != null) {
                     var curtype = tempobj.locationtype;
                     var locname = tempobj.locationname;
@@ -256,7 +256,7 @@ var GameCommands = {
                 break;
             }
             case "CT_ITEM_LAYERED_WEAR": {
-                var tempobj = GetObject(part2);
+                var tempobj = Finder.object(part2);
                 if (tempobj != null) {
                     var curtype = tempobj.locationtype;
                     var locname = tempobj.locationname;
@@ -323,7 +323,7 @@ var GameCommands = {
                         Tempobj = objectBeingActedUpon;
                     }
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     Tempobj.locationtype = "LT_PLAYER";
@@ -338,7 +338,7 @@ var GameCommands = {
                         Tempobj = objectBeingActedUpon;
                     }
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 var Destobj = null;
                 if (part3 == "00000000-0000-0000-0000-000000000004") {
@@ -346,7 +346,7 @@ var GameCommands = {
                         Destobj = objectBeingActedUpon;
                     }
                 } else {
-                    Destobj = GetObject(part3);
+                    Destobj = Finder.object(part3);
                 }
                 if (Tempobj != null && Destobj != null) {
                     for (var i = 0; i < TheGame.Objects.length; i++) {
@@ -364,7 +364,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     if (part3 == "Visible")
@@ -400,7 +400,7 @@ var GameCommands = {
             }
             case "CT_MOVECHARINVTOPLAYER": {
                 var tempchar = null;
-                tempchar = GetCharacter(part2);
+                tempchar = Finder.character(part2);
                 if (tempchar != null) {
                     for (var i = 0; i < TheGame.Objects.length; i++) {
                         var obj = TheGame.Objects[i];
@@ -416,7 +416,7 @@ var GameCommands = {
                 if (part2 == CurrentRoomGuid) {
                     temproom = TheGame.Player.CurrentRoom;
                 } else {
-                    temproom = TheGame.GetRoom(part2);
+                    temproom = Finder.room(part2);
                 }
                 if (temproom != null) {
                     for (var i = 0; i < TheGame.Objects.length; i++) {
@@ -430,10 +430,10 @@ var GameCommands = {
             }
             case "CT_DISPLAYROOMDESCRIPTION": {
                 if (part2 == CurrentRoomGuid) {
-                    AddTextToRTF(GetRoom(TheGame.Player.CurrentRoom).Description + "\r\n", "Black", "Regular");
+                    AddTextToRTF(Finder.room(TheGame.Player.CurrentRoom).Description + "\r\n", "Black", "Regular");
                 } else {
                     var temproom = null;
-                    temproom = GetRoom(part2);
+                    temproom = Finder.room(part2);
                     if (temproom != null)
                         AddTextToRTF(temproom.Description + "\r\n", "Black", "Regular");
                 }
@@ -441,7 +441,7 @@ var GameCommands = {
             }
             case "CT_CHAR_DISPLAYPORT": {
                 var tempchar = null;
-                tempchar = GetCharacter(part2);
+                tempchar = Finder.character(part2);
                 if (tempchar != null) {
                     showImage(tempchar.CharPortrait);
                 }
@@ -449,11 +449,11 @@ var GameCommands = {
             }
             case "CT_DISPLAYROOMPICTURE": {
                 if (part2 == CurrentRoomGuid) {
-                    var currentroom = GetRoom(TheGame.Player.CurrentRoom);
+                    var currentroom = Finder.room(TheGame.Player.CurrentRoom);
                     showImage(currentroom.RoomPic);
                 } else {
                     var temproom = null;
-                    temproom = GetRoom(part2);
+                    temproom = Finder.room(part2);
                     if (temproom != null) {
                         showImage(temproom.RoomPic);
                     }
@@ -466,7 +466,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     Tempobj.locationtype = "LT_ROOM";
@@ -475,7 +475,7 @@ var GameCommands = {
                     } else if (part3 == VoidRoomGuid) {
                         Tempobj.locationtype = "LT_NULL";
                     } else {
-                        var temp = GetRoom(part3);
+                        var temp = Finder.room(part3);
                         if (temp != null)
                             Tempobj.locationname = temp.UniqueID;
                     }
@@ -489,7 +489,7 @@ var GameCommands = {
                         try {
                             locationnameref = part3;
                         } catch (err) {
-                            var locationobj = GetObject(part3);
+                            var locationobj = Finder.object(part3);
                             if (locationobj != null)
                                 locationnameref = locationobj.UniqueIdentifier;
                         }
@@ -499,13 +499,13 @@ var GameCommands = {
                         }
                     }
                 } else {
-                    var tempobj = GetObject(part2);
+                    var tempobj = Finder.object(part2);
                     if (tempobj != null) {
                         var locationnameref = "";
                         try {
                             locationnameref = part3;
                         } catch (err) {
-                            var locationobj = GetObject(part3);
+                            var locationobj = Finder.object(part3);
                             if (locationobj != null)
                                 locationnameref = locationobj.UniqueIdentifier;
                         }
@@ -524,7 +524,7 @@ var GameCommands = {
                         objectBeingActedUpon.locationname = part3;
                     }
                 } else {
-                    var tempobj = GetObject(part2);
+                    var tempobj = Finder.object(part2);
                     if (tempobj != null) {
                         tempobj.locationtype = "LT_CHARACTER";
                         tempobj.locationname = part3;
@@ -534,7 +534,7 @@ var GameCommands = {
             }
             case "CT_SETEXIT": {
                 var temproom = null;
-                temproom = GetRoom(part2);
+                temproom = Finder.room(part2);
                 if (temproom != null) {
                     var index = part3.indexOf('-');
                     var tempdir = part3.substring(0, index);
@@ -559,7 +559,7 @@ var GameCommands = {
             }
             case "CT_SETEXITDESTINATION": {
                 var temproom = null;
-                temproom = GetRoom(part2);
+                temproom = Finder.room(part2);
                 if (temproom != null) {
                     var tempexit = null;
                     for (var j = 0; j < temproom.Exits.length; j++) {
@@ -573,7 +573,7 @@ var GameCommands = {
                             tempexit.bActive = false;
                         } else {
                             var destroom = null;
-                            destroom = GetRoom(part4);
+                            destroom = Finder.room(part4);
                             if (destroom != null) {
                                 tempexit.DestinationRoom = destroom.UniqueID;
                                 tempexit.bActive = true;
@@ -590,10 +590,10 @@ var GameCommands = {
                 Globals.bRunningTimers = true;
                 Globals.bResetTimer = false;
                 Globals.currentTimer = "";
-                var temptimer = GetTimer(part2);
+                var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
                     Globals.currentTimer = temptimer.Name;
-                    var tempact = GetAction(temptimer.Actions, "<<On Each Turn>>");
+                    var tempact = Finder.action(temptimer.Actions, "<<On Each Turn>>");
                     if (tempact != null) {
                         Globals.timerInvocation += 1;
                         ProcessAction(tempact, true);
@@ -609,7 +609,7 @@ var GameCommands = {
                 break;
             }
             case "CT_RESETTIMER": {
-                var temptimer = GetTimer(part2);
+                var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
                     temptimer.TurnNumber = 0;
                     if (Globals.bRunningTimers && Globals.currentTimer == temptimer.Name) {
@@ -621,7 +621,7 @@ var GameCommands = {
                 break;
             }
             case "CT_SETTIMER": {
-                var temptimer = GetTimer(part2);
+                var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
                     if (part3 == "Active") {
                         temptimer.Active = true;
@@ -637,7 +637,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     Tempobj.description = cmdtxt;
@@ -649,7 +649,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_ROOMPROPERTYVALUE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var splits = part3.split(":");
                     var ValueToSet = "";
@@ -660,7 +660,7 @@ var GameCommands = {
                         if (roomname == "<CurrentRoom>") {
                             temproom = TheGame.Player.CurrentRoom;
                         } else {
-                            temproom = GetRoom(roomname);
+                            temproom = Finder.room(roomname);
                         }
                         if (temproom != null) {
                             for (var i = 0; i < temproom.CustomProperties.length; i++) {
@@ -693,7 +693,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_TIMERPROPERTYVALUE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var splits = part3.split(":");
                     var ValueToSet = "";
@@ -701,7 +701,7 @@ var GameCommands = {
                         var roomname = splits[0];
                         var propname = splits[1];
                         var temproom = null;
-                        temproom = GetTimer(roomname);
+                        temproom = Finder.timer(roomname);
                         if (temproom != null) {
                             for (var i = 0; i < temproom.CustomProperties.length; i++) {
                                 var curprop = temproom.CustomProperties[i];
@@ -718,7 +718,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_VARIABLEPROPERTYVALUE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var splits = part3.split(":");
                     var ValueToSet = "";
@@ -726,7 +726,7 @@ var GameCommands = {
                         var roomname = splits[0];
                         var propname = splits[1];
                         var temproom = null;
-                        temproom = GetVariable(roomname);
+                        temproom = Finder.variable(roomname);
                         if (temproom != null) {
                             for (var i = 0; i < temproom.CustomProperties.length; i++) {
                                 var curprop = temproom.CustomProperties[i];
@@ -743,7 +743,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_CHARPROPERTYVALUE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var splits = part3.split(":");
                     var ValueToSet = "";
@@ -751,7 +751,7 @@ var GameCommands = {
                         var roomname = splits[0];
                         var propname = splits[1];
                         var temproom = null;
-                        temproom = GetCharacter(roomname);
+                        temproom = Finder.character(roomname);
                         if (temproom != null) {
                             for (var i = 0; i < temproom.CustomProperties.length; i++) {
                                 var curprop = temproom.CustomProperties[i];
@@ -768,7 +768,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_ITEMPROPERTYVALUE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var splits = part3.split(":");
                     var ValueToSet = "";
@@ -781,7 +781,7 @@ var GameCommands = {
                                 temproom = objectBeingActedUpon;
                             }
                         } else {
-                            temproom = GetObject(roomname);
+                            temproom = Finder.object(roomname);
                         }
                         if (temproom != null) {
                             for (var i = 0; i < temproom.CustomProperties.length; i++) {
@@ -799,7 +799,7 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_PLAYERPROPERTYVALUE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var ValueToSet = "";
                     var propname = part3;
@@ -824,9 +824,9 @@ var GameCommands = {
                     var property = splits[1];
                     var temproom = null;
                     if (roomname == "<CurrentRoom>") {
-                        temproom = GetRoom(TheGame.Player.CurrentRoom);
+                        temproom = Finder.room(TheGame.Player.CurrentRoom);
                     } else {
-                        temproom = GetRoom(roomname);
+                        temproom = Finder.room(roomname);
                     }
                     if (temproom != null) {
                         for (var j = 0; j < temproom.CustomProperties.length; j++) {
@@ -854,7 +854,7 @@ var GameCommands = {
                     var roomname = splits[0];
                     var property = splits[1];
                     var temproom = null;
-                    temproom = GetTimer(roomname);
+                    temproom = Finder.timer(roomname);
                     if (temproom != null) {
                         for (var j = 0; j < temproom.CustomProperties.length; j++) {
                             var curprop = temproom.CustomProperties[j];
@@ -881,7 +881,7 @@ var GameCommands = {
                     var roomname = splits[0];
                     var property = splits[1];
                     var temproom = null;
-                    temproom = GetVariable(roomname);
+                    temproom = Finder.variable(roomname);
                     if (temproom != null) {
                         for (var j = 0; j < temproom.CustomProperties.length; j++) {
                             var curprop = temproom.CustomProperties[j];
@@ -913,7 +913,7 @@ var GameCommands = {
                             tempitem = objectBeingActedUpon;
                         }
                     } else {
-                        tempitem = GetObject(itemname);
+                        tempitem = Finder.object(itemname);
                     }
                     if (tempitem != null) {
                         for (var j = 0; j < tempitem.CustomProperties.length; j++) {
@@ -941,7 +941,7 @@ var GameCommands = {
                     var roomname = splits[0];
                     var property = splits[1];
                     var temproom = null;
-                    temproom = GetCharacter(roomname);
+                    temproom = Finder.character(roomname);
                     if (temproom != null) {
                         for (var j = 0; j < temproom.CustomProperties.length; j++) {
                             var curprop = temproom.CustomProperties[j];
@@ -990,7 +990,7 @@ var GameCommands = {
                     bArraySet = true;
                     part2 = part2.substring(arrayvarindex + "Array:".length);
                 }
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 if (tempvar != null) {
                     var varindex = GetArrayIndex(part2, 0);
                     var varindex1a = GetArrayIndex(part2, 1);
@@ -1009,8 +1009,8 @@ var GameCommands = {
                 break;
             }
             case "CT_VARIABLE_SET_WITH_VARIABLE": {
-                var tempvar = GetVariable(part2);
-                var modifyingvar = GetVariable(part4);
+                var tempvar = Finder.variable(part2);
+                var modifyingvar = Finder.variable(part4);
                 var varindex = GetArrayIndex(part4, 0);
                 var varindex4a = GetArrayIndex(part4, 1);
                 var modifyval = "";
@@ -1031,7 +1031,7 @@ var GameCommands = {
                 break;
             }
             case "CT_DISPLAYVARIABLE": {
-                var tempvar = GetVariable(part2);
+                var tempvar = Finder.variable(part2);
                 var varindex = GetArrayIndex(part2, 0);
                 var varindex2a = GetArrayIndex(part2, 1);
                 if (tempvar != null) {
@@ -1053,7 +1053,7 @@ var GameCommands = {
             }
             case "CT_CHAR_SETPORT": {
                 var tempchar = null;
-                tempchar = GetCharacter(part2);
+                tempchar = Finder.character(part2);
                 if (tempchar != null) {
                     tempchar.CharPortrait = part3;
                 }
@@ -1064,7 +1064,7 @@ var GameCommands = {
                 if (part2 == CurrentRoomGuid) {
                     temproom = TheGame.Player.CurrentRoom;
                 } else {
-                    temproom = GetRoom(part2);
+                    temproom = Finder.room(part2);
                 }
                 if (temproom != null) {
                     temproom.RoomPic = part3;
@@ -1131,7 +1131,7 @@ var GameCommands = {
                 if (part2 == "00000000-0000-0000-0000-000000000004") {
                     actionlist = Globals.curActions;
                 } else {
-                    tempobj = GetObject(part2);
+                    tempobj = Finder.object(part2);
                     if (tempobj) {
                         actionlist = tempobj.Actions;
                     }
@@ -1139,7 +1139,7 @@ var GameCommands = {
                 if (actionlist != null) {
                     var actname = part3.substring(0, part3.lastIndexOf('-'));
                     var active = part3.substring(part3.lastIndexOf('-') + 1);
-                    var tempact = GetAction(actionlist, actname);
+                    var tempact = Finder.action(actionlist, actname);
                     if (tempact != null) {
                         if (active == "Active") {
                             tempact.bActive = true;
@@ -1151,11 +1151,11 @@ var GameCommands = {
                 break;
             }
             case "CT_SETCHARACTION": {
-                var tempobj = GetCharacter(part2);
+                var tempobj = Finder.character(part2);
                 if (tempobj != null) {
                     var actname = part3.substring(0, part3.lastIndexOf('-'));
                     var active = part3.substring(part3.lastIndexOf('-') + 1);
-                    var tempact = GetAction(tempobj.Actions, actname);
+                    var tempact = Finder.action(tempobj.Actions, actname);
                     if (tempact != null) {
                         if (active == "Active") {
                             tempact.bActive = true;
@@ -1167,14 +1167,14 @@ var GameCommands = {
                 break;
             }
             case "CT_CHAR_SET_GENDER": {
-                var tempobj = GetCharacter(part2);
+                var tempobj = Finder.character(part2);
                 if (tempobj != null) {
                     tempobj.CharGender = part3;
                 }
                 break;
             }
             case "CT_CHAR_SET_NAME": {
-                var tempobj = GetCharacter(part2);
+                var tempobj = Finder.character(part2);
                 if (tempobj != null) {
                     tempobj.CharnameOverride = part4;
                 }
@@ -1182,7 +1182,7 @@ var GameCommands = {
             }
             case "CT_ROOM_SET_NAME_OVERRIDE": {
                 var tempobj = null;
-                tempobj = GetRoom(part2);
+                tempobj = Finder.room(part2);
                 if (tempobj != null) {
                     tempobj.SDesc = part4;
                 }
@@ -1190,7 +1190,7 @@ var GameCommands = {
             }
             case "CT_ITEM_SET_NAME_OVERRIDE": {
                 var tempobj = null;
-                tempobj = GetObject(part2);
+                tempobj = Finder.object(part2);
                 if (tempobj != null) {
                     tempobj.sdesc = part4;
                 }
@@ -1199,7 +1199,7 @@ var GameCommands = {
             case "CT_SETPLAYERACTION": {
                 var actname = part3.substring(0, part3.lastIndexOf('-'));
                 var active = part3.substring(part3.lastIndexOf('-') + 1);
-                var tempact = GetAction(TheGame.Player.Actions, actname);
+                var tempact = Finder.action(TheGame.Player.Actions, actname);
                 if (tempact != null) {
                     if (active == "Active") {
                         tempact.bActive = true;
@@ -1211,11 +1211,11 @@ var GameCommands = {
             }
             case "CT_SETROOMACTION": {
                 var tempobj = null;
-                tempobj = GetRoom(part2);
+                tempobj = Finder.room(part2);
                 if (tempobj != null) {
                     var actname = part3.substring(0, part3.lastIndexOf('-'));
                     var active = part3.substring(part3.lastIndexOf('-') + 1);
-                    var tempact = GetAction(tempobj.Actions, actname);
+                    var tempact = Finder.action(tempobj.Actions, actname);
                     if (tempact != null) {
                         if (active == "Active") {
                             tempact.bActive = true;
@@ -1232,7 +1232,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     if (part3 == "Locked") {
@@ -1249,7 +1249,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     if (part3 == "Open") {
@@ -1267,7 +1267,7 @@ var GameCommands = {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
-                    Tempobj = GetObject(part2);
+                    Tempobj = Finder.object(part2);
                 }
                 if (Tempobj != null) {
                     if (part3 == "Worn") {
@@ -1279,32 +1279,32 @@ var GameCommands = {
                 break;
             }
             case "CT_DISPLAYCHARDESC": {
-                AddTextToRTF(GetCharacter(part2).Description + "\r\n", "Black", "Regular");
+                AddTextToRTF(Finder.character(part2).Description + "\r\n", "Black", "Regular");
                 var bfoundanitem = false;
                 break;
             }
             case "CT_MOVECHAR": {
-                var tempchar = GetCharacter(part2);
+                var tempchar = Finder.character(part2);
                 if (tempchar.CurrentRoom == TheGame.Player.CurrentRoom) {
-                    var tempact = GetAction(tempchar.Actions, "<<On Character Leave>>");
+                    var tempact = Finder.action(tempchar.Actions, "<<On Character Leave>>");
                     if (tempact != null)
                         ProcessAction(tempact, true);
                 }
                 if (part3 == CurrentRoomGuid) {
                     tempchar.CurrentRoom = TheGame.Player.CurrentRoom;
-                    var tempact = GetAction(tempchar.Actions, "<<On Character Enter>>");
+                    var tempact = Finder.action(tempchar.Actions, "<<On Character Enter>>");
                     if (tempact != null)
                         ProcessAction(tempact, true);
                 } else if (part3 == VoidRoomGuid) {
-                    GetCharacter(part2).CurrentRoom = VoidRoomGuid;
+                    Finder.character(part2).CurrentRoom = VoidRoomGuid;
                 } else {
                     if (part3 == "") {
                         alert("Error in command CT_MoveChar.  Could not locate a room called " + part3);
                         break;
                     }
-                    GetCharacter(part2).CurrentRoom = GetRoom(part3).UniqueID;
+                    Finder.character(part2).CurrentRoom = Finder.room(part3).UniqueID;
                     if (part3 == TheGame.Player.CurrentRoom) {
-                        var tempact = GetAction(tempchar.Actions, "<<On Character Enter>>");
+                        var tempact = Finder.action(tempchar.Actions, "<<On Character Enter>>");
                         if (tempact != null)
                             ProcessAction(tempact, true);
                     }
@@ -1317,7 +1317,7 @@ var GameCommands = {
                 break;
             }
             case "CT_MOVETOCHAR": {
-                var tempchar = GetCharacter(part2);
+                var tempchar = Finder.character(part2);
                 if (tempchar != null) {
                     if (tempchar.CurrentRoom != VoidRoomGuid && tempchar.CurrentRoom != CurrentRoomGuid) {
                         movePlayerToRoom(tempchar.CurrentRoom);
@@ -1326,7 +1326,7 @@ var GameCommands = {
                 break;
             }
             case "CT_MOVETOOBJ": {
-                var tempobj = GetObject(part2);
+                var tempobj = Finder.object(part2);
                 if (tempobj != null) {
                     if (tempobj.locationtype == "LT_ROOM") {
                         movePlayerToRoom(tempobj.locationname);
@@ -1335,11 +1335,11 @@ var GameCommands = {
                 break;
             }
             case "CT_CHAR_MOVETOOBJ": {
-                var tempchar = GetCharacter(part2);
-                var tempobj = GetObject(part3);
+                var tempchar = Finder.character(part2);
+                var tempobj = Finder.object(part3);
                 if (tempobj != null && tempchar != null) {
                     if (tempobj.locationtype == "LT_ROOM") {
-                        tempchar.CurrentRoom = GetRoom(tempobj.locationname).UniqueID;
+                        tempchar.CurrentRoom = Finder.room(tempobj.locationname).UniqueID;
                     }
                     if (TheGame.Player.CurrentRoom == tempobj.locationname)
                         RoomChange(false, false);
@@ -1347,7 +1347,7 @@ var GameCommands = {
                 break;
             }
             case "CT_SETCHARDESC": {
-                GetCharacter(part2).Description = cmdtxt;
+                Finder.character(part2).Description = cmdtxt;
                 break;
             }
             case "CT_SETROOMDESCRIPTION": {
@@ -1355,7 +1355,7 @@ var GameCommands = {
                 if (part2 == CurrentRoomGuid) {
                     temproom = TheGame.Player.CurrentRoom;
                 } else {
-                    temproom = GetRoom(part2);
+                    temproom = Finder.room(part2);
                 }
                 if (temproom != null)
                     temproom.Description = cmdtxt;

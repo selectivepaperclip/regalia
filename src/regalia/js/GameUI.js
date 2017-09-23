@@ -56,7 +56,7 @@ var GameUI = {
                     if (getObjectClass(act) == "action" || "actionparent" in act) {
                         ActionRecorder.choseInputAction(Globals.selectedObj);
                         ExecuteAction(act, true, Globals.selectedObj);
-                        RunCommands(Globals.theObj, Globals.selectedObj, act);
+                        GameCommands.runCommands(Globals.theObj, Globals.selectedObj, act);
                     }
                 });
             }
@@ -81,7 +81,7 @@ var GameUI = {
                     $("#cmdinputmenu").css("visibility", "hidden");
                     ActionRecorder.choseInputAction(Globals.selectedObj);
                     SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
-                    RunCommands.apply(null, Globals.pauseCommandArgs);
+                    GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
                 });
             }
         });

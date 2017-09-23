@@ -62,7 +62,7 @@ $(function() {
             GameController.continue();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
-            RunCommands.apply(null, Globals.pauseCommandArgs);
+            GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
         }
     });
     $("#PlayerImg").click(function(e) {
@@ -90,7 +90,7 @@ $(function() {
             $("#textchoice").css("visibility", "hidden");
             ActionRecorder.filledInTextInput(Globals.selectedObj);
             SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
-            RunCommands.apply(null, Globals.pauseCommandArgs);
+            GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
         }
     }
     $("#textbutton").click(setTextInputChoice);
@@ -310,12 +310,12 @@ $(function() {
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        RunCommands.apply(null, Globals.pauseCommandArgs);
+        GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
     });
     $("#cmdCancelInput").click(function(e) {
         $("#cmdinputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        RunCommands.apply(null, Globals.pauseCommandArgs);
+        GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
     });
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");

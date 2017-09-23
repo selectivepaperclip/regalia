@@ -89,7 +89,7 @@ var GameActions = {
 
                             if (tempobj.bContainer) {
                                 if (!tempobj.bOpenable || tempobj.bOpen) {
-                                    AddOpenedObjects(tempobj, $("#inputchoices"), "inputchoices");
+                                    GameUI.addOpenedObjects(tempobj, $("#inputchoices"), "inputchoices");
                                 }
                             }
                         }

@@ -331,9 +331,7 @@ $(function() {
                 if (curtimer.curtickcount >= curtimer.TimerSeconds * 1000) {
                     curtimer.curtickcount = 0;
                     RunTimer(curtimer);
-                    RefreshInventory();
-                    RefreshRoomObjects();
-                    RefreshCharacters();
+                    GameUI.refreshPanelItems();
                 }
             }
         }
@@ -501,7 +499,7 @@ function receivedText() {
 function StartGame() {
     var currentroom = Finder.room(TheGame.Player.StartingRoom);
     SetupStatusBars();
-    RefreshInventory();
+    GameUI.refreshInventory();
     AddTextToRTF(TheGame.OpeningMessage, "Black", "Regular");
     if (currentroom != null) {
         ChangeRoom(currentroom, true, true);

@@ -184,5 +184,143 @@ var GameUI = {
                 this.addChildActions(actions, "--" + Indent, action.name, actionRecipientToLog);
             }
         }
+    },
+
+    addOpenedObjects: function(outerObject, thelistbox, itemclass) {
+        TheGame.Objects.forEach(function (innerObject) {
+            if (
+                (objectContainsObject(outerObject, innerObject)) ||
+                ((outerObject.constructor.name === "character") && characterHasObject(outerObject, innerObject))
+            ) {
+                thelistbox.append(
+                    GameUI.panelLink(
+                        itemclass,
+                        '--' + objecttostring(innerObject),
+                        innerObject.UniqueIdentifier,
+                        innerObject.Actions,
+                        Finder.object
+                    )
+                );
+                
+                if (innerObject.bOpenable && innerObject.bOpen) {
+                    GameUI.addOpenedObjects(innerObject, thelistbox, itemclass);
+                }
+            }
+        });
+    },
+
+    refreshRoomObjects: function () {
+        $("#RoomObjects").empty();
+        Interactables.visibleRoomObjects().forEach(function (obj) {
+            $("#RoomObjects").append(
+                GameUI.panelLink(
+                    'RoomObjects',
+                    objecttostring(obj),
+                    obj.UniqueIdentifier,
+                    obj.Actions,
+                    Finder.object
+                )
+            );
+
+            if (obj.bContainer) {
+                if (!obj.bOpenable || obj.bOpen) {
+                    GameUI.addOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects');
+                }
+            }
+        });
+        if (TheGame.Player.CurrentRoom != null) {
+            var currentroom = Finder.room(TheGame.Player.CurrentRoom);
+            if (currentroom != null) {
+                for (var j = 0; j < currentroom.Exits.length; j++) {
+                    var tempexit = currentroom.Exits[j];
+                    if (tempexit.PortalObjectName != "<None>") {
+                        var tempobj = Finder.object(tempexit.PortalObjectName);
+                        if (tempobj != null) {
+                            if (tempobj.bVisible) {
+                                $("#RoomObjects").append(
+                                    GameUI.panelLink(
+                                        'RoomObjects',
+                                        objecttostring(tempobj),
+                                        tempobj.UniqueIdentifier,
+                                        tempobj.Actions,
+                                        Finder.object
+                                    )
+                                );
+
+                                if (tempobj.bContainer) {
+                                    if (!tempobj.bOpenable || tempobj.bOpen) {
+                                        GameUI.addOpenedObjects(tempobj, $("#RoomObjects"), 'RoomObjects');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    refreshInventory: function () {
+        $("#Inventory").empty();
+        Interactables.visibleInventoryObjects().forEach(function (obj) {
+            $("#Inventory").append(
+                GameUI.panelLink(
+                    'RoomObjects',
+                    objecttostring(obj),
+                    obj.UniqueIdentifier,
+                    obj.Actions,
+                    Finder.object
+                )
+            );
+
+            if (obj.bContainer) {
+                if (!obj.bOpenable || obj.bOpen) {
+                    GameUI.addOpenedObjects(obj, $("#Inventory"), 'RoomObjects');
+                }
+            }
+        });
+    },
+
+    refreshCharacters: function () {
+        $("#VisibleCharacters").empty();
+        Interactables.characters().forEach(function (obj) {
+            $("#VisibleCharacters").append(
+                GameUI.panelLink(
+                    'VisibleCharacters',
+                    CharToString(obj),
+                    obj.Charname,
+                    obj.Actions,
+                    Finder.character
+                )
+            );
+
+            if (obj.bAllowInventoryInteraction) {
+                GameUI.addOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
+            }
+        });
+    },
+
+    panelLink: function (itemClass, text, value, actions, objFinderFunction) {
+        var $div = $("<div>", {
+            class: itemClass,
+            text: text,
+            value: value
+        });
+        $div.toggleClass('no-actions', GetActionCount(actions) === 0);
+
+        $div.click(function(clickEvent) {
+            Globals.selectedObj = objFinderFunction($(this).val());
+            if (Globals.selectedObj != null) {
+                Globals.theObj = Globals.selectedObj;
+                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
+            }
+        });
+        return $div;
+    },
+
+    refreshPanelItems: function () {
+        this.refreshInventory();
+        this.refreshRoomObjects();
+        this.refreshCharacters();
     }
 };

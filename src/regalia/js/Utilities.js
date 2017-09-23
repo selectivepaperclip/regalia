@@ -211,153 +211,12 @@ function SetupStatusBars() {
     $("#statusbartext").empty().append(statbar);
 }
 
-function RefreshInventory() {
-    $("#Inventory").empty();
-    Interactables.visibleInventoryObjects().forEach(function (obj) {
-        var $div = $("<div>", {
-            class: "RoomObjects",
-            text: objecttostring(obj),
-            value: obj.UniqueIdentifier
-        });
-        $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
-
-        $div.click(function(clickEvent) {
-            Globals.selectedObj = Finder.object($(this).val());
-            if (Globals.selectedObj != null) {
-                Globals.theObj = Globals.selectedObj;
-                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
-            }
-        });
-        $("#Inventory").append($div);
-        if (obj.bContainer) {
-            if (!obj.bOpenable || obj.bOpen) {
-                AddOpenedObjects(obj, $("#Inventory"), 'RoomObjects');
-            }
-        }
-    });
-}
-
-function RefreshRoomObjects() {
-    $("#RoomObjects").empty();
-    Interactables.visibleRoomObjects().forEach(function (obj) {
-        var $div = $("<div>", {
-            class: "RoomObjects",
-            text: objecttostring(obj),
-            value: obj.UniqueIdentifier
-        });
-        $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
-
-        $div.click(function(clickEvent) {
-            Globals.selectedObj = Finder.object($(this).val());
-            if (Globals.selectedObj != null) {
-                Globals.theObj = Globals.selectedObj;
-                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
-            }
-        });
-        $("#RoomObjects").append($div);
-        if (obj.bContainer) {
-            if (!obj.bOpenable || obj.bOpen) {
-                AddOpenedObjects(obj, $("#RoomObjects"), 'RoomObjects');
-            }
-        }
-    });
-    if (TheGame.Player.CurrentRoom != null) {
-        var currentroom = Finder.room(TheGame.Player.CurrentRoom);
-        if (currentroom != null) {
-            for (var j = 0; j < currentroom.Exits.length; j++) {
-                var tempexit = currentroom.Exits[j];
-                if (tempexit.PortalObjectName != "<None>") {
-                    var tempobj = Finder.object(tempexit.PortalObjectName);
-                    if (tempobj != null) {
-                        if (tempobj.bVisible) {
-                            var $div = $("<div>", {
-                                class: "RoomObjects",
-                                text: objecttostring(tempobj),
-                                value: tempobj.UniqueIdentifier
-                            });
-                            $div.toggleClass('no-actions', GetActionCount(tempobj.Actions) === 0);
-
-                            $div.click(function(clickEvent) {
-                                Globals.selectedObj = Finder.object($(this).val());
-                                if (Globals.selectedObj != null) {
-                                    Globals.theObj = Globals.selectedObj;
-                                    GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
-                                }
-                            });
-                            $("#RoomObjects").append($div);
-                            if (tempobj.bContainer) {
-                                if (!tempobj.bOpenable || tempobj.bOpen) {
-                                    AddOpenedObjects(tempobj, $("#RoomObjects"), 'RoomObjects');
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 function objectContainsObject(container, object) {
     return (object.locationtype === "LT_IN_OBJECT") && (object.locationname === container.UniqueIdentifier) && (object.bVisible);
 }
 
 function characterHasObject(character, object) {
     return (object.locationtype === "LT_CHARACTER") && (object.locationname === character.Charname) && (object.bVisible);
-}
-
-function AddOpenedObjects(outerObject, thelistbox, itemclass) {
-    TheGame.Objects.forEach(function (innerObject) {
-        if (
-            (objectContainsObject(outerObject, innerObject)) ||
-            ((outerObject.constructor.name === "character") && characterHasObject(outerObject, innerObject))
-        ) {
-            var $div = $("<div>", {
-                class: itemclass,
-                text: "--" + objecttostring(innerObject),
-                value: innerObject.UniqueIdentifier
-            });
-            $div.toggleClass('no-actions', GetActionCount(innerObject.Actions) === 0);
-
-            $div.click(function(clickEvent) {
-                Globals.selectedObj = Finder.object($(this).val());
-                if (Globals.selectedObj != null) {
-                    Globals.theObj = Globals.selectedObj;
-                    GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
-                }
-            });
-
-            thelistbox.append($div);
-            if (innerObject.bOpenable && innerObject.bOpen) {
-                AddOpenedObjects(innerObject, thelistbox, itemclass);
-            }
-        }
-    });
-}
-
-function RefreshCharacters() {
-    $("#VisibleCharacters").empty();
-    Interactables.characters().forEach(function (obj) {
-        var $div = $("<div>", {
-            class: "VisibleCharacters",
-            text: CharToString(obj),
-            value: obj.Charname
-        });
-        $div.toggleClass('no-actions', GetActionCount(obj.Actions) === 0);
-
-        $div.click(function(clickEvent) {
-            Globals.selectedObj = Finder.character($(this).val());
-            if (Globals.selectedObj != null) {
-                Globals.theObj = Globals.selectedObj;
-                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
-            }
-        });
-
-        $("#VisibleCharacters").append($div);
-        if (obj.bAllowInventoryInteraction) {
-            AddOpenedObjects(obj, $("#VisibleCharacters"), 'VisibleCharacters');
-        }
-    });
 }
 
 function nameForAction(action) {
@@ -443,9 +302,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
             ActionRecorder.roomEntered(roomDisplayName(currentroom));
             if (bRunTimerEvents)
                 RunTimerEvents();
-            RefreshRoomObjects();
-            RefreshCharacters();
-            RefreshInventory();
+            GameUI.refreshPanelItems();
             if ($("#RoomThumb").css("visibility") != "hidden")
                 SetExits();
             SetBorders();
@@ -973,9 +830,7 @@ function RunTimerEvents() {
     }
     runAfterPause(function () {
         Globals.bRunningTimers = false;
-        RefreshInventory();
-        RefreshRoomObjects();
-        RefreshCharacters();
+        GameUI.refreshPanelItems();
     });
 }
 

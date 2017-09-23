@@ -328,7 +328,7 @@ var GameCommands = {
                 if (Tempobj != null) {
                     Tempobj.locationtype = "LT_PLAYER";
                 }
-                RefreshInventory();
+                GameUI.refreshInventory();
                 break;
             }
             case "CT_ITEMS_MOVE_CONTAINER_TO_CONTAINER": {
@@ -371,9 +371,7 @@ var GameCommands = {
                         Tempobj.bVisible = true;
                     else
                         Tempobj.bVisible = false;
-                    RefreshRoomObjects();
-                    RefreshCharacters();
-                    RefreshInventory();
+                    GameUI.refreshPanelItems();
                 }
                 break;
             }
@@ -1257,7 +1255,7 @@ var GameCommands = {
                     } else {
                         Tempobj.bOpen = false;
                     }
-                    RefreshRoomObjects();
+                    GameUI.refreshRoomObjects();
                 }
                 break;
             }
@@ -1309,7 +1307,7 @@ var GameCommands = {
                             GameActions.processAction(tempact, true);
                     }
                 }
-                RefreshCharacters();
+                GameUI.refreshCharacters();
                 break;
             }
             case "CT_MOVEPLAYER": {
@@ -1493,8 +1491,8 @@ var GameCommands = {
                 }
             }
         }
-        RefreshInventory();
-        RefreshRoomObjects();
+        GameUI.refreshInventory();
+        GameUI.refreshRoomObjects();
         SetupStatusBars();
         return bResult;
     },

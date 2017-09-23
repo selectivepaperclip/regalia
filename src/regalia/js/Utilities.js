@@ -220,7 +220,6 @@ function RefreshInventory() {
                 Globals.selectedObj = GetObject($(this).val());
                 if (Globals.selectedObj != null) {
                     Globals.theObj = Globals.selectedObj;
-                    $(this).val([]);
                     DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
@@ -250,7 +249,6 @@ function RefreshRoomObjects() {
                 Globals.selectedObj = GetObject($(this).val());
                 if (Globals.selectedObj != null) {
                     Globals.theObj = Globals.selectedObj;
-                    $("#RoomObjects").val([]);
                     DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });
@@ -282,7 +280,6 @@ function RefreshRoomObjects() {
                                 Globals.selectedObj = GetObject($(this).val());
                                 if (Globals.selectedObj != null) {
                                     Globals.theObj = Globals.selectedObj;
-                                    $("#RoomObjects").val([]);
                                     DisplayActions(Globals.selectedObj.Actions, clickEvent);
                                 }
                             });
@@ -349,7 +346,6 @@ function AddOpenedObjects(outerObject, thelistbox, itemclass) {
                 Globals.selectedObj = GetObject($(this).val());
                 if (Globals.selectedObj != null) {
                     Globals.theObj = Globals.selectedObj;
-                    $(this).val([]);
                     DisplayActions(Globals.selectedObj.Actions, clickEvent);
                 }
             });

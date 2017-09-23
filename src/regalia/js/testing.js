@@ -307,16 +307,6 @@ $(function() {
     $("#textactionbutton").click(setTextActionChoice);
     onKeyupEnter('#textactioninput', setTextActionChoice);
 
-    $("#cmdinputchoices").change(function(e) {
-        Globals.selectedObj = $("#cmdinputchoices").val();
-        if (Globals.selectedObj != null) {
-            GameController.stopAwaitingInput();
-            $("#cmdinputmenu").css("visibility", "hidden");
-            ActionRecorder.choseInputAction(Value);
-            SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
-            RunCommands.apply(null, Globals.pauseCommandArgs);
-        }
-    });
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
@@ -327,32 +317,8 @@ $(function() {
         GameController.stopAwaitingInput();
         RunCommands.apply(null, Globals.pauseCommandArgs);
     });
-    $("#Inventory").change(function(e) {
-        Globals.selectedObj = GetObject($("#Inventory").val());
-        if (Globals.selectedObj != null) {
-            Globals.theObj = Globals.selectedObj;
-            $("#Inventory").val([]);
-            DisplayActions(Globals.selectedObj.Actions);
-        }
-    });
-    $("#VisibleCharacters").change(function(e) {
-        Globals.selectedObj = GetCharacter($("#VisibleCharacters").val());
-        if (Globals.selectedObj != null) {
-            Globals.theObj = Globals.selectedObj;
-            $("#VisibleCharacters").val([]);
-            DisplayActions(Globals.selectedObj.Actions);
-        }
-    });
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
-    });
-    $("#RoomObjects").change(function(e) {
-        Globals.selectedObj = GetObject($("#RoomObjects").val());
-        if (Globals.selectedObj != null) {
-            Globals.theObj = Globals.selectedObj;
-            $("#RoomObjects").val([]);
-            DisplayActions(Globals.selectedObj.Actions);
-        }
     });
     setInterval(function() {
         if (!TheGame) {

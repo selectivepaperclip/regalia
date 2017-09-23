@@ -1438,6 +1438,23 @@ var GameCommands = {
         }
     },
 
+    processCondition: function (wrappedCondition, AdditionalInputData, loopObj) {
+        var conditionBeingProcessed = wrappedCondition.payload;
+        var act = wrappedCondition.parentAction;
+        var timerInvocation = wrappedCondition.timerInvocation;
+
+        var nextCommands;
+        if (GameConditions.testCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, loopObj)) {
+            if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
+                return;
+            } else {
+                return conditionBeingProcessed.PassCommands;
+            }
+        } else {
+            return conditionBeingProcessed.FailCommands;
+        }
+    },
+
     runCommands: function (TheObj, AdditionalInputData, act) {
         Globals.pauseCommandArgs = arguments;
         var bResult = false;
@@ -1449,16 +1466,11 @@ var GameCommands = {
             }
 
             var loopObj = Globals.loopArgs.object;
-            var commandBeingProcessed = null;
             var commandOrCondition = CommandLists.shiftCommand();
             var curtype = getObjectClass(commandOrCondition.payload);
             if (curtype == "command" || "CommandName" in commandOrCondition.payload) {
-                commandBeingProcessed = commandOrCondition.payload;
-            } else {
-                ProcessCondition(commandOrCondition, AdditionalInputData, loopObj);
-            }
+                var commandBeingProcessed = commandOrCondition.payload;
 
-            if (commandBeingProcessed != null) {
                 var part2 = PerformTextReplacements(commandBeingProcessed.CommandPart2, loopObj);
                 var part3 = PerformTextReplacements(commandBeingProcessed.CommandPart3, loopObj);
                 var part4 = PerformTextReplacements(commandBeingProcessed.CommandPart4, loopObj);
@@ -1474,11 +1486,46 @@ var GameCommands = {
                     alert(err.message);
                     alert("Rags can not process the command correctly.  If you are the game author," + " please correct the error in this command:" + commandBeingProcessed.cmdtype);
                 }
+            } else {
+                var nextCommands = this.processCondition(commandOrCondition, AdditionalInputData, loopObj);
+                if (nextCommands) {
+                    this.insertToMaster(nextCommands, undefined, act);
+                }
             }
         }
         RefreshInventory();
         RefreshRoomObjects();
         SetupStatusBars();
         return bResult;
+    },
+
+    addToMaster: function (commands, addinputdata, act) {
+        for (var i = 0; i < commands.length; i++) {
+            command.AdditionalInputData = addinputdata || undefined;
+            CommandLists.addToEnd({
+                parentAction: act,
+                timerInvocation: Globals.timerInvocation,
+                payload: commands[i]
+            });
+        }
+    },
+
+    insertToMaster: function (commands, addinputdata, act) {
+        for (var i = commands.length - 1; i >= 0; i--) {
+            command.AdditionalInputData = addinputdata || undefined;
+            CommandLists.addToFront({
+                parentAction: act,
+                timerInvocation: Globals.timerInvocation,
+                payload: commands[i]
+            });
+        }
+    },
+    addCommands: function (insertFirst, commands, AdditionalInputData, act) {
+        if (insertFirst) {
+            this.insertToMaster(commands, AdditionalInputData, act);
+        } else {
+            this.addToMaster(commands, AdditionalInputData, act);
+            this.runCommands(Globals.theObj, AdditionalInputData, act);
+        }
     }
 };

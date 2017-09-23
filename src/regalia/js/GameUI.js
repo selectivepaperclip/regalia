@@ -55,7 +55,7 @@ var GameUI = {
                     $("#inputmenu").css("visibility", "hidden");
                     if (getObjectClass(act) == "action" || "actionparent" in act) {
                         ActionRecorder.choseInputAction(Globals.selectedObj);
-                        ExecuteAction(act, true, Globals.selectedObj);
+                        GameActions.executeAction(act, true, Globals.selectedObj);
                         GameCommands.runCommands(Globals.theObj, Globals.selectedObj, act);
                     }
                 });

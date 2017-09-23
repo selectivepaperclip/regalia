@@ -299,7 +299,7 @@ $(function() {
             GameController.stopAwaitingInput();
             $("#textactionchoice").css("visibility", "hidden");
             if (getObjectClass(Globals.inputDataObject) == "action" || "actionparent" in Globals.inputDataObject) {
-                ExecuteAction(Globals.inputDataObject, Globals.bMasterTimer, Globals.selectedObj);
+                GameActions.executeAction(Globals.inputDataObject, Globals.bMasterTimer, Globals.selectedObj);
             }
         }
     }

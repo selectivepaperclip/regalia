@@ -8,8 +8,8 @@ var GameConditions = {
                 Globals.loopArgs.object = Globals.loopArgs.array[Globals.loopArgs.idx];
                 Globals.loopArgs.idx++;
 
-                InsertToMaster([tempcond], undefined, conditionAction);
-                InsertToMaster(tempcond.PassCommands, undefined, conditionAction);
+                GameCommands.insertToMaster([tempcond], undefined, conditionAction);
+                GameCommands.insertToMaster(tempcond.PassCommands, undefined, conditionAction);
             } else {
                 ResetLoopObjects();
             }
@@ -36,9 +36,9 @@ var GameConditions = {
 
                 switch (tempcheck.CondType) {
                     case "CT_Loop_While": {
-                        if (TestVariable(step2, step3, step4)) {
-                            InsertToMaster([tempcond], undefined, conditionAction);
-                            InsertToMaster(tempcond.PassCommands, undefined, conditionAction);
+                        if (this.testVariable(step2, step3, step4)) {
+                            GameCommands.insertToMaster([tempcond], undefined, conditionAction);
+                            GameCommands.insertToMaster(tempcond.PassCommands, undefined, conditionAction);
                         }
                         break;
                     }
@@ -128,6 +128,67 @@ var GameConditions = {
         }
         if (!Globals.loopArgs.array) {
             Logger.logEvaluatedCondition(tempcond, bResult);
+        }
+        return bResult;
+    },
+
+    testVariable: function (step2, step3, step4) {
+        var bResult = true;
+        var tempvar = GetVariable(step2);
+        if (tempvar != null) {
+            var varindex = GetArrayIndex(step2, 0);
+            var varindex2 = GetArrayIndex(step2, 1);
+            var replacedstring = PerformTextReplacements(step4, null);
+            if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {
+                // Do Nothing
+            } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
+                if (varindex != -1) {
+                    if (varindex2 != -1) {
+                        tempvar.dNumType = parseFloat(tempvar.VarArray[varindex][varindex2]);
+                    } else
+                        tempvar.dNumType = tempvar.VarArray[varindex];
+                }
+                if (step3 == "Equals") {
+                    bResult = parseFloat(replacedstring) == tempvar.dNumType;
+                } else if (step3 == "Not Equals") {
+                    bResult = parseFloat(replacedstring) != tempvar.dNumType;
+                } else if (step3 == "Greater Than") {
+                    bResult = tempvar.dNumType > parseFloat(replacedstring);
+                } else if (step3 == "Greater Than or Equals") {
+                    bResult = tempvar.dNumType >= parseFloat(replacedstring);
+                } else if (step3 == "Less Than") {
+                    bResult = tempvar.dNumType < parseFloat(replacedstring);
+                } else if (step3 == "Less Than or Equals") {
+                    bResult = tempvar.dNumType <= parseFloat(replacedstring);
+                }
+            } else if (tempvar.vartype == "VT_STRINGARRAY" || tempvar.vartype == "VT_STRING") {
+                if (varindex != -1) {
+                    if (varindex2 != -1)
+                        tempvar.sString = tempvar.VarArray[varindex][varindex2].toString();
+                    else
+                        tempvar.sString = tempvar.VarArray[varindex].toString();
+                }
+                if (step3 == "Equals") {
+                    bResult = replacedstring == tempvar.sString;
+                } else if (step3 == "Not Equals") {
+                    bResult = replacedstring != tempvar.sString;
+                } else if (step3 == "Contains") {
+                    bResult = tempvar.sString.indexOf(replacedstring) > -1;
+                } else if (step3 == "Greater Than") {
+                    bResult = tempvar.sString > replacedstring;
+                } else if (step3 == "Less Than") {
+                    bResult = tempvar.sString < replacedstring;
+                }
+            }
+        }
+        if ((tempvar === undefined) && (step3 === "Contains")) {
+            // HACK - preserve bug compatibility with desktop RAGS client
+            // It seems like a "varname Contains val" query passes
+            // if varname does not exist. Not sure how many other
+            // situations this applies to. This is needed to get past
+            // the opening quiz questions in Evil, Inc. where the
+            // variable names have been typoed.
+            return true;
         }
         return bResult;
     },
@@ -378,7 +439,7 @@ var GameConditions = {
                 break;
             }
             case "CT_Variable_Comparison": {
-                return TestVariable(step2, step3, step4);
+                return this.testVariable(step2, step3, step4);
             }
             case "CT_Variable_To_Variable_Comparison": {
                 var tempvar = GetVariable(step2);

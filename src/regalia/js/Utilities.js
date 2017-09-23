@@ -31,28 +31,6 @@ var Interactables = {
     }
 };
 
-function AddToMaster(commands, addinputdata, act) {
-    for (var i = 0; i < commands.length; i++) {
-        command.AdditionalInputData = addinputdata || undefined;
-        CommandLists.addToEnd({
-            parentAction: act,
-            timerInvocation: Globals.timerInvocation,
-            payload: commands[i]
-        });
-    }
-}
-
-function InsertToMaster(commands, addinputdata, act) {
-    for (var i = commands.length - 1; i >= 0; i--) {
-        command.AdditionalInputData = addinputdata || undefined;
-        CommandLists.addToFront({
-            parentAction: act,
-            timerInvocation: Globals.timerInvocation,
-            payload: commands[i]
-        });
-    }
-}
-
 function escapeQuotedTags(str) {
     var insideQuote = false;
     var result = [];
@@ -567,7 +545,7 @@ function ProcessAction(Action, bTimer) {
     var curclass = getObjectClass(Globals.selectedObj);
 
     if (act.InputType === "None") {
-        ExecuteAction(act, bTimer);
+        GameActions.executeAction(act, bTimer);
         SetBorders();
         return;
     }
@@ -646,15 +624,6 @@ function ProcessAction(Action, bTimer) {
     SetBorders();
 }
 
-function addCommands(insertFirst, commands, AdditionalInputData, act) {
-    if (insertFirst) {
-        InsertToMaster(commands, AdditionalInputData, act);
-    } else {
-        AddToMaster(commands, AdditionalInputData, act);
-        GameCommands.runCommands(Globals.theObj, AdditionalInputData, act);
-    }
-}
-
 function isLoopCheck(check) {
     var loopCondTypes = [
         "CT_Loop_While",
@@ -669,43 +638,6 @@ function isLoopCheck(check) {
         "CT_Loop_Item_Group"
     ];
     return loopCondTypes.indexOf(check.CondType) > -1;
-}
-
-function ExecuteAction(act, runNext, AdditionalInputData) {
-    Logger.logExecutingAction(act);
-    var bPassed = true;
-    if (act.bConditionFailOnFirst) {
-        for (var i = 0; i < act.Conditions.length; i++) {
-            var tempcond = act.Conditions[i];
-            if (GameConditions.testCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null)) {
-                if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
-                    // Do nothing?
-                } else {
-                    addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
-                }
-            } else {
-                bPassed = false;
-                addCommands(runNext, tempcond.FailCommands, AdditionalInputData, act);
-            }
-        }
-    } else {
-        bPassed = (act.Conditions.length === 0);
-        for (var i = 0; i < act.Conditions.length; i++) {
-            var tempcond = act.Conditions[i];
-            var btestresult = GameConditions.testCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null);
-            if (btestresult) {
-                bPassed = btestresult;
-                addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
-            } else {
-                addCommands(runNext, tempcond.FailCommands, AdditionalInputData, act);
-            }
-        }
-    }
-    if (bPassed) {
-        addCommands(runNext, act.PassCommands, AdditionalInputData, act);
-    } else {
-        addCommands(runNext, act.FailCommands, AdditionalInputData, act);
-    }
 }
 
 function runNextAfterPause(runNextPhase) {
@@ -803,21 +735,6 @@ function movePlayerToRoom(roomName) {
     TheGame.Player.CurrentRoom = roomName;
     if (TheGame.Player.CurrentRoom) {
         RoomChange(false, true);
-    }
-}
-
-function ProcessCondition(wrappedCondition, AdditionalInputData, loopObj) {
-    var conditionBeingProcessed = wrappedCondition.payload;
-    var act = wrappedCondition.parentAction;
-    var timerInvocation = wrappedCondition.timerInvocation;
-    if (GameConditions.testCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, loopObj)) {
-        if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
-            // Do nothing?
-        } else {
-            InsertToMaster(conditionBeingProcessed.PassCommands, undefined, act);
-        }
-    } else {
-        InsertToMaster(conditionBeingProcessed.FailCommands, undefined, act);
     }
 }
 
@@ -1274,67 +1191,6 @@ function SetCustomProperty(curprop, part3, replacedstring) {
             curprop.Value = (iPropVal / iReplacedString).toString();
         }
     }
-}
-
-function TestVariable(step2, step3, step4) {
-    var bResult = true;
-    var tempvar = GetVariable(step2);
-    if (tempvar != null) {
-        var varindex = GetArrayIndex(step2, 0);
-        var varindex2 = GetArrayIndex(step2, 1);
-        var replacedstring = PerformTextReplacements(step4, null);
-        if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {
-            // Do Nothing
-        } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
-            if (varindex != -1) {
-                if (varindex2 != -1) {
-                    tempvar.dNumType = parseFloat(tempvar.VarArray[varindex][varindex2]);
-                } else
-                    tempvar.dNumType = tempvar.VarArray[varindex];
-            }
-            if (step3 == "Equals") {
-                bResult = parseFloat(replacedstring) == tempvar.dNumType;
-            } else if (step3 == "Not Equals") {
-                bResult = parseFloat(replacedstring) != tempvar.dNumType;
-            } else if (step3 == "Greater Than") {
-                bResult = tempvar.dNumType > parseFloat(replacedstring);
-            } else if (step3 == "Greater Than or Equals") {
-                bResult = tempvar.dNumType >= parseFloat(replacedstring);
-            } else if (step3 == "Less Than") {
-                bResult = tempvar.dNumType < parseFloat(replacedstring);
-            } else if (step3 == "Less Than or Equals") {
-                bResult = tempvar.dNumType <= parseFloat(replacedstring);
-            }
-        } else if (tempvar.vartype == "VT_STRINGARRAY" || tempvar.vartype == "VT_STRING") {
-            if (varindex != -1) {
-                if (varindex2 != -1)
-                    tempvar.sString = tempvar.VarArray[varindex][varindex2].toString();
-                else
-                    tempvar.sString = tempvar.VarArray[varindex].toString();
-            }
-            if (step3 == "Equals") {
-                bResult = replacedstring == tempvar.sString;
-            } else if (step3 == "Not Equals") {
-                bResult = replacedstring != tempvar.sString;
-            } else if (step3 == "Contains") {
-                bResult = tempvar.sString.indexOf(replacedstring) > -1;
-            } else if (step3 == "Greater Than") {
-                bResult = tempvar.sString > replacedstring;
-            } else if (step3 == "Less Than") {
-                bResult = tempvar.sString < replacedstring;
-            }
-        }
-    }
-    if ((tempvar === undefined) && (step3 === "Contains")) {
-        // HACK - preserve bug compatibility with desktop RAGS client
-        // It seems like a "varname Contains val" query passes
-        // if varname does not exist. Not sure how many other
-        // situations this applies to. This is needed to get past
-        // the opening quiz questions in Evil, Inc. where the
-        // variable names have been typoed.
-        return true;
-    }
-    return bResult;
 }
 
 function RunEvents(EventType) {

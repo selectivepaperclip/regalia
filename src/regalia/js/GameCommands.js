@@ -1436,13 +1436,13 @@ var GameCommands = {
         }
     },
 
-    processCondition: function (wrappedCondition, AdditionalInputData, loopObj) {
+    processCondition: function (wrappedCondition, loopObj) {
         var conditionBeingProcessed = wrappedCondition.payload;
         var act = wrappedCondition.parentAction;
         var timerInvocation = wrappedCondition.timerInvocation;
 
         var nextCommands;
-        if (GameConditions.testCondition(conditionBeingProcessed, AdditionalInputData, act, timerInvocation, loopObj)) {
+        if (GameConditions.testCondition(conditionBeingProcessed, act, timerInvocation, loopObj)) {
             if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
                 return;
             } else {
@@ -1453,7 +1453,7 @@ var GameCommands = {
         }
     },
 
-    runCommands: function (TheObj, AdditionalInputData, act) {
+    runCommands: function (TheObj, act) {
         Globals.pauseCommandArgs = arguments;
         var bResult = false;
         while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || Globals.runningLiveTimerCommands)) {
@@ -1485,7 +1485,7 @@ var GameCommands = {
                     alert("Rags can not process the command correctly.  If you are the game author," + " please correct the error in this command:" + commandBeingProcessed.cmdtype);
                 }
             } else {
-                var nextCommands = this.processCondition(commandOrCondition, AdditionalInputData, loopObj);
+                var nextCommands = this.processCondition(commandOrCondition, loopObj);
                 if (nextCommands) {
                     this.insertToMaster(nextCommands, undefined, act);
                 }
@@ -1523,7 +1523,7 @@ var GameCommands = {
             this.insertToMaster(commands, AdditionalInputData, act);
         } else {
             this.addToMaster(commands, AdditionalInputData, act);
-            this.runCommands(Globals.theObj, AdditionalInputData, act);
+            this.runCommands(Globals.theObj, act);
         }
     }
 };

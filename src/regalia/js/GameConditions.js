@@ -1,5 +1,5 @@
 var GameConditions = {
-    testCondition: function (tempcond, AdditionalInputData, conditionAction, conditionTimerInvocation, loopObj) {
+    testCondition: function (tempcond, conditionAction, conditionTimerInvocation, loopObj) {
         var bResult = true;
         var counter = 0;
 
@@ -557,7 +557,11 @@ var GameConditions = {
                 if (conditionAction.InputType == "Text") {
                     return step4.toLowerCase() == datatocheck.toLowerCase();
                 } else {
-                    return step2.toLowerCase() == datatocheck.toLowerCase();
+                    if (typeof datatocheck === 'object' && 'UniqueIdentifier' in datatocheck) {
+                        return Finder.object(step2) === Finder.object(datatocheck.UniqueIdentifier);
+                    } else {
+                        return step2.toLowerCase() == datatocheck.toLowerCase();
+                    }
                 }
             }
         }

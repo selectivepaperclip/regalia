@@ -5,7 +5,7 @@ var GameActions = {
         if (act.bConditionFailOnFirst) {
             for (var i = 0; i < act.Conditions.length; i++) {
                 var tempcond = act.Conditions[i];
-                if (GameConditions.testCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null)) {
+                if (GameConditions.testCondition(tempcond, act, Globals.timerInvocation, null)) {
                     if (tempcond.Checks.length == 1 && isLoopCheck(tempcond.Checks[0])) {
                         // Do nothing?
                     } else {
@@ -20,7 +20,7 @@ var GameActions = {
             bPassed = (act.Conditions.length === 0);
             for (var i = 0; i < act.Conditions.length; i++) {
                 var tempcond = act.Conditions[i];
-                var btestresult = GameConditions.testCondition(tempcond, AdditionalInputData, act, Globals.timerInvocation, null);
+                var btestresult = GameConditions.testCondition(tempcond, act, Globals.timerInvocation, null);
                 if (btestresult) {
                     bPassed = btestresult;
                     GameCommands.addCommands(runNext, tempcond.PassCommands, AdditionalInputData, act);
@@ -73,7 +73,7 @@ var GameActions = {
 
         function addObjectChoices() {
             Interactables.roomAndInventoryObjects().forEach(function (obj) {
-                GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
+                GameUI.addInputChoice(act, objecttostring(obj), obj);
             });
             if (TheGame.Player.CurrentRoom != null) {
                 var currentroom = Finder.room(TheGame.Player.CurrentRoom);
@@ -85,7 +85,7 @@ var GameActions = {
                     if (roomExit.PortalObjectName != "<None>") {
                         var tempobj = Finder.object(roomExit.PortalObjectName);
                         if (tempobj && tempobj.bVisible) {
-                            GameUI.addInputChoice(act, objecttostring(tempobj), tempobj.UniqueIdentifier);
+                            GameUI.addInputChoice(act, objecttostring(tempobj), tempobj);
 
                             if (tempobj.bContainer) {
                                 if (!tempobj.bOpenable || tempobj.bOpen) {
@@ -115,7 +115,7 @@ var GameActions = {
             addObjectChoices();
         } else if (act.InputType == "Inventory") {
             Interactables.inventoryObjects().forEach(function (obj) {
-                GameUI.addInputChoice(act, objecttostring(obj), obj.UniqueIdentifier);
+                GameUI.addInputChoice(act, objecttostring(obj), obj);
             });
         } else if (act.InputType == "ObjectOrCharacter") {
             addObjectChoices();

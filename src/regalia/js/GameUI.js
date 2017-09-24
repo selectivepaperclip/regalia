@@ -42,21 +42,20 @@ var GameUI = {
     addInputChoice: function (act, text, value) {
         var $div = $("<div>", {
             class: "inputchoices",
-            text: text,
-            value: value
+            text: text
         });
 
         $div.click(function() {
-            Globals.selectedObj = $(this).val();
+            Globals.selectedObj = value;
             if (Globals.selectedObj != null) {
                 GameController.executeAndRunTimers(function () {
                     Globals.additionalData = Globals.selectedObj;
                     GameController.stopAwaitingInput();
                     $("#inputmenu").css("visibility", "hidden");
                     if (getObjectClass(act) == "action" || "actionparent" in act) {
-                        ActionRecorder.choseInputAction(Globals.selectedObj);
+                        ActionRecorder.choseInputAction(text);
                         GameActions.executeAction(act, true, Globals.selectedObj);
-                        GameCommands.runCommands(Globals.theObj, Globals.selectedObj, act);
+                        GameCommands.runCommands(Globals.theObj, act);
                     }
                 });
             }

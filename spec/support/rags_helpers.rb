@@ -146,6 +146,10 @@ def freeze_game_variable(name)
   page.evaluate_script("cheatFreezes.variables['#{name}'] = true")
 end
 
+def skip_next_live_timer
+  page.evaluate_script("$('.live-timer-display-rows tr:first').click()")
+end
+
 def export_savegames(prefix = 'rspec')
   click_on 'save'
   accept_alert do

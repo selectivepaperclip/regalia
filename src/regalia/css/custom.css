@@ -479,3 +479,38 @@ body {
 .freeze-button.frozen {
     background-color: #00e7ff;
 }
+
+.live-timer-display {
+    background-color: white;
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+}
+
+.live-timer-display table {
+    border-collapse: collapse;
+}
+
+.live-timer-display h4 {
+    margin: 0;
+    background: #ccc;
+    border-bottom: 2px solid black;
+    padding: 3px;
+}
+
+.live-timer-display-rows td {
+    padding: 3px;
+}
+
+.live-timer-display-rows tr:hover td {
+    background-color: #b5b5b5;
+    border-color: #b5b5b5;
+    cursor: pointer;
+}
+
+.live-timer-display-rows tr:not:last-child td {
+    border-bottom: 1px solid grey;
+}

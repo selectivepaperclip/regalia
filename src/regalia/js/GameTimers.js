@@ -1,10 +1,16 @@
 var GameTimers = {
     activeLiveTimers: function () {
+        if (!TheGame) {
+            return [];
+        }
         return TheGame.Timers.filter(function (timer) {
            return timer.Active && timer.LiveTimer;
         });
     },
     staticTimers: function () {
+        if (!TheGame) {
+            return [];
+        }
         return TheGame.Timers.filter(function (timer) {
             return !timer.LiveTimer;
         });
@@ -94,5 +100,32 @@ var GameTimers = {
                 callback();
             });
         });
+    },
+
+    tickLiveTimers: function (skipRefresh) {
+        if (!TheGame) {
+            return;
+        }
+
+        this.activeLiveTimers().forEach(function(timer) {
+            timer.curtickcount += 1000;
+            if (timer.curtickcount >= timer.TimerSeconds * 1000) {
+                timer.curtickcount = 0;
+                GameTimers.runTimer(timer);
+                if (!skipRefresh) {
+                    GameUI.refreshPanelItems();
+                }
+            }
+        });
+    },
+
+    scheduleLiveTimers: function (oneSecond) {
+        GameTimers.tickLiveTimers();
+        GameUI.displayLiveTimers();
+        setTimeout(function () {
+            GameTimers.scheduleLiveTimers(oneSecond);
+        }, oneSecond);
     }
 };
+
+

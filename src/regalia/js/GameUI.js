@@ -322,5 +322,32 @@ var GameUI = {
         this.refreshInventory();
         this.refreshRoomObjects();
         this.refreshCharacters();
+    },
+
+    displayLiveTimers: function () {
+        var activeLiveTimers = GameTimers.activeLiveTimers();
+        $('.live-timer-display').toggle(activeLiveTimers.length > 0);
+        if (activeLiveTimers.length > 0) {
+            var $container = $('.live-timer-display-rows');
+            $container.empty();
+            activeLiveTimers.forEach(function (timer) {
+                var $timerRow = $('<tr>');
+                $timerRow.append('<td>' + timer.Name + '</td>');
+                $timerRow.append('<td>' + (timer.TimerSeconds - (timer.curtickcount / 1000)) + 's</td>');
+                $timerRow.append('<td><b>Click to Skip</b></td>');
+                $timerRow.data('timer-name', timer.Name);
+                $timerRow.click(function () {
+                    var timerName = $(this).data('timer-name');
+                    var timer = Finder.timer(timerName);
+                    var secondsRemaining = (timer.TimerSeconds - (timer.curtickcount / 1000));
+                    for (var i = 0; i < secondsRemaining; i++) {
+                        GameTimers.tickLiveTimers(true);
+                    }
+                    GameUI.refreshPanelItems();
+                    GameUI.displayLiveTimers();
+                });
+                $container.append($timerRow);
+            });
+        }
     }
 };

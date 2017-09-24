@@ -320,19 +320,8 @@ $(function() {
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");
     });
-    setInterval(function() {
-        if (!TheGame) {
-            return;
-        }
-        GameTimers.activeLiveTimers().forEach(function(timer) {
-            timer.curtickcount += 1000;
-            if (timer.curtickcount >= timer.TimerSeconds * 1000) {
-                timer.curtickcount = 0;
-                GameTimers.runTimer(timer);
-                GameUI.refreshPanelItems();
-            }
-        });
-    }, window.location.href.match(/speedy_timers/) ? 50 : 1000);
+
+    GameTimers.scheduleLiveTimers(window.location.href.match(/speedy_timers/) ? 50 : 1000);
 
     $(".compass-direction").click(function(e) {
         var $el = $(e.target);

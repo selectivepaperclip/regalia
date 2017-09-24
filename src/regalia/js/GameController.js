@@ -18,7 +18,7 @@ var GameController = {
         fn();
 
         if (CommandLists.commandCount() == 0 && this.shouldRunCommands() && !wasRunningTimers) {
-            RunTimerEvents();
+            GameTimers.runTimerEvents();
             UpdateStatusBars();
         }
     },

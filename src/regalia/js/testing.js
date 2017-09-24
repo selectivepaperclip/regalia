@@ -324,17 +324,14 @@ $(function() {
         if (!TheGame) {
             return;
         }
-        for (var i = 0; i < TheGame.Timers.length; i++) {
-            var curtimer = TheGame.Timers[i];
-            if (curtimer.Active && curtimer.LiveTimer) {
-                curtimer.curtickcount += 1000;
-                if (curtimer.curtickcount >= curtimer.TimerSeconds * 1000) {
-                    curtimer.curtickcount = 0;
-                    RunTimer(curtimer);
-                    GameUI.refreshPanelItems();
-                }
+        GameTimers.activeLiveTimers().forEach(function(timer) {
+            timer.curtickcount += 1000;
+            if (timer.curtickcount >= timer.TimerSeconds * 1000) {
+                timer.curtickcount = 0;
+                GameTimers.runTimer(timer);
+                GameUI.refreshPanelItems();
             }
-        }
+        });
     }, window.location.href.match(/speedy_timers/) ? 50 : 1000);
 
     $(".compass-direction").click(function(e) {

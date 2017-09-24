@@ -301,7 +301,7 @@ function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
             }, 0);
             ActionRecorder.roomEntered(roomDisplayName(currentroom));
             if (bRunTimerEvents)
-                RunTimerEvents();
+                GameTimers.runTimerEvents();
             GameUI.refreshPanelItems();
             if ($("#RoomThumb").css("visibility") != "hidden")
                 SetExits();
@@ -795,97 +795,6 @@ function SetCustomProperty(curprop, part3, replacedstring) {
         if (bInteger) {
             curprop.Value = (iPropVal / iReplacedString).toString();
         }
-    }
-}
-
-function runSingleTimer(temptimer) {
-    Globals.currentTimer = temptimer.Name;
-    RunTimer(temptimer, function () {
-        if (Globals.bResetTimer) {
-            runSingleTimer(temptimer);
-        }
-    });
-}
-
-function RunTimerEvents() {
-    if (Globals.bRunningTimers) {
-        return;
-    }
-
-    Globals.bRunningTimers = true;
-    Globals.bResetTimer = false;
-    Globals.currentTimer = "";
-    for (var i = 0; i < TheGame.Timers.length; i++) {
-        var timer = TheGame.Timers[i];
-        var lastTimer = (i === TheGame.Timers - 1);
-        if (!timer.LiveTimer) {
-            runAfterPause(function (timer) {
-                return function () {
-                    if (timer != null) {
-                        runSingleTimer(timer);
-                    }
-                };
-            }(timer));
-        }
-    }
-    runAfterPause(function () {
-        Globals.bRunningTimers = false;
-        GameUI.refreshPanelItems();
-    });
-}
-
-function RunTimer(temptimer, callback) {
-    if (!callback) {
-        callback = function () { };
-    }
-
-    Globals.bResetTimer = false;
-    if (temptimer.Active) {
-        temptimer.TurnNumber++;
-        if (temptimer.TurnNumber > temptimer.Length && temptimer.TType == "TT_LENGTH") {
-            if (!temptimer.Restart)
-                temptimer.Active = false;
-            temptimer.TurnNumber = 0;
-            return;
-        }
-
-        var tempact = Finder.action(temptimer.Actions, "<<On Each Turn>>");
-        if (tempact != null) {
-            if (temptimer.LiveTimer) {
-                Globals.runningLiveTimerCommands = true;
-                CommandLists.addToFront(function () {
-                   Globals.runningLiveTimerCommands = false;
-                });
-                GameActions.processAction(tempact, true);
-                GameCommands.runCommands(Globals.theObj, null, null);
-                return;
-            } else {
-                GameActions.processAction(tempact, false);
-            }
-        }
-
-        UpdateStatusBars();
-        runNextAfterPause(function () {
-            if (Globals.bResetTimer)
-                return callback();
-            tempact = Finder.action(temptimer.Actions, "<<On Turn " +
-                temptimer.TurnNumber.toString() + ">>");
-            if (tempact != null)
-                GameActions.processAction(tempact, false); //null);
-            UpdateStatusBars();
-
-            runNextAfterPause(function () {
-                if (Globals.bResetTimer)
-                    return callback();
-                if (temptimer.TurnNumber == temptimer.Length) {
-                    tempact = Finder.action(temptimer.Actions, "<<On Last Turn>>");
-                    if (tempact != null)
-                        GameActions.processAction(tempact, false); //null);
-                }
-                UpdateStatusBars();
-                callback();
-            });
-        });
     }
 }
 

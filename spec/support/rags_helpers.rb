@@ -147,7 +147,17 @@ def freeze_game_variable(name)
 end
 
 def skip_next_live_timer
-  page.evaluate_script("$('.live-timer-display-rows tr:first').click()")
+  page.find('.live-timer-display-rows tr', match: :first).click
+end
+
+def skip_all_live_timers
+  # Wait for a live timer dismiss button to actually exist
+  page.find('.live-timer-display-rows tr')
+
+  # Keep dismissing the live timers until they're all gone
+  while page.all('.live-timer-display-rows tr').length > 0
+    page.find('.live-timer-display-rows tr', match: :first).click
+  end
 end
 
 def export_savegames(prefix = 'rspec')

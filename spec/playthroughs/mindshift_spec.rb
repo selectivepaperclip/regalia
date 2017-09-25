@@ -105,7 +105,7 @@ describe 'mindshift', type: :feature, js: true do
     choose_input_action 'By starting a new game'
     continue_until_unpaused
 
-    sleep 3
+    skip_all_live_timers
     act_on_object 'mirror', 'Examine'
     act_on_object 'Player 4', 'Select'
     go_to_room "Bree's apartment (#303)"

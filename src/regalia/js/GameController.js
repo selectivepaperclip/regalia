@@ -2,6 +2,16 @@ var GameController = {
     gamePaused: false,
     gameAwaitingInput: false,
 
+    title: function () {
+        if (TheGame.Title) {
+            return TheGame.Title;
+        }
+
+        var urlParts = window.location.href.split("/");
+        var penultimateUrlPart = urlParts[urlParts.length - 2];
+        return decodeURIComponent(penultimateUrlPart);
+    },
+
     startAwaitingInput: function () {
         this.gameAwaitingInput = true;
         GameUI.hideGameElements();

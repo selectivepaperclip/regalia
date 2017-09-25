@@ -26,12 +26,11 @@ if html_file.end_with?('.html')
   FileUtils.mv(html_file, "#{html_file}.bak")
 end
 
-game_title = File.basename(html_file, '.*')
 puts "Copying Regalia content\n  From: '#{src_dir}'\n  To: #{rags_project_dir}"
 
 html_content = File.read(File.join(src_dir, 'regalia.html'))
 FileUtils.rm_rf(Dir[File.join(rags_project_dir, '*regalia.html')])
-File.write(File.join(rags_project_dir, "regalia.html"), html_content.gsub('GAME_TITLE_HERE', game_title))
+File.write(File.join(rags_project_dir, "regalia.html"), html_content)
 
 FileUtils.rm_rf(File.join(rags_project_dir, 'regalia'))
 FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 'regalia'))

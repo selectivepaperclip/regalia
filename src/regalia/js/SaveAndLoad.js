@@ -1,12 +1,6 @@
 var SavedGames = {
     titleForSave: function () {
-        if (TheGame.Title) {
-            return TheGame.Title;
-        }
-
-        var urlParts = window.location.href.split("/");
-        var lastUrlPart = urlParts[urlParts.length - 1];
-        return decodeURIComponent(lastUrlPart).replace(' - regalia.html', '').replace(/ /g, '_');
+        GameController.title().replace(/ /g, '_');
     },
     keyForIndex: function () {
         return this.titleForSave() + '-Saves';

@@ -413,6 +413,7 @@ function handleFileSelect(bQuick, CurID) {
     var savedGame = SavedGames.getSave(desiredId);
 
     TheGame = SetupGameData();
+    GameUI.setGameTitle();
     SavedGames.applySaveToGame(TheGame, savedGame);
     if (savedGame.cheatFreezes) {
         window.cheatFreezes = savedGame.cheatFreezes;
@@ -466,6 +467,7 @@ function receivedText() {
     try {
         OriginalGame = SetupGameData();
         TheGame = SetupGameData();
+        GameUI.setGameTitle();
         if (TheGame.Player.bPromptForName) {
             $("#playernamechoice").css("visibility", "visible");
             GameUI.hideGameElements();

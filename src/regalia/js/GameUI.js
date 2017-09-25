@@ -1,4 +1,10 @@
 var GameUI = {
+    setGameTitle: function () {
+        var title = GameController.title();
+        document.title = title;
+        $('.game-title').text(title);
+    },
+
     setInputMenuTitle: function (act) {
         $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
         $("#inputmenu").css("visibility", "visible");

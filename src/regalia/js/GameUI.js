@@ -31,6 +31,16 @@ var GameUI = {
         $(".compass-direction").css("visibility", "hidden");
     },
 
+    disableSaveAndLoad: function () {
+        $('#save').prop('disabled', true);
+        $('#load').prop('disabled', true);
+    },
+
+    enableSaveAndLoad: function () {
+        $('#save').prop('disabled', false);
+        $('#load').prop('disabled', false);
+    },
+
     clearInputChoices: function () {
         $("#inputchoices").empty();
     },

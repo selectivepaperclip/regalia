@@ -14,11 +14,13 @@ var GameController = {
 
     startAwaitingInput: function () {
         this.gameAwaitingInput = true;
+        GameUI.disableSaveAndLoad();
         GameUI.hideGameElements();
     },
 
     stopAwaitingInput: function () {
         this.gameAwaitingInput = false;
+        GameUI.enableSaveAndLoad();
         GameUI.showGameElements();
     },
 

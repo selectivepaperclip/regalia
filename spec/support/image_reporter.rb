@@ -32,8 +32,10 @@ class ImageReporter
     "Saw %.2f of the images in #{@game_name} this session." % percentage_seen_for_game
   end
 
-  def missing_images_report
-    puts "Didn't see the following images this session:"
-    puts unseen_images_for_game
+  def report_missing_images(output_filename)
+    puts "Didn't see #{unseen_images_for_game.length} images this session"
+    File.open(output_filename, 'w') do |f|
+      unseen_images_for_game.each { |image| f.write("#{image}\n") }
+    end
   end
 end

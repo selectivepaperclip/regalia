@@ -32,7 +32,7 @@ module TheSinnerHelper
     },
     'Liberty Square' => {
       'NorthWest' => 'In front of the University',
-      'NorthEast' => 'Library',
+      'NorthEast' => 'Library [LS F Library]',
       'East' => 'First Mid-Eastern Crossroad',
       'SouthEast' => 'In front of Park',
       'South' => 'Mid-South Crossroad',
@@ -55,7 +55,15 @@ module TheSinnerHelper
       'NorthEast' => 'South-Eastern Crossroad'
     },
     "Rachel Hollinse's house" => {
-      'SouthWest' => 'South-Eastern Crossroad'
+      'In' => "Rachel Hollinse's house",
+      'NorthWest' => 'South-Eastern Crossroad'
+    },
+    'SW Rachel house' => {
+      'Out' => "Rachel Hollinse's house",
+      'North' => "Rachel's house. Bedroom"
+    },
+    "Rachel's house. Bedroom" => {
+      'South' => 'SW Rachel house'
     },
     'SW F Coxes house' => {
       'SouthWest' => 'South-Eastern Crossroad',
@@ -123,17 +131,25 @@ module TheSinnerHelper
     },
     'In front of the University' => {
       'SouthEast' => 'Liberty Square',
+      'West' => "University's Sport Ground",
       'In' => 'University Entrance'
+    },
+    "University's Sport Ground" => {
+      'East' => 'In front of the University'
     },
     'University Entrance' => {
       'Out' => 'In front of the University'
     },
-    'Library' => {
+    'Library [LS F Library]' => {
       'SouthWest' => 'Liberty Square',
       'In' => 'Reception'
     },
     'Reception' => {
-      'Out' => 'Library'
+      'Out' => 'Library [LS F Library]',
+      'NorthEast' => 'Library [LS Library]'
+    },
+    'Library [LS Library]' => {
+      'SouthWest' => 'Reception'
     },
     'In front of Park' => {
       'NorthWest' => 'Liberty Square',
@@ -163,7 +179,11 @@ module TheSinnerHelper
       'In' => "Jefferson's house"
     },
     "Jefferson's house" => {
-      'Out' => "In front of Jefferson's house"
+      'Out' => "In front of Jefferson's house",
+      'West' => 'Pool'
+    },
+    'Pool' => {
+      'East' => "Jefferson's house"
     }
   }
 
@@ -173,6 +193,10 @@ module TheSinnerHelper
 
   def go_to_room(destination_room)
     current_room = page.find('#RoomTitle').text
+    if current_room == 'Library'
+      fancy_room_name = page.evaluate_script('Finder.room(TheGame.Player.CurrentRoom).Name')
+      current_room = "Library [#{fancy_room_name}]"
+    end
 
     unless GAME_MAP[destination_room]
       raise "Don't know anything about destination room (#{destination_room})"
@@ -259,12 +283,10 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     go_direction 'East'
 
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_room 'Search'
     act_on_object 'Book about Sherlock Holmes', 'Tear out a page'
     continue_until_unpaused
-    go_direction 'SouthWest'
 
     go_to_room 'Liberty Square'
     act_on_object 'Page', 'Throw it out'
@@ -284,9 +306,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Lie: I am a new intern'
 
     # Lie about books
-    go_to_room 'Library'
-    go_direction 'In'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_character 'Student in the Library', 'Offer your help'
     act_on_character 'Student in the Library', 'Suggest a book'
     choose_input_action 'Lie: suggest'
@@ -422,10 +442,9 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'In front of Old Lighthouse'
     go_direction 'In'
-    act_on_room 'Spy on Kingstones'
-    act_on_room 'Spy on Kingstones'
-    act_on_room 'Spy on Kingstones'
-    act_on_room 'Spy on Kingstones'
+    until (continue_button = page.all('#Continue', visible: true)[0])
+      act_on_room 'Spy on Kingstones'
+    end
     continue_until_unpaused
     go_direction 'Out'
 
@@ -514,8 +533,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Learn about Norma and Angela
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_character 'Angela Colbert', 'Examine'
     act_on_character 'Angela Colbert', 'Talk'
     choose_input_action 'Tell me about Norma'
@@ -572,28 +590,23 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Ask Angela about sexy books
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_character 'Angela Colbert', 'Talk'
     choose_input_action 'Ask about the figurine.'
     continue_until_unpaused
     act_on_character 'Angela Colbert', 'Talk'
     choose_input_action 'Access to erotic books for Rubi'
     continue_until_unpaused
-    go_direction 'SouthWest'
 
     go_to_room 'Bar'
     act_on_character 'Katie Jewel', 'Buy the pastry'
 
     # Increase Angela's sins
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
-    go_to_room 'Library'
+    go_to_room 'Library [LS Library]'
     act_on_object 'big pack of pastry', 'Give'
     choose_input_action 'Angela Colbert'
     continue_until_unpaused
     act_on_character 'Angela Colbert', 'Cast: Read sins'
-    go_direction 'SouthWest'
 
     # Tell Rubi about sexy books
     go_to_room 'Deeper Park'
@@ -655,8 +668,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get witchcraft book for Vanessa
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_character 'Angela Colbert', 'Talk'
     choose_input_action 'Ask about access to old books'
     continue_until_unpaused
@@ -667,7 +679,6 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Angela Colbert', 'Talk'
     choose_input_action 'Tell me about Norma'
     continue_until_unpaused
-    go_direction 'SouthWest'
 
     go_to_room 'SW F Coxes house'
     act_on_room 'Peep'
@@ -726,11 +737,9 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Alberston\'s house'
     act_on_character 'Ann Alberstone', 'Cast: Read sins'
 
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_room 'Search'
     act_on_object 'sex manual', 'Take'
-    go_direction 'SouthWest'
 
     go_to_room 'University Entrance'
     go_direction 'NorthWest'
@@ -809,14 +818,12 @@ describe 'the sinner', type: :feature, js: true do
     # Get Rubi to steal a book
     go_to_room 'Liberty Square'
     wait_until_hour 18
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_character 'Angela Colbert', 'Cast: Read sins'
     continue_until_unpaused
     act_on_character 'Rubi Patterson', 'Talk'
     choose_input_action 'Were you able to "borrow" an interesting book?'
     continue_until_unpaused
-    go_direction 'SouthWest'
 
     # Wendy's Graffiti Quest
     go_to_room 'Mid-South Crossroad'
@@ -906,18 +913,9 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Learn'
     continue_until_unpaused
 
-    # Peep on Lara
-    go_to_room 'Mid-South Crossroad'
-    wait_until_hour 19
-    go_to_room "In front of Jewel's house"
-    act_on_room 'Peep'
-    continue_until_unpaused
-
     # Beat Wendy at Darts
+    go_to_room 'Mid-South Crossroad'
     wait_until_hour 21
-    go_direction 'NorthEast'
-    go_to_room 'In front of a Bar'
-    go_direction 'In'
     go_to_room 'Bar'
     act_on_character 'Wendy', 'Play Darts'
     choose_input_action 'Yes'
@@ -1195,8 +1193,8 @@ describe 'the sinner', type: :feature, js: true do
     page.all(".RoomObjects", text: 'box').last.click
     choose_action('Search')
     continue_until_unpaused
-    act_on_character 'Jack', 'Decide'
-    choose_input_action 'Fight your way through'
+    act_on_character 'Wendy', 'Cast: Induce to sin'
+    choose_input_action 'Lust'
     continue_until_unpaused
 
     act_on_self 'Next Day'
@@ -1297,8 +1295,7 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'East'
 
     # Finish Rubi's seduction
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    go_to_room 'Library [LS Library]'
     act_on_character 'Rubi Patterson', 'Talk'
     choose_input_action 'Chat'
     continue_until_unpaused
@@ -1315,6 +1312,11 @@ describe 'the sinner', type: :feature, js: true do
     # See Angela's pics
     go_direction 'SouthWest'
     act_on_character 'Angela Colbert', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Peep on Lara
+    go_to_room "In front of Jewel's house"
+    act_on_room 'Peep'
     continue_until_unpaused
 
     # Get Scarlett to suggest Joe repair computers
@@ -1414,7 +1416,6 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     choose_input_action 'Yes'
     continue_until_unpaused
-    go_direction 'NorthWest'
 
     # Beat up Joe to satisfy Katie
     go_to_room 'Liberty Square'
@@ -1621,14 +1622,15 @@ describe 'the sinner', type: :feature, js: true do
 
     # See Rubi's post-seduction library pics
     go_to_room 'Liberty Square'
-    wait_until_hour 19
-    go_to_room 'Reception'
-    go_direction 'NorthEast'
+    wait_until_hour 18
+    go_to_room 'Library [LS Library]'
     act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
 
     puts image_reporter.percentage_seen_report
-    # puts image_reporter.missing_images_report
+    if image_reporter.percentage_seen_for_game > 50
+      image_reporter.report_missing_images('tmp/thesinner_missing_images.txt')
+    end
   end
 end

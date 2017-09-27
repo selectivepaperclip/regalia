@@ -1112,12 +1112,14 @@ var GameCommands = {
                 break;
             }
             case "CT_MM_SET_UD_COMPASS": {
+                ImageRecorder.sawImage(part2);
                 $('#CustomUDCompass').off('load');
                 $('#CustomUDCompass').attr('src', 'images/' + part2);
                 $('#UDCompass').hide();
                 break;
             }
             case "CT_MM_SET_MAIN_COMPASS": {
+                ImageRecorder.sawImage(part2);
                 $('#CustomCompass').off('load');
                 $('#CustomCompass').attr('src', 'images/' + part2);
                 $('#Compass').hide();

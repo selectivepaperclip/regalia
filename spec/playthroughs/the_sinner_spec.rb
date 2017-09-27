@@ -74,9 +74,9 @@ module TheSinnerHelper
     },
     "In front of Alberston's house" => {
       'SouthEast' => 'South-Eastern Crossroad',
-      'In' => "Alberston's house"
+      'In' => "Alberstone's house"
     },
-    "Alberston's house" => {
+    "Alberstone's house" => {
       'Out' => 'In front of Alberston\'s house'
     },
     'In front of supermarket' => {
@@ -218,15 +218,26 @@ module TheSinnerHelper
     import_savegames(savegames_filename)
   end
 
-  def current_hour
-    page.find('#statusbartext').text.match(/(\d\d):(\d\d)/)[1].to_i
+  def current_time
+    time_match = page.find('#statusbartext').text.match(/(\d\d):(\d\d)/)
+    {
+      hour: time_match[1].to_i,
+      minute: time_match[2].to_i
+    }
+  end
+
+  def current_minute
+    page.find('#statusbartext').text.match(/(\d\d):(\d\d)/)[2].to_i
   end
 
   def wait_until_hour(hour)
-    if hour < current_hour
+    if hour < current_time[:hour]
       raise 'Cannot wait for past hour'
     end
-    hours_to_wait = hour.to_i - current_hour
+    if current_time[:minute] != 0
+      (current_time[:minute] / 10).times { act_on_self 'Wait 10 minutes' }
+    end
+    hours_to_wait = hour.to_i - current_time[:hour]
 
     while hours_to_wait > 0
       if hours_to_wait >= 6
@@ -240,7 +251,7 @@ module TheSinnerHelper
   end
 end
 
-# Tested with TheSinner 0.15b
+# Tested with TheSinner 0.16
 describe 'the sinner', type: :feature, js: true do
   let!(:image_reporter) { ImageReporter.new('TheSinner', page) }
 
@@ -278,10 +289,9 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'mobile', 'Install porn image'
     continue_until_unpaused
 
-    go_direction 'West'
+    go_to_room "University's Sport Ground"
     act_on_room 'Peep'
     continue_until_unpaused
-    go_direction 'East'
 
     go_to_room 'Library [LS Library]'
     act_on_room 'Search'
@@ -335,9 +345,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Start learning about the party
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
     go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Scarlett Jefferson', 'Examine'
     act_on_character 'Scarlett Jefferson', 'Talk'
     choose_input_action 'Ask about the party'
@@ -366,9 +375,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Scarlett thinking about bribes
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
     go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Scarlett Jefferson', 'Talk'
     choose_input_action 'Chat'
     act_on_character 'Scarlett Jefferson', 'Talk'
@@ -409,9 +417,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Tell Scarlett that Olivia is on board
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
     go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Scarlett Jefferson', 'Talk'
     choose_input_action 'Olivia allows the party!'
     continue_until_unpaused
@@ -453,9 +460,22 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Learn'
     continue_until_unpaused
 
-    # Give Kingstones photos to Layla
     act_on_self 'Next Day'
     continue_until_unpaused
+
+    # Increase Rose's sin
+    go_to_room "Alberstone's house"
+    act_on_character 'Rose Alberstone', 'Examine'
+    act_on_character 'Rose Alberstone', 'Talk'
+    choose_input_action 'Lie: It is too muddy for jogging'
+    continue_until_unpaused
+    act_on_character 'Rose Alberstone', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Skip the housework.'
+    continue_until_unpaused
+    act_on_character 'Rose Alberstone', 'Cast: Read sins'
+
+    # Give Kingstones photos to Layla
     go_to_room 'First Mid-Eastern Crossroad'
     wait_until_hour 10
     go_to_room 'Seafront'
@@ -464,7 +484,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Ann to come to the party
-    go_to_room "Alberston's house"
+    go_to_room "Alberstone's house"
     act_on_character 'Ann Alberstone', 'Examine'
     act_on_character 'Ann Alberstone', 'Talk'
     choose_input_action 'You should relax'
@@ -684,23 +704,11 @@ describe 'the sinner', type: :feature, js: true do
     act_on_room 'Peep'
     continue_until_unpaused
 
-    # Increase Rose's sin
-    go_to_room 'Alberston\'s house'
-    act_on_character 'Rose Alberstone', 'Examine'
-    act_on_character 'Rose Alberstone', 'Talk'
-    choose_input_action 'Egg on'
-    choose_input_action 'Skip the housework.'
-    continue_until_unpaused
-    act_on_character 'Rose Alberstone', 'Talk'
-    choose_input_action 'Egg on'
-    choose_input_action 'Skip the housework.'
-    continue_until_unpaused
-
     # Get Vodka for Norma
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 19
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcololic beverage'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
     choose_input_action 'Vodka'
 
     # Increase Layla's sin
@@ -734,7 +742,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Ann to blow Quincy
-    go_to_room 'Alberston\'s house'
+    go_to_room "Alberstone's house"
     act_on_character 'Ann Alberstone', 'Cast: Read sins'
 
     go_to_room 'Library [LS Library]'
@@ -748,7 +756,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     go_direction 'SouthEast'
 
-    go_to_room 'Alberston\'s house'
+    go_to_room "Alberstone's house"
     act_on_character 'Ann Alberstone', 'Talk'
     choose_input_action 'Chat'
     act_on_character 'Ann Alberstone', 'Talk'
@@ -775,9 +783,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Ask around for Layla's phone
-    go_to_room 'Liberty Square'
-    wait_until_hour 13
     go_to_room 'University Entrance'
+    wait_until_hour 13
     act_on_character 'Ann Alberstone', 'Talk'
     choose_input_action 'Ask about Layla\'s phone'
     act_on_character 'Rubi Patterson', 'Talk'
@@ -792,8 +799,8 @@ describe 'the sinner', type: :feature, js: true do
 
     # Get Layla's phone and finish her seduction
     go_to_room 'Jefferson\'s house'
-    act_on_room 'Buglary: Go to Scarlett\'s bedroom'
-    act_on_object 'wardrobe', 'Open'
+    act_on_room 'Burglary: Go to Scarlett\'s bedroom'
+    act_on_object 'Wardrobe', 'Open'
     act_on_object 'Layla\'s mobile', 'watch photos'
     continue_until_unpaused
     act_on_object 'Layla\'s mobile', 'Take'
@@ -837,10 +844,11 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
+
     # Add to Rose's sins with Ann's Sex Manual
-    go_to_room 'Alberston\'s house'
+    go_to_room 'Alberstone\'s house'
     go_direction 'NorthEast'
-    act_on_object 'Wardrobe', 'Hide Sex Maual'
+    act_on_object 'Wardrobe', 'Hide Sex Manual'
     go_direction 'SouthWest'
     act_on_character 'Rose Alberstone', 'Talk'
     choose_input_action 'Egg on'
@@ -850,15 +858,15 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Add to Joe's sins
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
     go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'Chat'
     continue_until_unpaused
-    act_on_object 'ClassCdoor', 'Skill: Barglary'
+
+    act_on_object 'Door to the Herodotus Class', 'Skill: Burglary'
     continue_until_unpaused
-    act_on_object 'ClassCdoor', 'Open'
+    act_on_object 'Door to the Herodotus Class', 'Open'
     go_direction 'North'
     go_direction 'South'
     act_on_character 'Joe Spencer', 'Talk'
@@ -879,33 +887,36 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'I do not believe that your mother is such a whore'
     continue_until_unpaused
     act_on_character 'Wendy', 'Talk'
-    choose_input_action 'Darts challange'
+    choose_input_action 'Darts challenge'
     continue_until_unpaused
 
-    # Complete Rose's seduction
+    # Get Rose more riled up
     wait_until_hour 12
     go_to_room 'Supermarket'
     act_on_character 'Rose Alberstone', 'Cast: Induce to sin'
     choose_input_action 'Stealing'
-    continue_until_unpaused
-    go_to_room 'South-Eastern Crossroad'
-    go_to_room 'In front of Alberston\'s house'
-    act_on_room 'Peep'
-    continue_until_unpaused
-    act_on_room 'Cast: Induce to sin'
-    choose_input_action 'Lust'
-    continue_until_unpaused
-    go_to_room 'Alberston\'s house'
-    act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
     continue_until_unpaused
 
     # Find what's on Chloe's laptop
     go_to_room 'SW F Coxes house'
     act_on_character 'Buffi', 'Attach empty cans'
     continue_until_unpaused
-    act_on_room 'Buglary'
+    act_on_room 'Burglary'
     go_to_room 'SW Cox house'
     act_on_object 'laptop', 'Check Browser history'
+    continue_until_unpaused
+
+    # Complete Rose's seduction
+    go_to_room 'In front of Alberston\'s house'
+    wait_until_hour 14
+    act_on_room 'Peep'
+    continue_until_unpaused
+    act_on_room 'Cast: Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+    go_to_room "Alberstone's house"
+    act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
+    choose_first_input_action 'Rose'
     continue_until_unpaused
 
     # Learn Advanced Sex
@@ -940,9 +951,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Start Lara's sins
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
     go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Lara Jewel', 'Examine'
     act_on_object 'Pastry', 'Give'
     choose_input_action 'Lara Jewel'
@@ -965,9 +975,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Start Chloe's laptop actions
-    go_to_room 'South-Eastern Crossroad'
-    wait_until_hour 13
     go_to_room 'Your House'
+    wait_until_hour 13
     act_on_object 'laptop', 'Go to BDSM site'
     act_on_object 'laptop', 'Polite "hello"'
     act_on_object 'laptop', 'Simple chat'
@@ -1017,9 +1026,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Learn Vanessa's and friends next steps
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
     go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Vanessa Hadwin', 'Talk'
     choose_input_action 'How was the ritual?'
     act_on_character 'Vanessa Hadwin', 'Cast: Read sins'
@@ -1059,20 +1067,20 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'In front of supermarket'
     act_on_room 'Work'
     continue_until_unpaused
+    wait_until_hour 16
     go_to_room 'Supermarket'
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
+    choose_first_input_action 'Rose'
     continue_until_unpaused
 
     # Watch Vanessa do some sex
-    go_to_room 'In front of the University'
-    go_direction 'West'
+    go_to_room "University's Sport Ground"
     act_on_character 'Vanessa Hadwin', 'Cast: Induce to sin'
     choose_input_action 'Lust'
     continue_until_unpaused
     act_on_character 'Vanessa Hadwin', 'Talk'
     choose_input_action 'Chat'
     continue_until_unpaused
-    go_direction 'East'
 
     # Peep on Lara
     go_to_room 'Mid-South Crossroad'
@@ -1240,13 +1248,11 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Finish Joe's seduction
-    go_to_room 'In front of the University'
-    go_direction 'West'
+    go_to_room "University's Sport Ground"
     act_on_room 'Peep'
     choose_input_action 'Truth'
     act_on_room 'Peep'
     continue_until_unpaused
-    go_direction 'East'
 
     # See Olivia's pics
     go_to_room 'Mid-South Crossroad'
@@ -1263,7 +1269,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Ann and Scarlett to sex
-    go_to_room 'Alberston\'s house'
+    go_to_room "Alberstone's house"
     go_direction 'NorthEast'
     act_on_character 'Ann Alberstone', 'Talk'
     choose_input_action 'Meet with Scarlett'
@@ -1279,8 +1285,7 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'East'
 
     # Try to convince Joe to see Scarlett
-    go_to_room 'In front of the University'
-    go_direction 'West'
+    go_to_room "University's Sport Ground"
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'Speak about Scarlett'
     act_on_character 'Joe Spencer', 'Talk'
@@ -1292,7 +1297,6 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'You should visit Scarlett'
     choose_input_action 'Scarlett wants to fuck with you'
-    go_direction 'East'
 
     # Finish Rubi's seduction
     go_to_room 'Library [LS Library]'
@@ -1305,7 +1309,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Rubi and Angela to bang
-    act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'
+    act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
 
@@ -1334,7 +1338,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # See Rubi party pics
     go_to_room 'Jefferson\'s house'
-    act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'
+    act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
 
@@ -1349,11 +1353,9 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     choose_input_action 'Yes'
     continue_until_unpaused
-    go_direction 'NorthWest'
 
     # Get Joe and Scarlett to have sex
-    go_to_room 'In front of the University'
-    go_direction 'West'
+    go_to_room "University's Sport Ground"
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'You should visit Scarlett'
     choose_input_action 'Ask to repair computer of Scarlett for money.'
@@ -1387,18 +1389,16 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Anger'
     continue_until_unpaused
 
-    go_to_room 'Liberty Square'
-    wait_until_hour 10
-    go_to_room 'University Entrance'
-
     # See Scarlett university pics
+    go_to_room 'University Entrance'
+    wait_until_hour 10
     act_on_character 'Scarlett Jefferson', 'Cast: Irresistible lust'
     choose_first_input_action 'Scarlett'
     continue_until_unpaused
 
     # See Rubi university pics
     go_to_room 'University Entrance'
-    act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'
+    act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
 
@@ -1426,7 +1426,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Get Lara drunk
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcololic beverage'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
     choose_input_action 'Rum'
 
     go_to_room 'Mid-South Crossroad'
@@ -1464,7 +1464,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Rachel Hollinse', 'Cast: Irresistible lust'
     choose_input_action 'Rachel'
     continue_until_unpaused
-    act_on_character 'Katie Jewel', 'Buy alcololic beverage'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
     choose_input_action 'Rum'
     continue_until_unpaused
     act_on_character 'Katie Jewel', 'Talk'
@@ -1524,7 +1524,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 20
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcololic beverage'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
     choose_input_action 'Rum'
 
     # Finish Lara's seduction
@@ -1543,7 +1543,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Get Lara's home pics
     go_to_room 'Jewel\'s house'
-    act_on_character 'Lara Jewel', 'Cast: Irrisistible lust'
+    act_on_character 'Lara Jewel', 'Cast: Irresistible lust'
     choose_input_action 'Lara'
     continue_until_unpaused
 
@@ -1554,7 +1554,7 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'North'
     continue_until_unpaused
     go_direction 'South'
-    act_on_character 'Lara Jewel', 'Cast: Irrisistible lust'
+    act_on_character 'Lara Jewel', 'Cast: Irresistible lust'
     choose_input_action 'Lara'
     continue_until_unpaused
 
@@ -1562,7 +1562,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 16
     go_to_room 'Jewel\'s house'
-    act_on_character 'Lara Jewel', 'Cast: Irrisistible lust'
+    act_on_character 'Lara Jewel', 'Cast: Irresistible lust'
     choose_input_action 'Lara'
     continue_until_unpaused
     act_on_character 'Katie Jewel', 'Cast: Irresistible lust'
@@ -1576,7 +1576,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Liberty Square'
     wait_until_hour 18
     go_to_room 'Park'
-    act_on_character 'Lara Jewel', 'Cast: Irrisistible lust'
+    act_on_character 'Lara Jewel', 'Cast: Irresistible lust'
     choose_first_input_action 'Lara'
     continue_until_unpaused
 
@@ -1592,8 +1592,9 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # See remaining Ann and Rose home pics
-    go_to_room 'Alberston\'s house'
+    go_to_room "Alberstone's house"
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
+    choose_first_input_action 'Rose'
     continue_until_unpaused
     act_on_character 'Ann Alberstone', 'Cast: Irresistible lust'
     choose_input_action 'Ann and Rose'
@@ -1602,30 +1603,115 @@ describe 'the sinner', type: :feature, js: true do
     # See Rose park pics
     go_to_room 'Park'
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
+    choose_first_input_action 'Rose'
     continue_until_unpaused
 
     # See Rubi's park pics
     go_to_room 'Liberty Square'
     wait_until_hour 16
     go_to_room 'Deeper Park'
-    act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'
+    act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
 
     # See Vanessa's post-seduction sport pics
-    go_to_room 'In front of the University'
-    go_direction 'West'
+    go_to_room "University's Sport Ground"
     act_on_character 'Vanessa Hadwin', 'Cast: Irresistible lust'
     choose_input_action 'Vanessa'
     continue_until_unpaused
-    go_direction 'East'
 
     # See Rubi's post-seduction library pics
     go_to_room 'Liberty Square'
     wait_until_hour 18
     go_to_room 'Library [LS Library]'
-    act_on_character 'Rubi Patterson', 'Cast: Irrisistible lust'
+    act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
+    continue_until_unpaused
+
+    # Get a Dildo
+    go_to_room 'Jefferson\'s house'
+    act_on_room 'Burglary: Go to Layla\'s bedroom'
+    act_on_object 'Wardrobe', 'Open'
+    act_on_object 'Dildo', 'Take'
+    go_direction 'SouthEast'
+
+    # Wait till Monday
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Trigger Father's entrance
+    go_to_room 'University Entrance'
+    wait_until_hour 10
+    act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
+    choose_input_action 'Rubi'
+    continue_until_unpaused
+    act_on_character 'Father Becker', 'Listen'
+    continue_until_unpaused
+
+    # Get a Drone
+    go_to_room 'In front of Bolder\'s house'
+    wait_until_hour 13
+    act_on_room 'Burglary'
+    go_direction 'NorthEast'
+    act_on_object 'Wardrobe', 'Open'
+    act_on_object 'Drone', 'Take'
+    continue_until_unpaused
+    act_on_object 'DildoDrone', 'Examine'
+    go_direction 'SouthWest'
+    go_direction 'Out'
+
+    # Prank father
+    go_to_room 'University Entrance'
+    act_on_character 'Father Becker', 'Prank'
+    continue_until_unpaused
+
+    # Get Father drunk
+    go_to_room 'In front of a Bar'
+    wait_until_hour 20
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+    choose_input_action 'Beer'
+    act_on_object 'Beer', 'Give'
+    choose_input_action 'Father Becker'
+    continue_until_unpaused
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+    choose_input_action 'Whiskey'
+    act_on_object 'Whiskey', 'Give'
+    choose_input_action 'Father Becker'
+    continue_until_unpaused
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+    choose_input_action 'Beer'
+    act_on_object 'Beer', 'Give'
+    choose_input_action 'Father Becker'
+    continue_until_unpaused
+
+    # Confess Sins with Wendy
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'In front of the graveyard'
+    wait_until_hour 16
+    act_on_character 'Wendy', 'Go to confess sins'
+    continue_until_unpaused
+
+    # Confess Sins with Angela, finishing Father's seduction
+    go_to_room 'Reception'
+    act_on_character 'Angela Colbert', 'Go to confess sins'
+    continue_until_unpaused
+
+    # See confessional pics
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Church'
+    wait_until_hour 16
+    act_on_object 'Confessional', 'Cast: Irresistible lust'
+    continue_until_unpaused
+    act_on_object 'Confessional', 'Cast: Irresistible lust'
+    continue_until_unpaused
+    act_on_object 'Confessional', 'Cast: Irresistible lust'
     continue_until_unpaused
 
     puts image_reporter.percentage_seen_report

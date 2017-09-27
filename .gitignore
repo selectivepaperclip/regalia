@@ -3,3 +3,4 @@ images/
 node_modules/
 .env
 script/
+tmp/

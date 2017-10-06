@@ -174,19 +174,17 @@ var GameUI = {
             });
         });
 
-        var leftposition, topposition;
-        if (clickEvent) {
-            leftposition = clickEvent.clientX;
-            topposition = clickEvent.clientY;
-        } else {
-            topposition = window.y - 50;
-            leftposition = window.x;
-            if (window.x + $("#selectionmenu").width() > $(window).width())
-                leftposition = $(window).width() - $("#selectionmenu").width();
+        var leftPosition = clickEvent.clientX;
+        var topPosition = clickEvent.clientY;
+        var rightPosition = leftPosition + $("#Actionchoices").width();
+        var windowWidth = $(window).width();
+        var fudgeFactor = 2;
+        if (rightPosition > windowWidth - fudgeFactor) {
+            leftPosition -= (rightPosition - windowWidth + fudgeFactor);
         }
 
-        $("#selectionmenu").css("top", topposition + "px");
-        $("#selectionmenu").css("left", leftposition + "px");
+        $("#selectionmenu").css("top", topPosition + "px");
+        $("#selectionmenu").css("left", leftPosition + "px");
         $("#selectionmenu").css("visibility", "visible");
         $("#Actionchoices").focus();
     },

@@ -37,11 +37,13 @@ var GameController = {
 
     pause: function () {
         this.gamePaused = true;
+        GameUI.disableSaveAndLoad();
         GameUI.hideGameElements();
     },
 
     continue: function () {
         this.gamePaused = false;
+        GameUI.enableSaveAndLoad();
         GameUI.showGameElements();
     },
 

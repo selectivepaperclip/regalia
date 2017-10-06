@@ -150,16 +150,6 @@ body {
     margin: 2px;
 }
 
-#UDCompass, #Compass {
-    width: auto;
-    height: 100%;
-}
-
-#CustomCompass, #CustomUDCompass {
-    max-width: 100%;
-    max-height: 100%;
-}
-
 /* other stuff */
 
 #RoomThumb, #RoomThumbImg {
@@ -204,6 +194,12 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
+}
+
+#RoomThumbImg, .RoomLayeredImage,
+#PlayerImg, .PortraitLayeredImage,
+#MainImg, .MainLayeredImage,
+.compass-rose, .compass-up-down {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

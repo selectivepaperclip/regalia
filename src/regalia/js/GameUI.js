@@ -5,6 +5,11 @@ var GameUI = {
         $('.game-title').text(title);
     },
 
+    setDefaultCompass: function () {
+        $(".compass-rose").css("background-image", 'url("images/300px-Compass_Rose_English_North.png")');
+        $(".compass-up-down").css("background-image", 'url("images/300px-Compass_Rose_UD.png")');
+    },
+
     setInputMenuTitle: function (act) {
         $("#InputMenuTitle").text(PerformTextReplacements(act.CustomChoiceTitle, null));
         $("#inputmenu").css("visibility", "visible");

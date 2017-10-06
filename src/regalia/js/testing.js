@@ -468,6 +468,7 @@ function receivedText() {
         OriginalGame = SetupGameData();
         TheGame = SetupGameData();
         GameUI.setGameTitle();
+        GameUI.setDefaultCompass();
         if (TheGame.Player.bPromptForName) {
             $("#playernamechoice").css("visibility", "visible");
             GameUI.hideGameElements();

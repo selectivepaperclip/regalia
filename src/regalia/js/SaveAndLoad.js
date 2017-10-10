@@ -1,6 +1,6 @@
 var SavedGames = {
     titleForSave: function () {
-        GameController.title().replace(/ /g, '_');
+        return GameController.title();
     },
     keyForIndex: function () {
         return this.titleForSave() + '-Saves';

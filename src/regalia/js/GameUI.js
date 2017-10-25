@@ -182,10 +182,15 @@ var GameUI = {
         var leftPosition = clickEvent.clientX;
         var topPosition = clickEvent.clientY;
         var rightPosition = leftPosition + $("#Actionchoices").width();
+        var bottomPosition = topPosition + $("#Actionchoices").height();
         var windowWidth = $(window).width();
+        var windowHeight = $(window).height();
         var fudgeFactor = 2;
         if (rightPosition > windowWidth - fudgeFactor) {
             leftPosition -= (rightPosition - windowWidth + fudgeFactor);
+        }
+        if (bottomPosition > windowHeight - fudgeFactor) {
+            topPosition -= (bottomPosition - windowHeight + fudgeFactor);
         }
 
         $("#selectionmenu").css("top", topPosition + "px");

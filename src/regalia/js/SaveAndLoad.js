@@ -39,20 +39,20 @@ var SavedGames = {
             name: name,
             date: date
         };
-        localStorage.setItem(this.keyForSave(id), JSON.stringify({
+        persistKeyValue(this.keyForSave(id), JSON.stringify({
             id: id,
             name: name,
             date: date,
             gameData: gameData,
             cheatFreezes: window.cheatFreezes
         }));
-        localStorage.setItem(this.keyForIndex(), JSON.stringify(savedGames));
+        persistKeyValue(this.keyForIndex(), JSON.stringify(savedGames));
     },
     destroySave: function (id) {
         var savedGames = this.getIndex();
         delete savedGames[id];
         localStorage.removeItem(this.keyForSave(id));
-        localStorage.setItem(this.keyForIndex(), JSON.stringify(savedGames));
+        persistKeyValue(this.keyForIndex(), JSON.stringify(savedGames));
     },
     reset: function () {
         var rawIndex = localStorage.getItem(this.keyForIndex());
@@ -62,7 +62,7 @@ var SavedGames = {
                 localStorage.removeItem(this.keyForSave(saveKeys[i]));
             }
         }
-        localStorage.setItem(this.keyForIndex(), JSON.stringify({}));
+        persistKeyValue(this.keyForIndex(), JSON.stringify({}));
     },
     import: function (newSaves) {
         var savedGames = this.getIndex();
@@ -73,9 +73,9 @@ var SavedGames = {
                 name: newSave.name,
                 date: newSave.date
             };
-            localStorage.setItem(this.keyForSave(newSave.id), JSON.stringify(newSave));
+            persistKeyValue(this.keyForSave(newSave.id), JSON.stringify(newSave));
         }
-        localStorage.setItem(this.keyForIndex(), JSON.stringify(savedGames));
+        persistKeyValue(this.keyForIndex(), JSON.stringify(savedGames));
     },
 
     saveDataFor: function (game) {
@@ -91,6 +91,17 @@ var SavedGames = {
         }
     }
 };
+
+function persistKeyValue(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) {
+        if (e instanceof DOMException && e.message.match(/exceeded the quota/)) {
+            alert("Save operation failed: localStorage quota exceeded.\n\nDelete some saves and try again.");
+        }
+        throw e;
+    }
+}
 
 function pathsEqual(p1,p2) {
     return JSON.stringify(p1) == JSON.stringify(p2);

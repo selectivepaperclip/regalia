@@ -46,8 +46,8 @@ function escapeQuotedTags(str) {
                 result = result.concat(
                     quoteContent
                         .join('')
-                        .replace(new RegExp(/<\s*\/br\s*>/, "g"), "&lt;br&gt;")
-                        .replace(new RegExp(/<\s*br\s*>/, "g"), "&lt;br&gt;")
+                        .replace(new RegExp("<\s*\/br\s*>", "g"), "&lt;br&gt;")
+                        .replace(new RegExp("<\s*br\s*>", "g"), "&lt;br&gt;")
                         .split('')
                 );
                 insideQuote = false;

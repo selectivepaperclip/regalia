@@ -85,7 +85,7 @@ var GameTimers = {
             tempact = Finder.action(timer.Actions, "<<On Turn " +
                 timer.TurnNumber.toString() + ">>");
             if (tempact != null)
-                GameActions.processAction(tempact, false); //null);
+                GameActions.processAction(tempact, false);
             UpdateStatusBars();
 
             runNextAfterPause(function () {
@@ -94,7 +94,7 @@ var GameTimers = {
                 if (timer.TurnNumber == timer.Length) {
                     tempact = Finder.action(timer.Actions, "<<On Last Turn>>");
                     if (tempact != null)
-                        GameActions.processAction(tempact, false); //null);
+                        GameActions.processAction(tempact, false);
                 }
                 UpdateStatusBars();
                 callback();

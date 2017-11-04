@@ -1,8 +1,4 @@
-﻿
-var CurrentRoomGuid = "00000000-0000-0000-0000-000000000001";
-var VoidRoomGuid = "00000000-0000-0000-0000-000000000002";
-
-function room() {
+﻿function room() {
     this.Description = "";
     this.SDesc = "";
     this.Name = "";
@@ -15,8 +11,6 @@ function room() {
     this.bEnterFirstTime = false;
     this.bLeaveFirstTime = false;
     this.UniqueID = "";
-
-
 }
 
 function SetupRoomData(RoomData) {

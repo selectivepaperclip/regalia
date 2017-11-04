@@ -1,8 +1,4 @@
-﻿
-var CurrentRoomGuid = "00000000-0000-0000-0000-000000000001";
-var VoidRoomGuid = "00000000-0000-0000-0000-000000000002";
-
-function variable() {
+﻿function variable() {
     this.dNumType = 0;
     this.dMin = "";
     this.dMax = "";

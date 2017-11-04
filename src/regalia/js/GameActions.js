@@ -32,7 +32,7 @@ var GameActions = {
         GameCommands.addCommands(runNext, bPassed ? act.PassCommands : act.FailCommands, AdditionalInputData, act);
     },
 
-    processAction: function(Action, bTimer) {
+    processAction: function(Action, bTimer, objectBeingActedActedUpon) {
         var act = null;
         Globals.bMasterTimer = bTimer;
 
@@ -48,9 +48,13 @@ var GameActions = {
         }
         var curclass = getObjectClass(Globals.selectedObj);
 
+        if (objectBeingActedActedUpon) {
+            CommandLists.startNestedCommandList({obj: objectBeingActedActedUpon, act: act});
+        }
+
         if (act.InputType === "None") {
             this.executeAction(act, bTimer);
-            SetBorders();
+            afterActionsProcessed();
             return;
         }
 
@@ -65,11 +69,20 @@ var GameActions = {
             $("#textactionchoice").css("visibility", "visible");
             $("#textactionchoice input").focus();
             GameController.startAwaitingInput();
-            SetBorders();
+            afterActionsProcessed();
             return;
         }
 
         GameUI.clearInputChoices();
+
+        function afterActionsProcessed() {
+            SetBorders();
+            if (objectBeingActedActedUpon) {
+                runAfterPause(function () {
+                    CommandLists.finishNestedCommandList();
+                });
+            }
+        }
 
         function addObjectChoices() {
             Interactables.roomAndInventoryObjects().forEach(function (obj) {
@@ -125,10 +138,10 @@ var GameActions = {
         GameUI.setInputMenuTitle(act);
         GameController.startAwaitingInput();
 
-        SetBorders();
+        afterActionsProcessed();
     },
 
-    runEvents: function (EventType) {
+    runEvents: function (EventType, done) {
         try {
             var startingroomid = TheGame.Player.CurrentRoom;
             var curroom = Finder.room(startingroomid);
@@ -141,100 +154,108 @@ var GameActions = {
                 GameActions.processAction(tempact, false);
             }
             Interactables.roomObjects().forEach(function (obj) {
-                CommandLists.addNestedCommandList(obj);
-
-                if (EventType.indexOf("Player Enter") > -1) {
-                    if (!obj.bEnterFirstTime) {
-                        tempact = Finder.action(obj.Actions, "<<On Player Enter First Time>>");
-                        obj.bEnterFirstTime = true;
-                        if (tempact != null)
-                            GameActions.processAction(tempact, false);
-                    }
-                } else if (EventType.indexOf("Player Leave") > -1) {
-                    if (!obj.bLeaveFirstTime) {
-                        tempact = Finder.action(obj.Actions, "<<On Player Leave First Time>>");
-                        obj.bLeaveFirstTime = true;
-                        if (tempact != null)
-                            GameActions.processAction(tempact, false);
-                    }
-                }
-                tempact = Finder.action(obj.Actions, EventType);
-                if (tempact != null) {
-                    if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                        if (EventType == "<<On Player Enter>>") {
-                            if (startingroomid == TheGame.Player.CurrentRoom) {
-                                GameActions.processAction(tempact, false);
+                runAfterPause(function () {
+                    if (EventType.indexOf("Player Enter") > -1) {
+                        if (!obj.bEnterFirstTime) {
+                            tempact = Finder.action(obj.Actions, "<<On Player Enter First Time>>");
+                            obj.bEnterFirstTime = true;
+                            if (tempact != null) {
+                                GameActions.processAction(tempact, false, obj);
                             }
-                        } else
-                            GameActions.processAction(tempact, false);
-                    }
-                }
-                if (obj.bContainer) {
-                    if (!obj.bOpenable || obj.bOpen) {
-                        for (var j = 0; j < TheGame.Objects.length; j++) {
-                            var tempobj2 = TheGame.Objects[j];
-                            CommandLists.addNestedCommandList(tempobj2);
-
-                            if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == obj.UniqueIdentifier)) {
-                                if (EventType.indexOf("Player Enter") > -1) {
-                                    if (!tempobj2.bEnterFirstTime) {
-                                        tempact = Finder.action(tempobj2.Actions, "<<On Player Enter First Time>>");
-                                        tempobj2.bEnterFirstTime = true;
-                                        if (tempact != null)
-                                            GameActions.processAction(tempact, false);
-                                    }
-                                } else if (EventType.indexOf("Player Leave") > -1) {
-                                    if (!tempobj2.bLeaveFirstTime) {
-                                        tempact = Finder.action(tempobj2.Actions, "<<On Player Leave First Time>>");
-                                        tempobj2.bLeaveFirstTime = true;
-                                        if (tempact != null)
-                                            GameActions.processAction(tempact, false);
-                                    }
-                                }
-                                tempact = Finder.action(tempobj2.Actions, EventType);
-                                if (tempact != null) {
-                                    if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                                        if (EventType == "<<On Player Enter>>") {
-                                            if (startingroomid == TheGame.Player.CurrentRoom) {
-                                                GameActions.processAction(tempact, false);
-                                            }
-                                        } else
-                                            GameActions.processAction(tempact, false);
-                                    }
-                                }
+                        }
+                    } else if (EventType.indexOf("Player Leave") > -1) {
+                        if (!obj.bLeaveFirstTime) {
+                            tempact = Finder.action(obj.Actions, "<<On Player Leave First Time>>");
+                            obj.bLeaveFirstTime = true;
+                            if (tempact != null) {
+                                GameActions.processAction(tempact, false, obj);
                             }
                         }
                     }
-                }
+                    tempact = Finder.action(obj.Actions, EventType);
+                    if (tempact != null) {
+                        if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
+                            if (EventType == "<<On Player Enter>>") {
+                                if (startingroomid == TheGame.Player.CurrentRoom) {
+                                    GameActions.processAction(tempact, false, obj);
+                                }
+                            } else {
+                                GameActions.processAction(tempact, false, obj);
+                            }
+                        }
+                    }
+                    if (obj.bContainer && (!obj.bOpenable || obj.bOpen)) {
+                        for (var j = 0; j < TheGame.Objects.length; j++) {
+                            runAfterPause(function () {
+                                var tempobj2 = TheGame.Objects[j];
+
+                                if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == obj.UniqueIdentifier)) {
+                                    if (EventType.indexOf("Player Enter") > -1) {
+                                        if (!tempobj2.bEnterFirstTime) {
+                                            tempact = Finder.action(tempobj2.Actions, "<<On Player Enter First Time>>");
+                                            tempobj2.bEnterFirstTime = true;
+                                            if (tempact != null)
+                                                GameActions.processAction(tempact, false, tempobj2);
+                                        }
+                                    } else if (EventType.indexOf("Player Leave") > -1) {
+                                        if (!tempobj2.bLeaveFirstTime) {
+                                            tempact = Finder.action(tempobj2.Actions, "<<On Player Leave First Time>>");
+                                            tempobj2.bLeaveFirstTime = true;
+                                            if (tempact != null) {
+                                                GameActions.processAction(tempact, false, tempobj2);
+                                            }
+                                        }
+                                    }
+                                    tempact = Finder.action(tempobj2.Actions, EventType);
+                                    if (tempact != null) {
+                                        if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
+                                            if (EventType == "<<On Player Enter>>") {
+                                                if (startingroomid == TheGame.Player.CurrentRoom) {
+                                                    GameActions.processAction(tempact, false, tempobj2);
+                                                }
+                                            } else {
+                                                GameActions.processAction(tempact, false, tempobj2);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             });
             Interactables.characters().forEach(function (character) {
-                if (EventType.indexOf("Player Enter") > -1) {
-                    if (!character.bEnterFirstTime) {
-                        tempact = Finder.action(character.Actions, "<<On Player Enter First Time>>");
-                        character.bEnterFirstTime = true;
-                        if (tempact != null)
-                            GameActions.processAction(tempact, false); //null);
+                runAfterPause(function () {
+                    if (EventType.indexOf("Player Enter") > -1) {
+                        if (!character.bEnterFirstTime) {
+                            tempact = Finder.action(character.Actions, "<<On Player Enter First Time>>");
+                            character.bEnterFirstTime = true;
+                            if (tempact != null)
+                                GameActions.processAction(tempact, false);
+                        }
+                    } else if (EventType.indexOf("Player Leave") > -1) {
+                        if (!character.bLeaveFirstTime) {
+                            tempact = Finder.action(character.Actions, "<<On Player Leave First Time>>");
+                            character.bLeaveFirstTime = true;
+                            if (tempact != null)
+                                GameActions.processAction(tempact, false);
+                        }
                     }
-                } else if (EventType.indexOf("Player Leave") > -1) {
-                    if (!character.bLeaveFirstTime) {
-                        tempact = Finder.action(character.Actions, "<<On Player Leave First Time>>");
-                        character.bLeaveFirstTime = true;
-                        if (tempact != null)
-                            GameActions.processAction(tempact, false); //null);
+                    tempact = Finder.action(character.Actions, EventType);
+                    if (tempact != null) {
+                        if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
+                            if (EventType == "<<On Player Enter>>") {
+                                if (startingroomid == TheGame.Player.CurrentRoom) {
+                                    GameActions.processAction(tempact, null);
+                                }
+                            } else
+                                GameActions.processAction(tempact, false);
+                        }
                     }
-                }
-                tempact = Finder.action(character.Actions, EventType);
-                if (tempact != null) {
-                    if (EventType == "<<On Player Enter>>" || EventType == "<<On Player Leave>>") {
-                        if (EventType == "<<On Player Enter>>") {
-                            if (startingroomid == TheGame.Player.CurrentRoom) {
-                                GameActions.processAction(tempact, null);
-                            }
-                        } else
-                            GameActions.processAction(tempact, false); //null);
-                    }
-                }
+                });
             });
+
+            runAfterPause(done);
         } catch (err) {
             var themsg = err.message;
         }

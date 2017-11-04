@@ -144,7 +144,8 @@ var GameUI = {
                     });
                     $("#selectionmenu").css("visibility", "hidden");
                     ResetLoopObjects();
-                    GameActions.processAction(selectionchoice);
+                    // TODO: get the selected obj from somewhere other than the global
+                    GameActions.processAction(selectionchoice, false, Globals.theObj);
                 });
             }
         });
@@ -332,6 +333,7 @@ var GameUI = {
         $div.toggleClass('no-actions', GetActionCount(actions) === 0);
 
         $div.click(function(clickEvent) {
+            // TODO: this is the main place that stashes Globals.selectedObj, try to get rid of it
             Globals.selectedObj = objFinderFunction($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;

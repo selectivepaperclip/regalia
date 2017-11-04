@@ -1,10 +1,23 @@
 var CommandLists = {
     stack: [
-        {obj: null, commands: []}
+        {obj: null, act: null, autoShift: false, commands: []}
     ],
 
-    addNestedCommandList: function (obj) {
-        this.stack.unshift({obj: obj, commands: []});
+    startNestedCommandList: function (params) {
+        params = params || {};
+        var newStackParams = {
+            obj: params.obj || this.objectBeingActedUpon(),
+            act: params.act, commands: []
+        };
+        this.stack.unshift(newStackParams);
+    },
+
+    finishNestedCommandList: function () {
+        if (this.stack.length === 1) {
+            throw "Tried to finish the command list but there was nothing under it!";
+        }
+        this.stack[0].autoShift = true;
+        GameCommands.runCommands.apply(GameCommands, [this.stack[0].obj, this.stack[0].act]);
     },
 
     nextCommand: function () {
@@ -26,13 +39,20 @@ var CommandLists = {
     },
 
     objectBeingActedUpon: function () {
-        return this.stack[0].obj;
+        for (var i = 0; i < this.stack.length; i++) {
+            if (this.stack[i].obj) {
+                return this.stack[i].obj;
+            }
+        }
     },
 
     commandCount: function () {
         this.unshiftEmptyStacks();
-        var result = 0;
-        for (var i = 0; i < this.stack.length; i++) {
+        var result = this.stack[0].commands.length;
+        for (var i = 1; i < this.stack.length; i++) {
+            if (!this.stack[i - 1].autoShift) {
+                return result;
+            }
             result += this.stack[i].commands.length;
         }
         return result;
@@ -40,7 +60,11 @@ var CommandLists = {
 
     unshiftEmptyStacks: function () {
         while (this.stack.length > 1 && this.stack[0].commands.length === 0) {
-            this.stack.shift();
+            if (this.stack[0].autoShift) {
+                this.stack.shift();
+            } else {
+                return;
+            }
         }
     }
 };

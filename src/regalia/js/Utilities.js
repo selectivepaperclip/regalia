@@ -263,51 +263,63 @@ function runAfterPause(runNextPhase) {
     }
 }
 
-function ChangeRoom(currentroom, bRunTimerEvents, bRunEvents) {
-    CommandLists.addNestedCommandList();
-    var desiredRoomId = currentroom.UniqueID;
-    if (currentroom == null)
+function ChangeRoom(currentRoom, bRunTimerEvents, bRunEvents) {
+    CommandLists.startNestedCommandList();
+    var desiredRoomId = currentRoom.UniqueID;
+    if (currentRoom == null)
         return;
-    $("#RoomTitle").html(roomDisplayName(currentroom));
-    SetRoomThumb(currentroom.RoomPic);
-    showImage(currentroom.RoomPic);
-    TheGame.Player.CurrentRoom = currentroom.UniqueID;
+    $("#RoomTitle").html(roomDisplayName(currentRoom));
+    SetRoomThumb(currentRoom.RoomPic);
+    showImage(currentRoom.RoomPic);
+    TheGame.Player.CurrentRoom = currentRoom.UniqueID;
     if (Globals.movingDirection) {
         $("#MainText").append('</br><b>' + Globals.movingDirection + "</b>");
     }
-    if (bRunEvents && !currentroom.bEnterFirstTime) {
-        currentroom.bEnterFirstTime = true;
-        GameActions.runEvents("<<On Player Enter First Time>>");
+    if (bRunEvents && !currentRoom.bEnterFirstTime) {
+        currentRoom.bEnterFirstTime = true;
+        GameActions.runEvents("<<On Player Enter First Time>>", phase2);
+    } else {
+        phase2();
     }
-    runAfterPause(function () {
-        // Handle situations where one of the "Enter First Time" events triggers a new ChangeRoom
-        if (TheGame.Player.CurrentRoom !== desiredRoomId) {
-            return;
-        }
-        if (bRunEvents) {
-            GameActions.runEvents("<<On Player Enter>>");
-        }
+
+    function phase2 () {
         runAfterPause(function () {
-            // Handle situations where one of the "Enter" events triggers a new ChangeRoom
+            // Handle situations where one of the "Enter First Time" events triggers a new ChangeRoom
             if (TheGame.Player.CurrentRoom !== desiredRoomId) {
                 return;
             }
-            $("#MainText").animate({
-                scrollTop: $("#MainText")[0].scrollHeight
-            });
-            AddTextToRTF(currentroom.Description, "Black", "Regular");
-            $("#MainText").animate({
-                scrollTop: $("#MainText")[0].scrollHeight
-            }, 0);
-            ActionRecorder.roomEntered(roomDisplayName(currentroom));
-            if (bRunTimerEvents)
-                GameTimers.runTimerEvents();
-            GameUI.refreshPanelItems();
-            if ($("#RoomThumb").css("visibility") != "hidden")
-                SetExits();
-            SetBorders();
+            if (bRunEvents) {
+                GameActions.runEvents("<<On Player Enter>>", phase3);
+            } else {
+                phase3();
+            }
+
+            function phase3 () {
+                runAfterPause(function () {
+                    CommandLists.finishNestedCommandList();
+
+                    // Handle situations where one of the "Enter" events triggers a new ChangeRoom
+                    if (TheGame.Player.CurrentRoom !== desiredRoomId) {
+                        return;
+                    }
+                    $("#MainText").animate({
+                        scrollTop: $("#MainText")[0].scrollHeight
+                    });
+                    AddTextToRTF(currentRoom.Description, "Black", "Regular");
+                    $("#MainText").animate({
+                        scrollTop: $("#MainText")[0].scrollHeight
+                    }, 0);
+                    ActionRecorder.roomEntered(roomDisplayName(currentRoom));
+                    if (bRunTimerEvents)
+                        GameTimers.runTimerEvents();
+                    GameUI.refreshPanelItems();
+                    if ($("#RoomThumb").css("visibility") != "hidden")
+                        SetExits();
+                    SetBorders();
+                });
+            }
         });
-    });
+    }
 }
 
 function RoomChange(bRunTimerEvents, bRunEvents) {

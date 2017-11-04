@@ -90,7 +90,7 @@ var GameCommands = {
                 break;
             }
             case "CT_DISPLAYITEMDESC": {
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         AddTextToRTF(objectBeingActedUpon.description, "Black", "Regular");
                 } else {
@@ -318,7 +318,7 @@ var GameCommands = {
             }
             case "CT_MOVEITEMTOINV": {
                 var Tempobj = null;
-                if (part2 == ("00000000-0000-0000-0000-000000000004")) {
+                if (part2 == (SelfObjectGuid)) {
                     if (objectBeingActedUpon) {
                         Tempobj = objectBeingActedUpon;
                     }
@@ -333,7 +333,7 @@ var GameCommands = {
             }
             case "CT_ITEMS_MOVE_CONTAINER_TO_CONTAINER": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon) {
                         Tempobj = objectBeingActedUpon;
                     }
@@ -341,7 +341,7 @@ var GameCommands = {
                     Tempobj = Finder.object(part2);
                 }
                 var Destobj = null;
-                if (part3 == "00000000-0000-0000-0000-000000000004") {
+                if (part3 == SelfObjectGuid) {
                     if (objectBeingActedUpon) {
                         Destobj = objectBeingActedUpon;
                     }
@@ -360,7 +360,7 @@ var GameCommands = {
             }
             case "CT_ITEM_SET_VISIBILITY": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
@@ -460,7 +460,7 @@ var GameCommands = {
             }
             case "CT_MOVEITEMTOROOM": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
@@ -481,7 +481,7 @@ var GameCommands = {
                 break;
             }
             case "CT_MOVEITEMTOOBJ": {
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon) {
                         var locationnameref = "";
                         try {
@@ -516,7 +516,7 @@ var GameCommands = {
                 break;
             }
             case "CT_MOVEITEMTOCHAR": {
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon) {
                         objectBeingActedUpon.locationtype = "LT_CHARACTER";
                         objectBeingActedUpon.locationname = part3;
@@ -631,7 +631,7 @@ var GameCommands = {
             }
             case "CT_SETITEMDESC": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
@@ -1124,7 +1124,7 @@ var GameCommands = {
             case "CT_SETOBJECTACTION": {
                 var tempobj = null;
                 var actionlist = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     actionlist = Globals.curActions;
                 } else {
                     tempobj = Finder.object(part2);
@@ -1224,7 +1224,7 @@ var GameCommands = {
             }
             case "CT_SETLOCKEDUNLOCKED": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
@@ -1241,7 +1241,7 @@ var GameCommands = {
             }
             case "CT_SETOPENCLOSED": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
@@ -1259,7 +1259,7 @@ var GameCommands = {
             }
             case "CT_SETITEMTOWORN": {
                 var Tempobj = null;
-                if (part2 == "00000000-0000-0000-0000-000000000004") {
+                if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon)
                         Tempobj = objectBeingActedUpon;
                 } else {
@@ -1459,6 +1459,9 @@ var GameCommands = {
                 var callback = CommandLists.shiftCommand();
                 callback();
                 continue;
+            }
+            if (!CommandLists.nextCommand()) {
+                throw 'NO COMMAND?';
             }
 
             var loopObj = Globals.loopArgs.object;

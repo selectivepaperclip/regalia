@@ -13,7 +13,7 @@ $(function() {
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    $('#regalia_version').text('Regalia 0.8.2');
+    $('#regalia_version').text('Regalia 0.9.0');
 
     $(document).keydown(function(e) {
         switch (e.keyCode) {
@@ -40,20 +40,6 @@ $(function() {
     $(document).mousemove(function(e) {
         window.x = e.pageX;
         window.y = e.pageY;
-    });
-    $("#Actionchoices").change(function(e) {
-        var selectionchoice = $("#Actionchoices").val();
-        if (selectionchoice != null) {
-            GameController.executeAndRunTimers(function () {
-                $("#MainText").append('</br><b>' + selectionchoice + "</b>");
-                $("#MainText").animate({
-                    scrollTop: $("#MainText")[0].scrollHeight
-                });
-                $("#selectionmenu").css("visibility", "hidden");
-                ResetLoopObjects();
-                GameActions.processAction(selectionchoice);
-            });
-        }
     });
     $("#Continue").click(function(e) {
         ActionRecorder.clickedContinue();
@@ -337,12 +323,12 @@ $(function() {
         if (curroom != null) {
             if (!curroom.bLeaveFirstTime) {
                 curroom.bLeaveFirstTime = true;
-                GameActions.runEvents("<<On Player Leave First Time>>");
+                GameActions.runEvents("<<On Player Leave First Time>>", function () {}); // TODO
             }
         }
         runAfterPause(function () {
             if (curroom != null) {
-                GameActions.runEvents("<<On Player Leave>>");
+                GameActions.runEvents("<<On Player Leave>>", function () {}); // TODO
             }
             runAfterPause(function () {
                 if (!Globals.bCancelMove) {
@@ -494,7 +480,7 @@ function StartGame() {
         ChangeRoom(currentroom, true, true);
     }
     SetPortrait(TheGame.Player.PlayerPortrait);
-    GameActions.runEvents("<<On Game Start>>");
+    GameActions.runEvents("<<On Game Start>>", function () {}); // TODO
 }
 
 function GetImageMimeType(lastthree) {

@@ -1,7 +1,4 @@
-﻿
-var SelfObjectGuid = "00000000-0000-0000-0000-000000000004";
-
-function ragsobject() {
+﻿function ragsobject() {
     this.locationtype = "LT_NULL";
     this.UniqueIdentifier = "";
     this.locationname = "";

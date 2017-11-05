@@ -136,7 +136,7 @@ function SetRoomThumb(ImageName) {
                 img.css('background-image', imageUrl(thelayers[i]));
                 img.click(function(clickEvent) {
                     Globals.theObj = Finder.room(TheGame.Player.CurrentRoom);
-                    GameUI.displayActions(Globals.theObj.Actions, clickEvent, 'room');
+                    GameUI.displayActions(Globals.theObj, clickEvent);
                 });
                 img.appendTo('#RoomImageLayers');
             }
@@ -193,7 +193,7 @@ function SetPortrait(ImageName) {
                 img.css('background-image', imageUrl(layers[i]));
                 img.click(function(clickEvent) {
                     Globals.theObj = TheGame.Player;
-                    GameUI.displayActions(TheGame.Player.Actions, clickEvent, 'self');
+                    GameUI.displayActions(TheGame.Player, clickEvent);
                 });
                 img.appendTo('#PortraitImageLayers');
             }

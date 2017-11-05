@@ -90,7 +90,11 @@ var ActionRecorder = {
     actedOnObject: function (object, action) {
         var method;
         var objectName;
-        if (object.Charname) {
+        if (object instanceof player) {
+            return this.actedOnSelf(action);
+        } else if (object instanceof room) {
+            return this.actedOnRoom(action);
+        } else if (object instanceof character) {
             method = 'act_on_character';
             objectName = object.CharnameOverride || object.Charname;
         } else {
@@ -98,16 +102,6 @@ var ActionRecorder = {
             objectName = object.sdesc || object.name;
         }
         this.addAction(method, objectName, action);
-    },
-
-    actedOnSomething: function (thing, selectiontext) {
-        if (thing == 'self') {
-            this.actedOnSelf(selectiontext);
-        } else if (thing == 'room') {
-            this.actedOnRoom(selectiontext);
-        } else {
-            this.actedOnObject(Globals.selectedObj, selectiontext);
-        }
     }
 };
 

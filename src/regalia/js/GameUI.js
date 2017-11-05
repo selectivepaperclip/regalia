@@ -125,7 +125,7 @@ var GameUI = {
         $("#textchoice input").focus();
     },
 
-    addActionChoice: function (action, text, actionRecipientToLog) {
+    addActionChoice: function (obj, action, text) {
         var $div = $("<div>", {
             class: "ActionChoices",
             text: text,
@@ -137,15 +137,14 @@ var GameUI = {
             var selectiontext = $(this).text();
             if (selectionchoice != null) {
                 GameController.executeAndRunTimers(function () {
-                    ActionRecorder.actedOnSomething(actionRecipientToLog, selectiontext);
+                    ActionRecorder.actedOnObject(obj, selectiontext);
                     $("#MainText").append('</br><b>' + selectionchoice + "</b>");
                     $("#MainText").animate({
                         scrollTop: $("#MainText")[0].scrollHeight
                     });
                     $("#selectionmenu").css("visibility", "hidden");
                     ResetLoopObjects();
-                    // TODO: get the selected obj from somewhere other than the global
-                    GameActions.processAction(selectionchoice, false, Globals.theObj);
+                    GameActions.processAction(selectionchoice, false, obj);
                 });
             }
         });
@@ -154,7 +153,8 @@ var GameUI = {
         return $div;
     },
 
-    displayActions: function (actions, clickEvent, actionRecipientToLog) {
+    displayActions: function (obj, clickEvent) {
+        var actions = obj.Actions;
         if (GetActionCount(actions) === 0) {
             return;
         }
@@ -164,8 +164,8 @@ var GameUI = {
         for (var i = 0; i < actions.length; i++) {
             var action = actions[i];
             if (actionShouldBeVisible(action)) {
-                this.addActionChoice(action, nameForAction(action), actionRecipientToLog);
-                this.addChildActions(actions, "--", action.name, actionRecipientToLog);
+                this.addActionChoice(obj, action, nameForAction(action));
+                this.addChildActions(obj, actions, "--", action.name);
             }
         }
 
@@ -200,12 +200,12 @@ var GameUI = {
         $("#Actionchoices").focus();
     },
 
-    addChildActions: function (actions, Indent, ActionName, actionRecipientToLog) {
+    addChildActions: function (obj, actions, Indent, ActionName) {
         for (var i = 0; i < actions.length; i++) {
             var action = actions[i];
             if (action.name.substring(0, 2) != "<<" && action.bActive && action.actionparent == ActionName) {
-                this.addActionChoice(action, Indent + nameForAction(action), actionRecipientToLog);
-                this.addChildActions(actions, "--" + Indent, action.name, actionRecipientToLog);
+                this.addActionChoice(obj, action, Indent + nameForAction(action));
+                this.addChildActions(obj, actions, "--" + Indent, action.name);
             }
         }
     },
@@ -337,7 +337,7 @@ var GameUI = {
             Globals.selectedObj = objFinderFunction($(this).val());
             if (Globals.selectedObj != null) {
                 Globals.theObj = Globals.selectedObj;
-                GameUI.displayActions(Globals.selectedObj.Actions, clickEvent);
+                GameUI.displayActions(Globals.selectedObj, clickEvent);
             }
         });
         return $div;

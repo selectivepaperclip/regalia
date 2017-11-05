@@ -53,11 +53,11 @@ $(function() {
     });
     $("#PlayerImg").click(function(e) {
         Globals.theObj = TheGame.Player;
-        GameUI.displayActions(TheGame.Player.Actions, e, 'self');
+        GameUI.displayActions(TheGame.Player, e);
     });
     $("#RoomThumbImg").click(function(e) {
         Globals.theObj = Finder.room(TheGame.Player.CurrentRoom);
-        GameUI.displayActions(Globals.theObj.Actions, e, 'room');
+        GameUI.displayActions(Globals.theObj, e);
     });
 
     function onKeyupEnter(selector, fn) {

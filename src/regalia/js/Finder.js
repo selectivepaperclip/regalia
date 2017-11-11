@@ -1,14 +1,14 @@
 var Finder = {
     action: function(actions, name) {
-        name = name.trim();
+        var lowercaseActionName = name.trim().toLowerCase();
         return actions.find(function (action) {
-            return action.name.trim().toLowerCase() === name.toLowerCase();
+            return action.name.trim().toLowerCase() === lowercaseActionName;
         });
     },
     timer: function(timerName) {
-        timerName = timerName.trim();
+        var lowercaseTimerName = timerName.trim().toLowerCase();
         return TheGame.Timers.find(function (timer) {
-            return timer.Name.trim() === timerName;
+            return timer.Name.trim().toLowerCase() === lowercaseTimerName;
         });
     },
     variable: function(variableName) {
@@ -16,8 +16,10 @@ var Finder = {
         if (variableName.indexOf("(") > -1) {
             variableName = variableName.substring(0, variableName.indexOf("("));
         }
+
+        var lowercaseVariableName = variableName.toLowerCase();
         return TheGame.Variables.find(function (variable) {
-            return variable.varname.trim().toLowerCase() === variableName.toLowerCase();
+            return variable.varname.trim().toLowerCase() === lowercaseVariableName;
         });
     },
     object: function(uidOrName) {
@@ -31,8 +33,10 @@ var Finder = {
                 return TheGame.Objects[i];
             }
         }
+
+        var lowercaseObjectName = uidOrName.toLowerCase();
         for (var j = 0; j < TheGame.Objects.length; j++) {
-            if (TheGame.Objects[j].name && TheGame.Objects[j].name.toLowerCase() === uidOrName.toLowerCase()) {
+            if (TheGame.Objects[j].name && TheGame.Objects[j].name.toLowerCase() === lowercaseObjectName) {
                 return TheGame.Objects[j];
             }
         }
@@ -42,9 +46,9 @@ var Finder = {
             return null;
         }
 
-        characterName = characterName.trim();
+        var lowercaseCharacterName = characterName.trim().toLowerCase();
         for (var i = 0; i < TheGame.Characters.length; i++) {
-            if (TheGame.Characters[i].Charname.toLowerCase() == characterName.toLowerCase()) {
+            if (TheGame.Characters[i].Charname.toLowerCase() == lowercaseCharacterName) {
                 return TheGame.Characters[i];
             }
         }
@@ -62,10 +66,11 @@ var Finder = {
         }
 
         var containsDash = roomName.indexOf('-') != -1;
+        var lowercaseRoomName = roomName.toLowerCase();
         //check by name if we get here
         for (var j = 0; j < TheGame.Rooms.length; j++) {
             var room = TheGame.Rooms[j];
-            if (room.Name == roomName) {
+            if (room.Name.toLowerCase() == lowercaseRoomName) {
                 return TheGame.Rooms[j];
             }
 
@@ -76,7 +81,7 @@ var Finder = {
             // room name or `%{name}-%{sdesc}`. So we need to check for that.
             if (containsDash && room.SDesc) {
                 var joinedName = [room.Name, room.SDesc].join('-');
-                if (joinedName == roomName) {
+                if (joinedName.toLowerCase() == lowercaseRoomName) {
                     return room;
                 }
             }

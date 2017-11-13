@@ -59,6 +59,29 @@ var ActionRecorder = {
         return this.actions.join("\n");
     },
 
+    roomAndExits: function () {
+        var roomTitle = $('#RoomTitle').text();
+        var exits = [];
+        var directions = ['NorthWest', 'North', 'NorthEast', 'East', 'SouthEast', 'South', 'SouthWest', 'West', 'Up', 'Down', 'In', 'Out'];
+        directions.forEach(function (direction) {
+            if ($('.compass-direction.active[data-direction=' + direction + ']').length > 0) {
+                var destRoom = roomDisplayName(Finder.room(GetDestinationRoomName(direction)));
+                exits.push([direction, destRoom]);
+            }
+        });
+        var lines = [];
+        lines.push('"' + roomTitle.replace(/"/g, '\"') + '" => {');
+        exits.forEach(function (pair, ix) {
+            var maybeComma = '';
+            if (ix < exits.length - 1) {
+                maybeComma = ',';
+            }
+            lines.push('  "' + pair[0].replace(/"/g, '\"') + '" => "' + pair[1].replace(/"/g, '\"') + '"' + maybeComma);
+        });
+        lines.push('},');
+        return lines.join("\n");
+    },
+
     locationChange: function (direction) {
         this.addAction('go_direction', direction)
     },

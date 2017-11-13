@@ -483,33 +483,19 @@ var GameCommands = {
             case "CT_MOVEITEMTOOBJ": {
                 if (part2 == SelfObjectGuid) {
                     if (objectBeingActedUpon) {
-                        var locationnameref = "";
-                        try {
-                            locationnameref = part3;
-                        } catch (err) {
-                            var locationobj = Finder.object(part3);
-                            if (locationobj != null)
-                                locationnameref = locationobj.UniqueIdentifier;
-                        }
-                        if (locationnameref != "") {
+                        var locationobj = Finder.object(part3);
+                        if (locationobj) {
                             objectBeingActedUpon.locationtype = "LT_IN_OBJECT";
-                            objectBeingActedUpon.locationname = locationnameref;
+                            objectBeingActedUpon.locationname = locationobj.UniqueIdentifier;
                         }
                     }
                 } else {
                     var tempobj = Finder.object(part2);
                     if (tempobj != null) {
-                        var locationnameref = "";
-                        try {
-                            locationnameref = part3;
-                        } catch (err) {
-                            var locationobj = Finder.object(part3);
-                            if (locationobj != null)
-                                locationnameref = locationobj.UniqueIdentifier;
-                        }
-                        if (locationnameref != "") {
+                        var locationobj = Finder.object(part3);
+                        if (locationobj) {
                             tempobj.locationtype = "LT_IN_OBJECT";
-                            tempobj.locationname = locationnameref;
+                            tempobj.locationname = locationobj.UniqueIdentifier;
                         }
                     }
                 }

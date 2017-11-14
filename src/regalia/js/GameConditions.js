@@ -11,6 +11,7 @@ var GameConditions = {
                 GameCommands.insertToMaster([tempcond], undefined, conditionAction);
                 GameCommands.insertToMaster(tempcond.PassCommands, undefined, conditionAction);
             } else {
+                Logger.logEvaluatedCondition(tempcond, bResult);
                 ResetLoopObjects();
             }
         }
@@ -39,6 +40,8 @@ var GameConditions = {
                         if (this.testVariable(step2, step3, step4)) {
                             GameCommands.insertToMaster([tempcond], undefined, conditionAction);
                             GameCommands.insertToMaster(tempcond.PassCommands, undefined, conditionAction);
+                        } else {
+                            Logger.logEvaluatedCondition(tempcond, bResult);
                         }
                         break;
                     }
@@ -126,7 +129,8 @@ var GameConditions = {
                     tempcheck.ConditionStep3 + " - " + tempcheck.ConditionStep4);
             }
         }
-        if (!Globals.loopArgs.array) {
+
+        if (!isLoopCheck(tempcond.Checks[0])) {
             Logger.logEvaluatedCondition(tempcond, bResult);
         }
         return bResult;

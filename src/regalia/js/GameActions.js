@@ -185,10 +185,8 @@ var GameActions = {
                         }
                     }
                     if (obj.bContainer && (!obj.bOpenable || obj.bOpen)) {
-                        for (var j = 0; j < TheGame.Objects.length; j++) {
+                        TheGame.Objects.forEach(function (tempobj2) {
                             runAfterPause(function () {
-                                var tempobj2 = TheGame.Objects[j];
-
                                 if ((tempobj2.locationtype == "LT_IN_OBJECT") && (tempobj2.locationname == obj.UniqueIdentifier)) {
                                     if (EventType.indexOf("Player Enter") > -1) {
                                         if (!tempobj2.bEnterFirstTime) {
@@ -220,7 +218,7 @@ var GameActions = {
                                     }
                                 }
                             });
-                        }
+                        });
                     }
                 });
             });

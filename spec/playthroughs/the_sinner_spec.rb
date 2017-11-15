@@ -503,10 +503,11 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Ann Alberstone', 'Go to the party'
 
     # Stall until drinking contest
-    act_on_character 'Ann Alberstone', 'Examine'
-    act_on_character 'Ann Alberstone', 'Examine'
-    act_on_character 'Ann Alberstone', 'Examine'
-    act_on_character 'Ann Alberstone', 'Examine'
+    Timeout.timeout(5) do
+      while page.all('#inputmenu', visible: true).length == 0
+        act_on_character 'Ann Alberstone', 'Examine'
+      end
+    end
     choose_input_action 'Yes'
     continue_until_unpaused
     choose_input_action 'The fifth one'

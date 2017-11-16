@@ -849,11 +849,7 @@ function ReplaceStatic(text, tempindex, change, loopobject) {
             return TheGame.Player.Name;
         },
         '[INPUTDATA]', function () {
-            var datatoinput = Globals.additionalData;
-            if (loopobject != null && loopobject.AdditionalInputData) {
-                datatoinput = loopobject.AdditionalInputData;
-            }
-            return datatoinput;
+            return CommandLists.lastAdditionalData();
         },
         '[MAXCARRY]', function () {
             return TheGame.Player.dWeightLimit;

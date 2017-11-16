@@ -70,13 +70,13 @@ var GameUI = {
             Globals.selectedObj = value;
             if (Globals.selectedObj != null) {
                 GameController.executeAndRunTimers(function () {
-                    Globals.additionalData = Globals.selectedObj;
+                    CommandLists.setAdditionalData(Globals.selectedObj);
                     GameController.stopAwaitingInput();
                     $("#inputmenu").css("visibility", "hidden");
                     if (getObjectClass(act) == "action" || "actionparent" in act) {
                         ActionRecorder.choseInputAction(text);
-                        GameActions.executeAction(act, true, Globals.selectedObj);
-                        GameCommands.runCommands(Globals.theObj, act);
+                        GameActions.executeAction(act, true);
+                        GameCommands.runCommands();
                     }
                 });
             }
@@ -101,7 +101,7 @@ var GameUI = {
                     $("#cmdinputmenu").css("visibility", "hidden");
                     ActionRecorder.choseInputAction(Globals.selectedObj);
                     SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
-                    GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
+                    GameCommands.runCommands();
                 });
             }
         });

@@ -7,17 +7,16 @@ var CommandLists = {
         params = params || {};
         var newStackParams = {
             obj: params.obj || this.objectBeingActedUpon(),
-            act: params.act, commands: []
+            act: params.act,
+            commands: []
         };
         this.stack.unshift(newStackParams);
+        return newStackParams;
     },
 
-    finishNestedCommandList: function () {
-        if (this.stack.length === 1) {
-            throw "Tried to finish the command list but there was nothing under it!";
-        }
-        this.stack[0].autoShift = true;
-        GameCommands.runCommands.apply(GameCommands, [this.stack[0].obj, this.stack[0].act]);
+    finishNestedCommandList: function (commandList) {
+        commandList.autoShift = true;
+        GameCommands.runCommands();
     },
 
     nextCommand: function () {
@@ -38,10 +37,35 @@ var CommandLists = {
         this.stack[0].commands.push(command);
     },
 
+    setAdditionalData: function (additionalData) {
+        for (var i = 0; i < this.stack.length; i++) {
+            if (this.stack[i].act) {
+                this.stack[i].additionalData = additionalData;
+                return;
+            }
+        }
+    },
+
+    lastAdditionalData: function () {
+        for (var i = 0; i < this.stack.length; i++) {
+            if (this.stack[i].act) {
+                return this.stack[i].additionalData;
+            }
+        }
+    },
+
     objectBeingActedUpon: function () {
         for (var i = 0; i < this.stack.length; i++) {
             if (this.stack[i].obj) {
                 return this.stack[i].obj;
+            }
+        }
+    },
+
+    actionBeingTaken: function () {
+        for (var i = 0; i < this.stack.length; i++) {
+            if (this.stack[i].act) {
+                return this.stack[i].act;
             }
         }
     },

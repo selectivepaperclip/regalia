@@ -48,7 +48,7 @@ $(function() {
             GameController.continue();
             $("#Continue").css("background-color", "rgb(128, 128, 128)");
             $("#Continue").css('visibility', "hidden");
-            GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
+            GameCommands.runCommands();
         }
     });
     $("#PlayerImg").click(function(e) {
@@ -76,7 +76,7 @@ $(function() {
             $("#textchoice").css("visibility", "hidden");
             ActionRecorder.filledInTextInput(Globals.selectedObj);
             SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
-            GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
+            GameCommands.runCommands();
         }
     }
     $("#textbutton").click(setTextInputChoice);
@@ -281,11 +281,11 @@ $(function() {
         Globals.selectedObj = $("#textactioninput").val();
         if (Globals.selectedObj != null) {
             $("#textactioninput").val('');
-            Globals.additionalData = Globals.selectedObj;
+            CommandLists.setAdditionalData(Globals.selectedObj);
             GameController.stopAwaitingInput();
             $("#textactionchoice").css("visibility", "hidden");
             if (getObjectClass(Globals.inputDataObject) == "action" || "actionparent" in Globals.inputDataObject) {
-                GameActions.executeAction(Globals.inputDataObject, Globals.bMasterTimer, Globals.selectedObj);
+                GameActions.executeAction(Globals.inputDataObject, Globals.bMasterTimer);
             }
         }
     }
@@ -296,12 +296,12 @@ $(function() {
     $("#CancelInput").click(function () {
         $("#inputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
+        GameCommands.runCommands();
     });
     $("#cmdCancelInput").click(function(e) {
         $("#cmdinputmenu").css("visibility", "hidden");
         GameController.stopAwaitingInput();
-        GameCommands.runCommands.apply(GameCommands, Globals.pauseCommandArgs);
+        GameCommands.runCommands();
     });
     $("#selectionmenu").focusout(function() {
         $("#selectionmenu").css("visibility", "hidden");

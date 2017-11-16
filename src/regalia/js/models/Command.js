@@ -8,7 +8,6 @@ function command() {
     this.CommandPart4 = "";
     this.CustomChoices = [];
     this.EnhInputData = null;
-    this.AdditionalInputData = undefined;
 }
 
 function SetupCommandData(GameData) {

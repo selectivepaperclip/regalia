@@ -1,5 +1,5 @@
 var GameConditions = {
-    testCondition: function (tempcond, conditionAction, conditionTimerInvocation, loopObj) {
+    testCondition: function (tempcond, conditionAction, loopObj) {
         var bResult = true;
         var counter = 0;
 
@@ -8,8 +8,8 @@ var GameConditions = {
                 Globals.loopArgs.object = Globals.loopArgs.array[Globals.loopArgs.idx];
                 Globals.loopArgs.idx++;
 
-                GameCommands.insertToMaster([tempcond], undefined, conditionAction);
-                GameCommands.insertToMaster(tempcond.PassCommands, undefined, conditionAction);
+                GameCommands.insertToMaster([tempcond]);
+                GameCommands.insertToMaster(tempcond.PassCommands);
             } else {
                 Logger.logEvaluatedCondition(tempcond, bResult);
                 ResetLoopObjects();
@@ -38,8 +38,8 @@ var GameConditions = {
                 switch (tempcheck.CondType) {
                     case "CT_Loop_While": {
                         if (this.testVariable(step2, step3, step4)) {
-                            GameCommands.insertToMaster([tempcond], undefined, conditionAction);
-                            GameCommands.insertToMaster(tempcond.PassCommands, undefined, conditionAction);
+                            GameCommands.insertToMaster([tempcond]);
+                            GameCommands.insertToMaster(tempcond.PassCommands);
                         } else {
                             Logger.logEvaluatedCondition(tempcond, bResult);
                         }
@@ -120,7 +120,7 @@ var GameConditions = {
                         break;
                     }
                     default: {
-                        bResult = this.booleanConditionResult(tempcond, tempcheck, step2, step3, step4, objectBeingActedUpon, conditionAction, conditionTimerInvocation);
+                        bResult = this.booleanConditionResult(tempcond, tempcheck, step2, step3, step4, objectBeingActedUpon, conditionAction);
                     }
                 }
             } catch (err) {
@@ -197,7 +197,7 @@ var GameConditions = {
         return bResult;
     },
 
-    booleanConditionResult: function (tempcond, tempcheck, step2, step3, step4, objectBeingActedUpon, conditionAction, conditionTimerInvocation) {
+    booleanConditionResult: function (tempcond, tempcheck, step2, step3, step4, objectBeingActedUpon, conditionAction) {
         switch (tempcheck.CondType) {
             case "CT_Item_InGroup": {
                 return Finder.object(step2).GroupName == step3;
@@ -552,12 +552,8 @@ var GameConditions = {
             }
             case "CT_AdditionalDataCheck": {
                 var datatocheck = "";
-                if (Globals.additionalData &&
-                    Globals.additionalDataContext.action == conditionAction &&
-                    Globals.additionalDataContext.timerInvocation == conditionTimerInvocation)
-                    datatocheck = Globals.additionalData;
-                if (tempcond.AdditionalInputData)
-                    datatocheck = tempcond.AdditionalInputData;
+                if (CommandLists.lastAdditionalData())
+                    datatocheck = CommandLists.lastAdditionalData();
                 if (conditionAction.InputType == "Text") {
                     return step4.toLowerCase() == datatocheck.toLowerCase();
                 } else {

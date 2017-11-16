@@ -4,7 +4,6 @@ function ragscondition() {
     this.PassCommands = [];
     this.FailCommands = [];
     this.Checks = [];
-    this.AdditionalInputData = undefined;
 }
 
 function SetupConditionData(GameData) {

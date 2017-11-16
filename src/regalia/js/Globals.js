@@ -2,11 +2,6 @@ var TheGame = null;
 var OriginalGame = null;
 
 var Globals = {
-    additionalData: "",
-    additionalDataContext: {
-        action: null,
-        timerInvocation: null
-    },
     bRunningTimers: false,
     bMasterTimer: false,
     bCancelMove: false,
@@ -21,10 +16,8 @@ var Globals = {
     },
     inputDataObject: null,
     movingDirection: "",
-    pauseCommandArgs: null,
     runningLiveTimerCommands: false,
     theObj: null,
-    timerInvocation: 0,
     selectedObj: null,
     variableGettingSet: null
 };

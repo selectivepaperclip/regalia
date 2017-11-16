@@ -1,5 +1,6 @@
 var GameCommands = {
-    runSingleCommand: function (commandBeingProcessed, part2, part3, part4, cmdtxt, objectBeingActedUpon, act) {
+    runSingleCommand: function (commandBeingProcessed, part2, part3, part4, cmdtxt) {
+        var objectBeingActedUpon = CommandLists.objectBeingActedUpon();
         switch (commandBeingProcessed.cmdtype) {
             case "CT_LAYEREDIMAGE_ADD": {
                 function uniqueArray(array) {
@@ -579,10 +580,8 @@ var GameCommands = {
                     Globals.currentTimer = temptimer.Name;
                     var tempact = Finder.action(temptimer.Actions, "<<On Each Turn>>");
                     if (tempact != null) {
-                        Globals.timerInvocation += 1;
                         GameActions.processAction(tempact, true);
                         while (Globals.bResetTimer) {
-                            Globals.timerInvocation += 1;
                             Globals.bResetTimer = false;
                             GameActions.processAction(tempact, true);
                         }
@@ -1413,7 +1412,7 @@ var GameCommands = {
                     addObjectOptions();
                     addCharacterOptions();
                 }
-                GameUI.setCmdInputMenuTitle(act, part4);
+                GameUI.setCmdInputMenuTitle(CommandLists.actionBeingTaken(), part4);
                 GameController.startAwaitingInput();
                 break;
             }
@@ -1422,11 +1421,10 @@ var GameCommands = {
 
     processCondition: function (wrappedCondition, loopObj) {
         var conditionBeingProcessed = wrappedCondition.payload;
-        var act = wrappedCondition.parentAction;
-        var timerInvocation = wrappedCondition.timerInvocation;
+        var act = CommandLists.actionBeingTaken();
 
         var nextCommands;
-        if (GameConditions.testCondition(conditionBeingProcessed, act, timerInvocation, loopObj)) {
+        if (GameConditions.testCondition(conditionBeingProcessed, act, loopObj)) {
             if (conditionBeingProcessed.Checks.length === 1 && isLoopCheck(conditionBeingProcessed.Checks[0])) {
                 return;
             } else {
@@ -1437,8 +1435,7 @@ var GameCommands = {
         }
     },
 
-    runCommands: function (TheObj, act) {
-        Globals.pauseCommandArgs = arguments;
+    runCommands: function () {
         var bResult = false;
         while (CommandLists.commandCount() > 0 && (GameController.shouldRunCommands() || Globals.runningLiveTimerCommands)) {
             if (typeof CommandLists.nextCommand() === "function") {
@@ -1460,10 +1457,9 @@ var GameCommands = {
                 var part3 = PerformTextReplacements(commandBeingProcessed.CommandPart3, loopObj);
                 var part4 = PerformTextReplacements(commandBeingProcessed.CommandPart4, loopObj);
                 var cmdtxt = PerformTextReplacements(commandBeingProcessed.CommandText, loopObj);
-                var objectBeingActedUpon = CommandLists.objectBeingActedUpon() || TheObj;
                 Logger.logExecutingCommand(commandBeingProcessed, part2, part3 ,part4);
                 try {
-                    var stop = this.runSingleCommand(commandBeingProcessed, part2, part3, part4, cmdtxt, objectBeingActedUpon, act);
+                    var stop = this.runSingleCommand(commandBeingProcessed, part2, part3, part4, cmdtxt);
                     if (stop) {
                         return;
                     }
@@ -1474,7 +1470,7 @@ var GameCommands = {
             } else {
                 var nextCommands = this.processCondition(commandOrCondition, loopObj);
                 if (nextCommands) {
-                    this.insertToMaster(nextCommands, undefined, act);
+                    this.insertToMaster(nextCommands);
                 }
             }
         }
@@ -1484,33 +1480,27 @@ var GameCommands = {
         return bResult;
     },
 
-    addToMaster: function (commands, addinputdata, act) {
+    addToMaster: function (commands) {
         for (var i = 0; i < commands.length; i++) {
-            command.AdditionalInputData = addinputdata || undefined;
             CommandLists.addToEnd({
-                parentAction: act,
-                timerInvocation: Globals.timerInvocation,
                 payload: commands[i]
             });
         }
     },
 
-    insertToMaster: function (commands, addinputdata, act) {
+    insertToMaster: function (commands) {
         for (var i = commands.length - 1; i >= 0; i--) {
-            command.AdditionalInputData = addinputdata || undefined;
             CommandLists.addToFront({
-                parentAction: act,
-                timerInvocation: Globals.timerInvocation,
                 payload: commands[i]
             });
         }
     },
-    addCommands: function (insertFirst, commands, AdditionalInputData, act) {
+    addCommands: function (insertFirst, commands) {
         if (insertFirst) {
-            this.insertToMaster(commands, AdditionalInputData, act);
+            this.insertToMaster(commands);
         } else {
-            this.addToMaster(commands, AdditionalInputData, act);
-            this.runCommands(Globals.theObj, act);
+            this.addToMaster(commands);
+            this.runCommands();
         }
     }
 };

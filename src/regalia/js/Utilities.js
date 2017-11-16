@@ -88,7 +88,6 @@ function SetBorders() {
 }
 
 function GetActionCount(Actions) {
-    //Globals.curActions = Actions;
     var count = 0;
     for (var i = 0; i < Actions.length; i++) {
         if (actionShouldBeVisible(Actions[i])) {
@@ -264,7 +263,7 @@ function runAfterPause(runNextPhase) {
 }
 
 function ChangeRoom(currentRoom, bRunTimerEvents, bRunEvents) {
-    CommandLists.startNestedCommandList();
+    var commandList = CommandLists.startNestedCommandList();
     var desiredRoomId = currentRoom.UniqueID;
     if (currentRoom == null)
         return;
@@ -296,7 +295,7 @@ function ChangeRoom(currentRoom, bRunTimerEvents, bRunEvents) {
 
             function phase3 () {
                 runAfterPause(function () {
-                    CommandLists.finishNestedCommandList();
+                    CommandLists.finishNestedCommandList(commandList);
 
                     // Handle situations where one of the "Enter" events triggers a new ChangeRoom
                     if (TheGame.Player.CurrentRoom !== desiredRoomId) {

@@ -71,7 +71,7 @@ var GameTimers = {
                     Globals.runningLiveTimerCommands = false;
                 });
                 GameActions.processAction(tempact, true);
-                GameCommands.runCommands(Globals.theObj, null);
+                GameCommands.runCommands();
                 return;
             } else {
                 GameActions.processAction(tempact, false);

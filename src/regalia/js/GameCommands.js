@@ -570,9 +570,7 @@ var GameCommands = {
                 break;
             }
             case "CT_EXECUTETIMER": {
-                var bRunningTimersOriginal = Globals.bRunningTimers;
                 var currentTimerOriginal = Globals.currentTimer;
-                Globals.bRunningTimers = true;
                 Globals.bResetTimer = false;
                 Globals.currentTimer = "";
                 var temptimer = Finder.timer(part2);
@@ -587,7 +585,6 @@ var GameCommands = {
                         }
                     }
                 }
-                Globals.bRunningTimers = bRunningTimersOriginal;
                 Globals.currentTimer = currentTimerOriginal;
                 break;
             }
@@ -595,7 +592,7 @@ var GameCommands = {
                 var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
                     temptimer.TurnNumber = 0;
-                    if (Globals.bRunningTimers && Globals.currentTimer == temptimer.Name) {
+                    if (Globals.currentTimer == temptimer.Name) {
                         Globals.bResetTimer = true;
                     } else {
                         Globals.bResetTimer = false;

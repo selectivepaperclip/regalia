@@ -36,7 +36,7 @@ var Finder = {
 
         var lowercaseObjectName = uidOrName.toLowerCase();
         for (var j = 0; j < TheGame.Objects.length; j++) {
-            if (TheGame.Objects[j].name && TheGame.Objects[j].name.toLowerCase() === lowercaseObjectName) {
+            if (TheGame.Objects[j].name && TheGame.Objects[j].name.trim().toLowerCase() === lowercaseObjectName) {
                 return TheGame.Objects[j];
             }
         }
@@ -48,7 +48,7 @@ var Finder = {
 
         var lowercaseCharacterName = characterName.trim().toLowerCase();
         for (var i = 0; i < TheGame.Characters.length; i++) {
-            if (TheGame.Characters[i].Charname.toLowerCase() == lowercaseCharacterName) {
+            if (TheGame.Characters[i].Charname.trim().toLowerCase() == lowercaseCharacterName) {
                 return TheGame.Characters[i];
             }
         }
@@ -70,7 +70,7 @@ var Finder = {
         //check by name if we get here
         for (var j = 0; j < TheGame.Rooms.length; j++) {
             var room = TheGame.Rooms[j];
-            if (room.Name.toLowerCase() == lowercaseRoomName) {
+            if (room.Name.trim().toLowerCase() == lowercaseRoomName) {
                 return TheGame.Rooms[j];
             }
 
@@ -81,7 +81,7 @@ var Finder = {
             // room name or `%{name}-%{sdesc}`. So we need to check for that.
             if (containsDash && room.SDesc) {
                 var joinedName = [room.Name, room.SDesc].join('-');
-                if (joinedName.toLowerCase() == lowercaseRoomName) {
+                if (joinedName.trim().toLowerCase() == lowercaseRoomName) {
                     return room;
                 }
             }

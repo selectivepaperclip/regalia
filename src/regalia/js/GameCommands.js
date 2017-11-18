@@ -1397,12 +1397,29 @@ var GameCommands = {
                 } else if (acttype == "Object") {
                     addObjectOptions();
                 } else if (acttype == "Inventory") {
+                    function addChildObjects(parentObject) {
+                        if (!parentObject.bContainer) {
+                            return;
+                        }
+
+                        TheGame.Objects.forEach(function (innerObject) {
+                            if (objectContainsObject(parentObject, innerObject)) {
+                                GameUI.addCmdInputChoice(
+                                    objecttostring(innerObject),
+                                    innerObject.UniqueIdentifier
+                                );
+                                addChildObjects(innerObject);
+                            }
+                        });
+                    }
+
                     TheGame.Objects.forEach(function (obj) {
                         if (obj.locationtype == "LT_PLAYER") {
                             GameUI.addCmdInputChoice(
                                 objecttostring(obj),
                                 obj.UniqueIdentifier
-                            )
+                            );
+                            addChildObjects(obj);
                         }
                     });
                 } else if (acttype == "ObjectOrCharacter") {

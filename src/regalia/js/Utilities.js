@@ -754,19 +754,35 @@ function SetCommandInput(tempcommand, Value) {
                 }
             case "CT_SETVARIABLEBYINPUT":
                 {
+                    var acttype = part2;
                     var tempvar = Finder.variable(part3);
                     var varindex = GetArrayIndex(part3, 0);
                     var varindex3a = GetArrayIndex(part3, 1);
+                    var valueToSave;
+                    if (acttype === "Inventory" || acttype === "Object") {
+                        valueToSave = Finder.object(Value).name;
+                    } else if (acttype === "Character") {
+                        valueToSave = Finder.character(Value).Charname;
+                    } else if (acttype === "ObjectOrCharacter") {
+                        if (Finder.object(Value)) {
+                            valueToSave = Finder.object(Value).name;
+                        }
+                        if (Finder.character(Value)) {
+                            valueToSave = Finder.character(Value).Charname;
+                        }
+                    } else {
+                        valueToSave = Value;
+                    }
                     if (tempvar != null) {
                         if (varindex == -1) {
-                            tempvar.sString = Value;
+                            tempvar.sString = valueToSave;
                         } else {
                             if (varindex3a != -1) {
                                 tempvar.VarArray[varindex][varindex3a] = "";
-                                tempvar.VarArray[varindex][varindex3a] = Value;
+                                tempvar.VarArray[varindex][varindex3a] = valueToSave;
                             } else {
                                 tempvar.VarArray[varindex] = "";
-                                tempvar.VarArray[varindex] = Value;
+                                tempvar.VarArray[varindex] = valueToSave;
                             }
                         }
                     }

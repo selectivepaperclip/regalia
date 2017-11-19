@@ -465,13 +465,7 @@ function GetArrayIndex(varname, n) {
     if (retval && retval !== -1) {
         var rangeMatch = retval.match(/(\d+)\.\.(\d+)/);
         if (rangeMatch) {
-            var rangeStart = parseInt(rangeMatch[1], 10);
-            var rangeEnd = parseInt(rangeMatch[2], 10);
-            if (rangeStart === rangeEnd - 1) {
-                return rangeEnd.toString();
-            } else {
-                throw new Error("Found a range array index in property: '" + varname + "'. This is probably an error, giving up.")
-            }
+            return -1;
         }
     }
 

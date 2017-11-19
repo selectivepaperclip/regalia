@@ -146,42 +146,50 @@ var GameConditions = {
             if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {
                 // Do Nothing
             } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
+                var numberToCompare = tempvar.dNumType;
                 if (varindex != -1) {
                     if (varindex2 != -1) {
-                        tempvar.dNumType = parseFloat(tempvar.VarArray[varindex][varindex2]);
-                    } else
-                        tempvar.dNumType = tempvar.VarArray[varindex];
+                        numberToCompare = parseFloat(tempvar.VarArray[varindex][varindex2]);
+                    } else {
+                        numberToCompare = tempvar.VarArray[varindex];
+                    }
+                } else if (tempvar.vartype == "VT_NUMBERARRAY") {
+                    return false;
                 }
                 if (step3 == "Equals") {
-                    bResult = parseFloat(replacedstring) == tempvar.dNumType;
+                    bResult = parseFloat(replacedstring) == numberToCompare;
                 } else if (step3 == "Not Equals") {
-                    bResult = parseFloat(replacedstring) != tempvar.dNumType;
+                    bResult = parseFloat(replacedstring) != numberToCompare;
                 } else if (step3 == "Greater Than") {
-                    bResult = tempvar.dNumType > parseFloat(replacedstring);
+                    bResult = numberToCompare > parseFloat(replacedstring);
                 } else if (step3 == "Greater Than or Equals") {
-                    bResult = tempvar.dNumType >= parseFloat(replacedstring);
+                    bResult = numberToCompare >= parseFloat(replacedstring);
                 } else if (step3 == "Less Than") {
-                    bResult = tempvar.dNumType < parseFloat(replacedstring);
+                    bResult = numberToCompare < parseFloat(replacedstring);
                 } else if (step3 == "Less Than or Equals") {
-                    bResult = tempvar.dNumType <= parseFloat(replacedstring);
+                    bResult = numberToCompare <= parseFloat(replacedstring);
                 }
             } else if (tempvar.vartype == "VT_STRINGARRAY" || tempvar.vartype == "VT_STRING") {
+                var stringToCompare = tempvar.sString;
                 if (varindex != -1) {
-                    if (varindex2 != -1)
-                        tempvar.sString = tempvar.VarArray[varindex][varindex2].toString();
-                    else
-                        tempvar.sString = tempvar.VarArray[varindex].toString();
+                    if (varindex2 != -1) {
+                        stringToCompare = tempvar.VarArray[varindex][varindex2].toString();
+                    } else {
+                        stringToCompare = tempvar.VarArray[varindex].toString();
+                    }
+                } else if (tempvar.vartype == "VT_STRINGARRAY") {
+                    return false;
                 }
                 if (step3 == "Equals") {
-                    bResult = replacedstring == tempvar.sString;
+                    bResult = replacedstring == stringToCompare;
                 } else if (step3 == "Not Equals") {
-                    bResult = replacedstring != tempvar.sString;
+                    bResult = replacedstring != stringToCompare;
                 } else if (step3 == "Contains") {
-                    bResult = tempvar.sString.indexOf(replacedstring) > -1;
+                    bResult = stringToCompare.indexOf(replacedstring) > -1;
                 } else if (step3 == "Greater Than") {
-                    bResult = tempvar.sString > replacedstring;
+                    bResult = stringToCompare > replacedstring;
                 } else if (step3 == "Less Than") {
-                    bResult = tempvar.sString < replacedstring;
+                    bResult = stringToCompare < replacedstring;
                 }
             }
         }

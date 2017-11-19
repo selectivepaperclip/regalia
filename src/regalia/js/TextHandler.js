@@ -124,6 +124,7 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                         varname = varname.substring(0, varname.indexOf(":"));
                     }
                     var tempvar = Finder.variable(varname);
+                    var newval = "";
                     if (tempvar != null) {
                         var lengthtoremove = 0;
                         if (endindex4 > -1)
@@ -132,7 +133,6 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                             lengthtoremove = endindex3 - tempindex + 2;
                         text = text.slice(0, tempindex) + text.slice(tempindex + lengthtoremove);
                         if (actualindex < tempvar.VarArray.length) {
-                            var newval = "";
                             if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_STRINGARRAY") {
                                 if (actualindex2 > -1) {
                                     try {

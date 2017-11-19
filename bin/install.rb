@@ -8,10 +8,15 @@ usage: #{$0} directory_to_exported_rags_project
   EOT
 end
 
-rags_project_dir = ARGV[0]
+rags_project_dir = (ARGV[0] || '').gsub('\\', '/')
 root_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 src_dir = File.join(root_dir, 'src')
 node_modules_dir = File.join(root_dir, 'node_modules')
+
+unless File.directory?(rags_project_dir)
+  puts "The path '#{rags_project_dir}' does not seem to be a directory, bailing out..."
+  exit 1
+end
 
 puts "Searching '#{rags_project_dir}' for a .html file..."
 

@@ -1372,30 +1372,12 @@ var GameCommands = {
                     return true;
                 }
 
-                function addCharacterOptions() {
-                    TheGame.Characters.forEach(function (character) {
-                        GameUI.addCmdInputChoice(
-                            CharToString(character),
-                            character.Charname
-                        )
-                    });
-                }
-
-                function addObjectOptions() {
-                    Interactables.roomAndInventoryObjects().forEach(function (obj) {
-                        GameUI.addCmdInputChoice(
-                            objecttostring(obj),
-                            obj.UniqueIdentifier
-                        )
-                    });
-                }
-
                 GameUI.clearCmdInputChoices();
 
-                if (acttype == "Character") {
-                    addCharacterOptions();
-                } else if (acttype == "Object") {
-                    addObjectOptions();
+                if (acttype == "Character" || acttype == "Characters") {
+                    GameUI.addCharacterOptions();
+                } else if (acttype == "Object" || acttype == "Objects") {
+                    GameUI.addObjectOptions();
                 } else if (acttype == "Inventory") {
                     function addChildObjects(parentObject) {
                         if (!parentObject.bContainer) {
@@ -1406,7 +1388,7 @@ var GameCommands = {
                             if (objectContainsObject(parentObject, innerObject)) {
                                 GameUI.addCmdInputChoice(
                                     objecttostring(innerObject),
-                                    innerObject.UniqueIdentifier
+                                    innerObject
                                 );
                                 addChildObjects(innerObject);
                             }
@@ -1417,14 +1399,14 @@ var GameCommands = {
                         if (obj.locationtype == "LT_PLAYER") {
                             GameUI.addCmdInputChoice(
                                 objecttostring(obj),
-                                obj.UniqueIdentifier
+                                obj
                             );
                             addChildObjects(obj);
                         }
                     });
                 } else if (acttype == "ObjectOrCharacter") {
-                    addObjectOptions();
-                    addCharacterOptions();
+                    GameUI.addObjectOptions();
+                    GameUI.addCharacterOptions();
                 }
                 GameUI.setCmdInputMenuTitle(CommandLists.actionBeingTaken(), part4);
                 GameController.startAwaitingInput();

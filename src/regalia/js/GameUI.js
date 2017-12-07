@@ -88,18 +88,17 @@ var GameUI = {
     addCmdInputChoice: function (text, value) {
         var $div = $("<div>", {
             class: "inputchoices",
-            text: text,
-            value: value
+            text: text
         });
 
         $div.click(function () {
-            Globals.selectedObj = $(this).val();
+            Globals.selectedObj = value;
             if (Globals.selectedObj != null) {
                 GameController.executeAndRunTimers(function () {
                     $("#cmdinputmenu").hide();
                     GameController.stopAwaitingInput();
                     $("#cmdinputmenu").css("visibility", "hidden");
-                    ActionRecorder.choseInputAction(Globals.selectedObj);
+                    ActionRecorder.choseInputAction(text);
                     SetCommandInput(Globals.variableGettingSet, Globals.selectedObj);
                     GameCommands.runCommands();
                 });
@@ -108,6 +107,26 @@ var GameUI = {
 
         $("#cmdinputchoices").append($div);
         $("#cmdinputmenu").show();
+    },
+
+    addCharacterOptions: function (act) {
+        Interactables.characters().forEach(function (character) {
+            if (act) {
+                GameUI.addInputChoice(act, CharToString(character), character.Charname);
+            } else {
+                GameUI.addCmdInputChoice(CharToString(character), character.Charname);
+            }
+        });
+    },
+
+    addObjectOptions: function (act) {
+        Interactables.roomAndInventoryObjects().forEach(function (obj) {
+            if (act) {
+                GameUI.addInputChoice(act, objecttostring(obj), obj);
+            } else {
+                GameUI.addCmdInputChoice(objecttostring(obj), obj);
+            }
+        });
     },
 
     setCmdInputForCustomChoices: function (title, tempcommand) {

@@ -727,7 +727,7 @@ function CheckNumericLimits(tempvar, thevalue) {
         return parseFloat(thevalue);
 }
 
-function SetCommandInput(tempcommand, Value) {
+function SetCommandInput(tempcommand, value) {
     var part2 = PerformTextReplacements(tempcommand.CommandPart2, null);
     var part3 = PerformTextReplacements(tempcommand.CommandPart3, null);
     var part4 = PerformTextReplacements(tempcommand.CommandPart4, null);
@@ -740,14 +740,14 @@ function SetCommandInput(tempcommand, Value) {
             case "CT_SETVARIABLE_NUMERIC_BYINPUT":
                 {
                     if (varindex == -1) {
-                        tempvar.dNumType = CheckNumericLimits(tempvar, Value);
+                        tempvar.dNumType = CheckNumericLimits(tempvar, value);
                     } else {
                         if (varindex3a != -1) {
                             tempvar.VarArray[varindex][varindex3a] = "";
-                            tempvar.VarArray[varindex][varindex3a] = CheckNumericLimits(tempvar, Value).toString();
+                            tempvar.VarArray[varindex][varindex3a] = CheckNumericLimits(tempvar, value).toString();
                         } else {
                             tempvar.VarArray[varindex] = "";
-                            tempvar.VarArray[varindex] = CheckNumericLimits(tempvar, Value).toString();
+                            tempvar.VarArray[varindex] = CheckNumericLimits(tempvar, value).toString();
                         }
                     }
                     break;
@@ -759,19 +759,12 @@ function SetCommandInput(tempcommand, Value) {
                     var varindex = GetArrayIndex(part3, 0);
                     var varindex3a = GetArrayIndex(part3, 1);
                     var valueToSave;
-                    if (acttype === "Inventory" || acttype === "Object") {
-                        valueToSave = Finder.object(Value).name;
-                    } else if (acttype === "Character") {
-                        valueToSave = Finder.character(Value).Charname;
-                    } else if (acttype === "ObjectOrCharacter") {
-                        if (Finder.object(Value)) {
-                            valueToSave = Finder.object(Value).name;
-                        }
-                        if (Finder.character(Value)) {
-                            valueToSave = Finder.character(Value).Charname;
-                        }
+                    if (value.constructor.name === "ragsobject") {
+                        valueToSave = value.name;
+                    } else if (acttype === "Character" || acttype === "ObjectOrCharacter") {
+                        valueToSave = Finder.character(value).Charname;
                     } else {
-                        valueToSave = Value;
+                        valueToSave = value;
                     }
                     if (tempvar != null) {
                         if (varindex == -1) {

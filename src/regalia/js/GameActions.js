@@ -75,10 +75,8 @@ var GameActions = {
             });
         }
 
-        function addObjectChoices() {
-            Interactables.roomAndInventoryObjects().forEach(function (obj) {
-                GameUI.addInputChoice(act, objecttostring(obj), obj);
-            });
+        function addPortalObjectChoices() {
+            // Real talk: I don't know what this is supposed to do or whether it still works
             if (TheGame.Player.CurrentRoom != null) {
                 var currentroom = Finder.room(TheGame.Player.CurrentRoom);
                 if (!currentroom) {
@@ -102,28 +100,24 @@ var GameActions = {
             }
         }
 
-        function addCharacterChoices() {
-            Interactables.characters().forEach(function (character) {
-                GameUI.addInputChoice(act, CharToString(character), character.Charname);
-            });
-        }
-
         if (act.InputType == "Custom") {
             act.CustomChoices.forEach(function (customChoice) {
                 var replacedChoiceText = PerformTextReplacements(customChoice);
                 GameUI.addInputChoice(act, replacedChoiceText, replacedChoiceText);
             });
         } else if (act.InputType == "Character") {
-            addCharacterChoices();
+            GameUI.addCharacterOptions(act);
         } else if (act.InputType == "Object") {
-            addObjectChoices();
+            GameUI.addObjectOptions(act);
+            addPortalObjectChoices();
         } else if (act.InputType == "Inventory") {
             Interactables.inventoryObjects().forEach(function (obj) {
                 GameUI.addInputChoice(act, objecttostring(obj), obj);
             });
         } else if (act.InputType == "ObjectOrCharacter") {
-            addObjectChoices();
-            addCharacterChoices();
+            addPortalObjectChoices();
+            GameUI.addObjectOptions(act);
+            GameUI.addCharacterOptions(act);
         }
 
         GameUI.setInputMenuTitle(act);

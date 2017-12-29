@@ -15,6 +15,8 @@
     <script src="regalia/vendor/modernizr-2.0.6.js"></script>
     <script src="regalia/vendor/jquery-1.7.1.min.js"></script>
     <script src="regalia/vendor/deep-diff-0.3.8.min.js"></script>
+    <script src="regalia/vendor/react.production.min.js"></script>
+    <script src="regalia/vendor/react-dom.production.min.js"></script>
     <script src="regalia/js/polyfills.js"></script>
     <script src="regalia/game/Game.js"></script>
     <script src="regalia/js/Constants.js"></script>
@@ -48,6 +50,7 @@
     <script src="regalia/js/Utilities.js"></script>
     <script src="regalia/js/TextHandler.js"></script>
     <script src="regalia/js/Cheat.js"></script>
+    <script src="regalia/js/components/CheatMenuComponents.js"></script>
 </head>
 
 <body>
@@ -290,51 +293,7 @@
     </div>
 </div>
 
-<div class="cheat-menu hidden modal-backdrop">
-    <div class="cheat-menu-content">
-        <div class="cheat-menu-title">
-            <h1>Cheat Menu</h1>
-        </div>
-        <div class="cheat-menu-scrollable">
-            <div class="cheat-menu-player-properties">
-                <h2 class="cheat-menu-subtitle">Player Properties</h2>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th>Freeze</th>
-                    </tr>
-
-                    </thead>
-                    <tbody class="cheat-menu-player-properties-body">
-
-                    </tbody>
-                </table>
-            </div>
-            <div class="cheat-menu-variables">
-                <h2 class="cheat-menu-subtitle">Game Variables</h2>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th>Desc</th>
-                        <th>Freeze</th>
-                    </tr>
-
-                    </thead>
-                    <tbody class="cheat-menu-variables-body">
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="cheat-menu-actions">
-            <button>Finish</button>
-        </div>
-    </div>
-</div>
+<div class="cheat-menu hidden modal-backdrop"></div>
 
 <div id="tooltip">
 </div>

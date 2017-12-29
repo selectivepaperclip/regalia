@@ -5,6 +5,12 @@
   "dependencies": {
     "deep-diff": "0.3.8"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
   "license": "ISC"
 }

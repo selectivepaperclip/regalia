@@ -41,10 +41,46 @@ FileUtils.rm_rf(File.join(rags_project_dir, 'regalia'))
 FileUtils.copy_entry(File.join(src_dir, 'regalia'), File.join(rags_project_dir, 'regalia'))
 FileUtils.copy(File.join(src_dir, 'Rags_32512.ico'), File.join(rags_project_dir, 'regalia'))
 
-vendor_files = [File.join(node_modules_dir, 'deep-diff', 'releases', 'deep-diff-0.3.8.min.js')]
+vendor_files = [
+  File.join(node_modules_dir, 'deep-diff', 'releases', 'deep-diff-0.3.8.min.js'),
+  File.join(node_modules_dir, 'react', 'umd', 'react.production.min.js'),
+  File.join(node_modules_dir, 'react-dom', 'umd', 'react-dom.production.min.js'),
+]
 vendor_files.each do |file_path|
   FileUtils.copy(file_path, File.join(rags_project_dir, 'regalia', 'vendor'))
 end
+
+def transpile(src, dest_dir: nil, dest_file: nil)
+  root_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+  args = [
+    'node',
+    File.join(root_dir, 'node_modules', 'babel-cli', 'bin', 'babel'),
+    '--plugins',
+    'transform-react-jsx',
+    '--presets',
+    'es2015',
+    src
+  ]
+  if dest_dir
+    args << '--out-dir'
+    args << dest_dir
+  end
+  if dest_file
+    args << '--out-file'
+    args << dest_file
+  end
+  system(*args)
+end
+
+puts "Transpiling JSX..."
+transpile(
+  File.join(src_dir, 'regalia', 'js', 'components'),
+  dest_dir: File.join(rags_project_dir, 'regalia', 'js', 'components')
+)
+transpile(
+  File.join(src_dir, 'regalia', 'js', 'Cheat.js'),
+  dest_file: File.join(rags_project_dir, 'regalia', 'js', 'Cheat.js')
+)
 
 puts "Copying Game.js content into Regalia folder..."
 FileUtils.mkdir_p(File.join(rags_project_dir, 'regalia', 'game'))

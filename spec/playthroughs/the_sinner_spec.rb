@@ -17,6 +17,7 @@ module TheSinnerHelper
       'SouthWest' => "In front of Jewel's house"
     },
     'South-West Crossroad' => {
+      "NorthWest" => "In front of the bikers' camp",
       'North' => 'Mid-West Crossroad',
       'East' => 'Mid-South Crossroad',
       'NorthEast' => 'In front of the church',
@@ -103,6 +104,29 @@ module TheSinnerHelper
     "Jewel's house" => {
       'Out' => "In front of Jewel's house"
     },
+    "In front of the bikers' camp" => {
+      "SouthEast" => "South-West Crossroad",
+      "In" => "Biker's camp"
+    },
+    "Biker's camp" => {
+      "North" => "Immortals' camp",
+      "East" => "Unruly's camp",
+      "South" => "Biker gym",
+      "West" => "Dragon rider's camp",
+      "Out" => "In front of the bikers' camp"
+    },
+    "Dragon rider's camp" => {
+      "East" => "Biker's camp"
+    },
+    "Immortals' camp" => {
+      "South" => "Biker's camp"
+    },
+    "Unruly's camp" => {
+      "West" => "Biker's camp"
+    },
+    "Biker gym" => {
+      "North" => "Biker's camp"
+    },
     'In front of the church' => {
       'SouthWest' => 'South-West Crossroad',
       'In' => 'Church'
@@ -171,8 +195,12 @@ module TheSinnerHelper
     'In front of Old Lighthouse' => {
       'SouthWest' => 'First Mid-Eastern Crossroad'
     },
-    'Seafront' => {
-      'NorthWest' => 'First Mid-Eastern Crossroad'
+    "Seafront" => {
+      "NorthWest" => "First Mid-Eastern Crossroad",
+      "East" => "Beach"
+    },
+    "Beach" => {
+      "West" => "Seafront"
     },
     "In front of Jefferson's house" => {
       'NorthEast' => 'First Mid-Eastern Crossroad',
@@ -213,6 +241,7 @@ module TheSinnerHelper
     start_game 'TheSinner'
 
     act_on_object 'Game', 'Start New Game (Skip entry)'
+    choose_input_action 'Easy (+5 points per sin)'
     continue_until_unpaused
 
     import_savegames(savegames_filename)
@@ -249,9 +278,29 @@ module TheSinnerHelper
       end
     end
   end
+
+  def buy_alcohol(alcohol)
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+    choose_input_action alcohol
+    continue_until_unpaused
+
+    go_direction 'Out'
+    # Guy who wants to steal your bottle from the bar (random)
+    if page.first('#inputmenu', text: 'Answer to him')
+      choose_input_action 'Lie: Distruct the guy'
+      choose_input_action 'Smash the bottle on his head'
+      continue_until_unpaused
+      go_to_room 'Bar'
+      act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+      choose_input_action alcohol
+      continue_until_unpaused
+    else
+      go_to_room 'Bar'
+    end
+  end
 end
 
-# Tested with TheSinner 0.16
+# Tested with TheSinner 0.17
 describe 'the sinner', type: :feature, js: true do
   let!(:image_reporter) { ImageReporter.new('TheSinner', page) }
 
@@ -281,6 +330,8 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Game', 'Start new game'
     continue_until_unpaused
     fill_in_text_input 'TestPlayer'
+    # choose_input_action 'Normal (+2 points per sin)'
+    choose_input_action 'Easy (+5 points per sin)'
     continue_until_unpaused
 
     # Gain the first level of 'Bad Boy'
@@ -347,12 +398,40 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Lie'
     continue_until_unpaused
 
-    # Learn 'Egg On'
-    go_to_room 'Your House'
-    act_on_self 'Learn'
+    # Learn about Wendy
+    go_to_room 'In front of the graveyard'
+    act_on_character 'Wendy', 'Examine'
+    act_on_character 'Wendy', 'Talk'
+    choose_input_action 'Introduce yourself'
+    act_on_character 'Wendy', 'Prove that you are cool'
+    choose_input_action 'Lie: rap'
+    continue_until_unpaused
+    act_on_character 'Wendy', 'Talk'
+    choose_input_action 'Chat'
+    act_on_character 'Wendy', 'Talk'
+    choose_input_action 'What are you doing here?'
+    act_on_character 'Wendy', 'Talk'
+    choose_input_action 'What are you cool at?'
+    act_on_character 'Wendy', 'Talk'
+    choose_input_action 'Everyone can draw graffiti'
     continue_until_unpaused
 
     act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Learn about Katie
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Buy a cup of coffee'
+    continue_until_unpaused
+    choose_input_action 'Lie: shrug'
+    continue_until_unpaused
+    act_on_character 'Katie Jewel', 'Examine'
+    act_on_character 'Katie Jewel', 'Talk'
+    choose_input_action 'What do you sell?'
+
+    # Learn 'Egg On'
+    go_to_room 'Your House'
+    act_on_self 'Learn'
     continue_until_unpaused
 
     # Egg on Chloe
@@ -614,16 +693,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Do you worship some gods?'
     continue_until_unpaused
 
-    # Learn about Katie
-    go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy a cup of coffee'
-    continue_until_unpaused
-    choose_input_action 'Lie: shrug'
-    continue_until_unpaused
-    act_on_character 'Katie Jewel', 'Examine'
-    act_on_character 'Katie Jewel', 'Talk'
-    choose_input_action 'What do you sell?'
-
     go_to_room 'Your House'
     act_on_self 'Next Day'
     continue_until_unpaused
@@ -663,24 +732,6 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'In front of the farm'
     choose_input_action 'Wait while the leader turns away and then hit him hard'
 
-    # Learn about Wendy
-    go_to_room 'In front of the graveyard'
-    act_on_character 'Wendy', 'Examine'
-    act_on_character 'Wendy', 'Talk'
-    choose_input_action 'Introduce yourself'
-    act_on_character 'Wendy', 'Prove that you are cool'
-    choose_input_action 'Lie: rap'
-    continue_until_unpaused
-    act_on_character 'Wendy', 'Talk'
-    choose_input_action 'Chat'
-    act_on_character 'Wendy', 'Talk'
-    choose_input_action 'What are you doing here?'
-    act_on_character 'Wendy', 'Talk'
-    choose_input_action 'What are you cool at?'
-    act_on_character 'Wendy', 'Talk'
-    choose_input_action 'Everyone can draw graffiti'
-    continue_until_unpaused
-
     # Start Chloe's seduction
     go_to_room 'SW Cox house'
     act_on_character 'Chloe Cox', 'Cast: Read sins'
@@ -691,6 +742,7 @@ describe 'the sinner', type: :feature, js: true do
     # Learn about Vanessa's figurine
     go_to_room 'University Entrance'
     go_direction 'NorthEast'
+    act_on_character 'Helen Coombs', 'Examine'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'Ask about figurine.'
     continue_until_unpaused
@@ -727,8 +779,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 19
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Vodka'
+    buy_alcohol 'Vodka'
 
     # Increase Layla's sin
     go_to_room 'Jefferson\'s house'
@@ -770,6 +821,8 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'University Entrance'
     go_direction 'NorthWest'
+
+    act_on_character 'Quincy Robson', 'Examine'
     act_on_character 'Quincy Robson', 'Talk'
     act_on_character 'Quincy Robson', 'Cast: Read Sins'
     continue_until_unpaused
@@ -996,36 +1049,18 @@ describe 'the sinner', type: :feature, js: true do
     # Start Chloe's laptop actions
     go_to_room 'Your House'
     wait_until_hour 13
+
     act_on_object 'laptop', 'Go to BDSM site'
-    act_on_object 'laptop', 'Polite "hello"'
-    act_on_object 'laptop', 'Simple chat'
-    act_on_object 'laptop', 'Ask for preferences'
+    choose_input_action 'Polite "hello"'
+    choose_input_action 'Simple chat'
+    choose_input_action 'Ask for preferences'
     continue_until_unpaused
-    act_on_object 'laptop', 'Start an action'
-    act_on_object 'laptop', 'Select a game'
+    choose_input_action 'Start an action'
     choose_input_action 'Submission'
-    act_on_object 'laptop', 'Abuse her'
+    choose_input_action 'Use her'
     continue_until_unpaused
-    act_on_object 'laptop', 'Fuck her brains out'
-    act_on_object 'laptop', 'Intensive play'
-    continue_until_unpaused
-    act_on_object 'laptop', 'Go to BDSM site'
-    act_on_object 'laptop', 'Hello'
-    act_on_object 'laptop', 'Start an action'
-    act_on_object 'laptop', 'Select a game'
-    choose_input_action 'Submission'
-    act_on_object 'laptop', 'Abuse her'
-    act_on_object 'laptop', 'Fuck her brains out'
-    act_on_object 'laptop', 'Say that she is a bitch'
-    continue_until_unpaused
-    act_on_object 'laptop', 'Go to BDSM site'
-    act_on_object 'laptop', 'Hello'
-    act_on_object 'laptop', 'Start an action'
-    act_on_object 'laptop', 'Select a game'
-    choose_input_action 'Submission'
-    act_on_object 'laptop', 'Abuse her'
-    act_on_object 'laptop', 'Fuck her brains out'
-    act_on_object 'laptop', 'Intensive play'
+    choose_input_action 'Fuck her brains out'
+    choose_input_action 'Intensive play'
     continue_until_unpaused
 
     # Watch Vanessa's ritual
@@ -1129,24 +1164,17 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Katie Jewel'
     continue_until_unpaused
 
-    # Complete Chloe's seduction
+    # Continue Chloe's seduction
     go_to_room 'South-Eastern Crossroad'
-    wait_until_hour 13
     go_to_room 'Your House'
+    wait_until_hour 13
     act_on_object 'laptop', 'Go to BDSM site'
-    act_on_object 'laptop', 'Hello'
-    act_on_object 'laptop', 'Start an action'
-    act_on_object 'laptop', 'Select a game'
+    choose_input_action 'Hello'
+    choose_input_action 'Start an action'
     choose_input_action 'Submission'
-    act_on_object 'laptop', 'Abuse her'
-    act_on_object 'laptop', 'Fuck her brains out'
-    act_on_object 'laptop', 'Intensive play'
-    continue_until_unpaused
-    go_to_room 'SW F Coxes house'
-    go_direction 'In'
-    go_to_room 'SW Cox house'
-    act_on_character 'Chloe Cox', 'Cast: Irresistible lust'
-    choose_input_action 'Chloe'
+    choose_input_action 'Use her'
+    choose_input_action 'Fuck her brains out'
+    choose_input_action 'Say she is a "bitch"'
     continue_until_unpaused
 
     # Get Rubi to ask for Ambergris
@@ -1278,6 +1306,28 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Olivia Osborne', 'Cast: Irresistible lust'
     continue_until_unpaused
 
+    # Complete Chloe's seduction
+    go_to_room 'Your House'
+    wait_until_hour 13
+    act_on_object 'laptop', 'Go to BDSM site'
+    choose_input_action 'Hello'
+    choose_input_action 'Start an action'
+    choose_input_action 'Submission'
+    choose_input_action 'Use her'
+    choose_input_action 'Fuck her brains out'
+    choose_input_action 'Intensive play'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # See Chloe's pics
+    go_to_room 'SW Cox house'
+    wait_until_hour 13
+    act_on_character 'Chloe Cox', 'Cast: Irresistible lust'
+    choose_input_action 'Chloe'
+    continue_until_unpaused
+
     # See Layla's pics
     go_to_room 'First Mid-Eastern Crossroad'
     wait_until_hour 14
@@ -1374,7 +1424,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Joe and Scarlett to have sex
-    go_to_room "University's Sport Ground"
+    go_to_room "University Entrance"
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'You should visit Scarlett'
     choose_input_action 'Ask to repair computer of Scarlett for money.'
@@ -1445,8 +1495,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Get Lara drunk
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Rum'
+    buy_alcohol 'Rum'
 
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 21
@@ -1483,9 +1532,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Rachel Hollinse', 'Cast: Irresistible lust'
     choose_input_action 'Rachel'
     continue_until_unpaused
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Rum'
-    continue_until_unpaused
+    buy_alcohol 'Rum'
     act_on_character 'Katie Jewel', 'Talk'
     choose_input_action 'Tell that you know about Katie\'s desire for Lara'
     continue_until_unpaused
@@ -1543,8 +1590,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 20
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Rum'
+    buy_alcohol 'Rum'
 
     # Finish Lara's seduction
     go_to_room 'Mid-South Crossroad'
@@ -1672,16 +1718,12 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get a Drone
-    go_to_room 'In front of Bolder\'s house'
-    wait_until_hour 13
-    act_on_room 'Burglary'
-    go_direction 'NorthEast'
-    act_on_object 'Wardrobe', 'Open'
-    act_on_object 'Drone', 'Take'
+    go_to_room 'Beach'
+    act_on_character 'Guy on the beach', 'Talk'
+    choose_input_action 'Can I play with your drone?'
+    choose_input_action 'Punch him in solar plexus'
     continue_until_unpaused
     act_on_object 'DildoDrone', 'Examine'
-    go_direction 'SouthWest'
-    go_direction 'Out'
 
     # Prank father
     go_to_room 'University Entrance'
@@ -1692,18 +1734,15 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'In front of a Bar'
     wait_until_hour 20
     go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Beer'
+    buy_alcohol 'Beer'
     act_on_object 'Beer', 'Give'
     choose_input_action 'Father Becker'
     continue_until_unpaused
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Whiskey'
+    buy_alcohol 'Whiskey'
     act_on_object 'Whiskey', 'Give'
     choose_input_action 'Father Becker'
     continue_until_unpaused
-    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
-    choose_input_action 'Beer'
+    buy_alcohol 'Beer'
     act_on_object 'Beer', 'Give'
     choose_input_action 'Father Becker'
     continue_until_unpaused
@@ -1731,6 +1770,145 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Confessional', 'Cast: Irresistible lust'
     continue_until_unpaused
     act_on_object 'Confessional', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Meet Gina
+    go_to_room "Biker's camp"
+    act_on_character 'Girl', 'Examine'
+    while evaluate_script('Globals.currentImage') != "GinaNorm.jpg"
+      go_direction 'Out'
+      go_direction 'In'
+      act_on_character 'Girl', 'Examine'
+    end
+
+    act_on_character 'Girl', 'Talk'
+    choose_input_action 'Introduce yourself'
+    choose_input_action 'Compliment the bike'
+
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'You are not like other girls here'
+    continue_until_unpaused
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Tell me about the camp'
+    continue_until_unpaused
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Which gang is yours?'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'How do you plan to join the gang?'
+    act_on_character 'Black Jack', 'Talk'
+    choose_input_action 'Race'
+
+    go_to_room 'Dragon rider\'s camp'
+    act_on_character 'Nessa', 'Talk'
+    choose_input_action 'Introduce yourself'
+    choose_input_action 'when you shut up and stop playing a bitch'
+    act_on_object 'Nessa\'s bike', 'Steal: Cut the wire'
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Tell that Nessa is out of race'
+    continue_until_unpaused
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'What will you do now?'
+    continue_until_unpaused
+    act_on_character 'Gina Blaze', 'Cast: Read Sins'
+    continue_until_unpaused
+    act_on_object 'camera', 'Shoot'
+    choose_input_action 'Gina Blaze'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'University Entrance'
+    go_direction 'NorthWest'
+    act_on_object 'Photos of Gina', 'Give'
+    choose_input_action 'Quincy Robson'
+    go_direction 'SouthEast'
+    go_direction 'East'
+    act_on_character 'Xavier Bryson', 'Examine'
+    act_on_object 'Photos of Gina', 'Give'
+    choose_input_action 'Xavier Bryson'
+    continue_until_unpaused
+    go_direction 'West'
+
+    go_to_room 'In front of a Bar'
+    go_direction 'In'
+    go_to_room 'Bar'
+    act_on_object 'Photos of Gina', 'Give'
+    choose_input_action 'Katie Jewel'
+    continue_until_unpaused
+
+    go_to_room 'Reception'
+    act_on_object 'Photos of Gina', 'Give'
+    choose_input_action 'Angela Colbert'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Ask about her father'
+    continue_until_unpaused
+
+    go_direction 'East'
+    choose_input_action 'Try to pass'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'What will you do now?'
+
+    go_to_room 'Dragon rider\'s camp'
+    act_on_character 'Nessa', 'Talk'
+    choose_input_action 'What would you say about Gina Blaze?'
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Black Jack', 'Talk'
+    choose_input_action 'What would you say about Gina Blaze?'
+    continue_until_unpaused
+
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Tell Gina about the invitation of Jack'
+    continue_until_unpaused
+    go_to_room 'Dragon rider\'s camp'
+    wait_until_hour 20
+    act_on_character 'Gina Blaze', 'Cast: Induce to sin'
+    choose_input_action 'Anger'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'In front of the bikers\' camp'
+    go_direction 'In'
+    continue_until_unpaused
+
+    go_to_room 'Reception'
+    act_on_character 'Angela Colbert', 'Talk'
+    choose_input_action 'Ask about Gina'
+    continue_until_unpaused
+
+    go_to_room 'Immortals\' camp'
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'Tell Maryam that Gina is a lesbian'
+    continue_until_unpaused
+
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Talk'
+    choose_input_action 'Ask to seduce Gina'
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Visit Katie'
+    continue_until_unpaused
+
+    go_to_room 'Biker gym'
+    act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 20
+    act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
     continue_until_unpaused
 
     puts image_reporter.percentage_seen_report

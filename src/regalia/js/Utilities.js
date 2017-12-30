@@ -64,12 +64,15 @@ function escapeQuotedTags(str) {
 }
 
 function evalJankyJavascript(str) {
+    // Need to remove newlines in string literals like 'my_str= "foo\nbar"'
+    // but <br> tags as exported from RAGS should be treated as real newlines in the source,
+    // so statements like "Foo()<br>Bar()" execute correctly.
+
     var escapedStr = escapeQuotedTags(str)
-        .replace(new RegExp("//.*?<\s*/?\s*br\s*>", "g"), "") // line comments ending in <br>
         .replace(new RegExp("</br>", "g"), "")
-        .replace(new RegExp("<br>", "g"), "")
-        .replace(new RegExp("&lt;br&gt;", "g"), "<br>")
-        .replace(new RegExp("\n", "g"), "");
+        .replace(new RegExp("\n", "g"), "")
+        .replace(new RegExp("<br>", "g"), "\n")
+        .replace(new RegExp("&lt;br&gt;", "g"), "<br>");
     return eval(escapedStr);
 }
 

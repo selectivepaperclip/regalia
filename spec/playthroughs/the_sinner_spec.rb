@@ -257,6 +257,24 @@ describe 'the sinner', type: :feature, js: true do
 
   include TheSinnerHelper
 
+  it 'successfully blocks entry into the university when you do not have the right powers' do
+    # this is implemented as a CT_CANCELMOVE that happens during a timer, and has
+    # regressed a whole bunch of times, so the test will try to ensure it does not regress again
+
+    start_game 'TheSinner'
+
+    act_on_object 'Game', 'Start new game'
+    continue_until_unpaused
+    fill_in_text_input 'TestPlayer'
+    continue_until_unpaused
+
+    go_to_room 'In front of the University'
+    go_direction 'In'
+    continue_until_unpaused
+    choose_input_action 'I just need to get in'
+    expect(page.find('#RoomTitle').text.strip).to eq('In front of the University')
+  end
+
   it 'can play through the game' do
     start_game 'TheSinner'
 

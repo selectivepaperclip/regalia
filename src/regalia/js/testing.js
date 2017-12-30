@@ -13,7 +13,7 @@ $(function() {
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    $('#regalia_version').text('Regalia 0.9.5');
+    $('#regalia_version').text('Regalia 0.9.6');
 
     $(document).keydown(function(e) {
         switch (e.keyCode) {
@@ -320,22 +320,31 @@ $(function() {
         Globals.bCancelMove = false;
         ActionRecorder.locationChange(direction);
         var curroom = Finder.room(TheGame.Player.CurrentRoom);
-        if (curroom != null) {
-            if (!curroom.bLeaveFirstTime) {
-                curroom.bLeaveFirstTime = true;
-                GameActions.runEvents("<<On Player Leave First Time>>", function () {}); // TODO
-            }
+
+        if (curroom != null && !curroom.bLeaveFirstTime) {
+            curroom.bLeaveFirstTime = true;
+            GameActions.runEvents("<<On Player Leave First Time>>", afterFirstPlayerLeaveEvent);
+        } else {
+            afterFirstPlayerLeaveEvent();
         }
-        runAfterPause(function () {
-            if (curroom != null) {
-                GameActions.runEvents("<<On Player Leave>>", function () {}); // TODO
-            }
+
+        function afterFirstPlayerLeaveEvent () {
             runAfterPause(function () {
-                if (!Globals.bCancelMove) {
-                    ChangeRoom(Finder.room(newRoom), true, true);
+                if (curroom != null) {
+                    GameActions.runEvents("<<On Player Leave>>", afterPlayerLeaveEvent);
+                } else {
+                    afterPlayerLeaveEvent();
+                }
+
+                function afterPlayerLeaveEvent () {
+                    runAfterPause(function () {
+                        if (!Globals.bCancelMove) {
+                            ChangeRoom(Finder.room(newRoom), true, true);
+                        }
+                    });
                 }
             });
-        });
+        }
     });
     $(".compass-direction").hover(function(e) {
         var $el = $(e.target);

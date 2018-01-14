@@ -316,6 +316,8 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     fill_in_text_input 'TestPlayer'
     continue_until_unpaused
+    choose_input_action 'Easy (+5 points per sin)'
+    continue_until_unpaused
 
     go_to_room 'In front of the University'
     go_direction 'In'
@@ -493,11 +495,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'You are a bitch!'
     continue_until_unpaused
 
-    # Learn 'Thievery'
-    go_to_room 'Your House'
-    act_on_self 'Learn'
-    continue_until_unpaused
-
     # Get Olivia on board with the party
     go_to_room 'Mid-South Crossroad'
     act_on_character 'Olivia Osborne', 'Talk'
@@ -524,6 +521,11 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Seafront'
     act_on_character 'Layla Jefferson', 'Talk'
     choose_input_action 'Can I come to the party?'
+    continue_until_unpaused
+
+    # Learn 'Thievery'
+    go_to_room 'Your House'
+    act_on_self 'Learn'
     continue_until_unpaused
 
     # Take photos of the Kingstones
@@ -742,6 +744,7 @@ describe 'the sinner', type: :feature, js: true do
     # Learn about Vanessa's figurine
     go_to_room 'University Entrance'
     go_direction 'NorthEast'
+    wait_until_hour 13
     act_on_character 'Helen Coombs', 'Examine'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'Ask about figurine.'

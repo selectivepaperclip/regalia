@@ -201,8 +201,8 @@ var GameUI = {
 
         var leftPosition = clickEvent.clientX;
         var topPosition = clickEvent.clientY;
-        var rightPosition = leftPosition + $("#Actionchoices").width();
-        var bottomPosition = topPosition + $("#Actionchoices").height();
+        var rightPosition = leftPosition + $("#selectionmenu").width();
+        var bottomPosition = topPosition + $("#selectionmenu").height();
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
         var fudgeFactor = 2;

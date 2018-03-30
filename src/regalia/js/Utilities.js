@@ -364,6 +364,11 @@ function AddTextToRTF(text, clr, fontst) {
         text = PerformTextReplacements(text, null);
     }
 
+    text = escapeHtmlSpecialCharacters(text);
+
+    // unescape the <br> or <br/> tags that just got escaped
+    text = text.replace(/&lt;\s*[/]?\s*br\s*[/]?\s*&gt;/g, '<br>')
+
     var replacedtext = text;
     if (fontst == "Regular" && clr == "Black") {
         // [c Green]green text[/c]
@@ -439,6 +444,17 @@ function AddTextToRTF(text, clr, fontst) {
         }, 0);
     }
 }
+
+function escapeHtmlSpecialCharacters(str) {
+    var tagsToReplace = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;'
+    };
+    return str.replace(/[&<>]/g, function(tag) {
+        return tagsToReplace[tag] || tag;
+    });
+};
 
 function nthIndex(str, pat, n){
     var i = -1;

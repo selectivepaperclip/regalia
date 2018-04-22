@@ -211,7 +211,10 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                     }
                 } else if (tempvar.vartype == "VT_DATETIME") {
                     if (dtformat != "") {
-                        newval = tempvar.dtDateTime.toString();
+                        newval = DateTimes.formatDateString(
+                            DateTimes.stringDateToDate(tempvar.dtDateTime),
+                            dtformat
+                        );
                         if (bReplacement) {
                             try {
                                 tempvar.dtDateTime = replacementvalue;

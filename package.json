@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Improvements to the JS RAGS client",
   "dependencies": {
-    "deep-diff": "0.3.8"
+    "deep-diff": "0.3.8",
+    "moment": "^2.22.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

@@ -45,6 +45,7 @@ vendor_files = [
   File.join(node_modules_dir, 'deep-diff', 'releases', 'deep-diff-0.3.8.min.js'),
   File.join(node_modules_dir, 'react', 'umd', 'react.production.min.js'),
   File.join(node_modules_dir, 'react-dom', 'umd', 'react-dom.production.min.js'),
+  File.join(node_modules_dir, 'moment', 'min', 'moment.min.js'),
 ]
 vendor_files.each do |file_path|
   FileUtils.copy(file_path, File.join(rags_project_dir, 'regalia', 'vendor'))

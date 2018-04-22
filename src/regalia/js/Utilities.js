@@ -620,7 +620,37 @@ function SetArrayData(tempvar, resultval) {
 }
 
 function SetVariable(tempvar, bArraySet, bJavascript, varindex, varindex1a, replacedstring, cmdtxt, part3) {
-    if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {} else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
+    if (tempvar.vartype == "VT_DATETIMEARRAY" || tempvar.vartype == "VT_DATETIME") {
+        var dateMoment = DateTimes.stringDateToMoment(tempvar.dtDateTime);
+        if (part3 == "Add Days") {
+            dateMoment.add(replacedstring, "day");
+        } else if (part3 == "Add Hours") {
+            dateMoment.add(replacedstring, "hour");
+        } else if (part3 == "Add Minutes") {
+            dateMoment.add(replacedstring, "minute");
+        } else if (part3 == "Add Seconds") {
+            dateMoment.add(replacedstring, "second");
+        } else if (part3 == "Subtract Days") {
+            dateMoment.subtract(replacedstring, "day");
+        } else if (part3 == "Subtract Hours") {
+            dateMoment.subtract(replacedstring, "hour");
+        } else if (part3 == "Subtract Minutes") {
+            dateMoment.subtract(replacedstring, "minute");
+        } else if (part3 == "Subtract Seconds") {
+            dateMoment.subtract(replacedstring, "second");
+        } else if (part3 == "Set Day Of Month To") {
+            dateMoment.date(replacedstring);
+        } else if (part3 == "Set Hours To") {
+            dateMoment.hour(replacedstring);
+        } else if (part3 == "Set Minutes To") {
+            dateMoment.minute(replacedstring);
+        } else if (part3 == "Set Seconds To") {
+            dateMoment.second(replacedstring);
+        } else if (part3 == "Equals") {
+            dateMoment = DateTimes.stringDateToMoment(replacedstring);
+        }
+        tempvar.dtDateTime = dateMoment.format(DateTimes.defaultDateFormat);
+    } else if (tempvar.vartype == "VT_NUMBERARRAY" || tempvar.vartype == "VT_NUMBER") {
         if (part3 == "Equals") {
             if (bArraySet) {
                 SetArrayData(tempvar, jsresult);

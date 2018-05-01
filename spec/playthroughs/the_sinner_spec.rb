@@ -131,8 +131,12 @@ module TheSinnerHelper
       'SouthWest' => 'South-West Crossroad',
       'In' => 'Church'
     },
-    'Church' => {
-      'Out' => 'In front of the church'
+    "Church" => {
+      "North" => "SE Church Backyard",
+      "Out" => "In front of the church"
+    },
+    "SE Church Backyard" => {
+      "South" => "Church"
     },
     'In front of the graveyard' => {
       'NorthWest' => 'South-West Crossroad',
@@ -144,14 +148,26 @@ module TheSinnerHelper
     'In front of the farm' => {
       'NorthEast' => 'South-West Crossroad'
     },
-    'ME F Williams house' => {
-      'SouthEast' => 'Mid-West Crossroad'
+    "ME F Williams house" => {
+      "SouthEast" => "Mid-West Crossroad",
+      "In" => "Willsons' house"
+    },
+    "Willsons' house" => {
+      "North" => "Willsons' house. Bedroom",
+      "Out" => "ME F Williams house"
+    },
+    "Willsons' house. Bedroom" => {
+      "South" => "Willsons' house"
     },
     'ME F Museum' => {
       'SouthWest' => 'Mid-West Crossroad'
     },
-    'ME F Abandoned house' => {
-      'NorthWest' => 'Mid-West Crossroad'
+    "ME F Abandoned house" => {
+      "NorthWest" => "Mid-West Crossroad",
+      "In" => "ME Abandoned house"
+    },
+    "ME Abandoned house" => {
+      "Out" => "ME F Abandoned house"
     },
     'In front of the University' => {
       'SouthEast' => 'Liberty Square',
@@ -212,7 +228,29 @@ module TheSinnerHelper
     },
     'Pool' => {
       'East' => "Jefferson's house"
-    }
+    },
+    "Corridor" => {
+      "NorthWest" => "Human Resources office",
+      "North" => "Secretary office",
+      "NorthEast" => "Alice Blunt's office",
+      "SouthEast" => "SysAdmin room",
+      "SouthWest" => "Open Office",
+    },
+    "Human Resources office" => {
+      "SouthEast" => "Corridor"
+    },
+    "Secretary office" => {
+      "South" => "Corridor"
+    },
+    "Alice Blunt's office" => {
+      "SouthWest" => "Corridor"
+    },
+    "SysAdmin room" => {
+      "NorthWest" => "Corridor"
+    },
+    "Open Office" => {
+      "NorthEast" => "Corridor"
+    },
   }
 
   def navigator
@@ -259,16 +297,28 @@ module TheSinnerHelper
     page.find('#statusbartext').text.match(/(\d\d):(\d\d)/)[2].to_i
   end
 
-  def wait_until_hour(hour)
+  def wait_until_hour(hour, janitor: false)
     if hour < current_time[:hour]
       raise 'Cannot wait for past hour'
     end
     if current_time[:minute] != 0
-      (current_time[:minute] / 10).times { act_on_self 'Wait 10 minutes' }
+      (current_time[:minute] / 10).times do
+        if janitor
+          act_on_self 'Quick Clean'
+        else
+          act_on_self 'Wait 10 minutes'
+        end
+      end
     end
     hours_to_wait = hour.to_i - current_time[:hour]
 
     while hours_to_wait > 0
+      if janitor
+        6.times { act_on_self 'Quick Clean' }
+        hours_to_wait -= 1
+        next
+      end
+
       if hours_to_wait >= 6
         act_on_self 'Add 6 hours'
         hours_to_wait -= 6
@@ -279,23 +329,28 @@ module TheSinnerHelper
     end
   end
 
-  def buy_alcohol(alcohol)
+  def buy_alcohol(alcohol, first: false)
     act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
     choose_input_action alcohol
     continue_until_unpaused
 
-    go_direction 'Out'
     # Guy who wants to steal your bottle from the bar (random)
-    if page.first('#inputmenu', text: 'Answer to him')
-      choose_input_action 'Lie: Distruct the guy'
+    if first
+      while true
+        go_direction 'Out'
+
+        break if page.first('#inputmenu', text: 'Answer to him')
+
+        go_to_room 'Bar'
+      end
+
+      choose_input_action 'Lie: Distract the guy'
       choose_input_action 'Smash the bottle on his head'
       continue_until_unpaused
       go_to_room 'Bar'
       act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
       choose_input_action alcohol
       continue_until_unpaused
-    else
-      go_to_room 'Bar'
     end
   end
 end
@@ -459,7 +514,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Learn about the Williams sex lives
     go_to_room 'Mid-West Crossroad'
-    wait_until_hour 16
+    wait_until_hour 17
     go_to_room 'ME F Williams house'
     act_on_room 'Peep'
     continue_until_unpaused
@@ -578,7 +633,8 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'First Mid-Eastern Crossroad'
     wait_until_hour 10
     go_to_room 'Seafront'
-    act_on_object 'nasty photos', 'Give'
+    act_on_object 'Photos', 'Open'
+    act_on_object 'Photos of Emma Kingston', 'Give'
     choose_input_action 'Layla Jefferson'
     continue_until_unpaused
 
@@ -782,7 +838,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 19
     go_to_room 'Bar'
-    buy_alcohol 'Vodka'
+    buy_alcohol 'Vodka', first: true
 
     # Increase Layla's sin
     go_to_room 'Jefferson\'s house'
@@ -1245,7 +1301,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Wendy', 'Go for burglary'
     continue_until_unpaused
     act_on_object 'RowB', 'Open'
-    page.find(".RoomObjects", text: 'StelB-I', match: :first).click
+    page.find(".RoomObjects", text: 'Shelf B-I', match: :first).click
     choose_action('Open')
     # the third box
     page.all(".RoomObjects", text: 'box').last.click
@@ -1912,6 +1968,322 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Biker\'s camp'
     wait_until_hour 20
     act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
+    continue_until_unpaused
+
+    go_to_room 'Willsons\' house'
+    act_on_character 'Reanna Willson', 'Examine'
+    act_on_character 'Reanna Willson', 'Talk'
+    choose_input_action 'I would like to apologise'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    wait_until_hour 17
+    act_on_room 'Peep'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Willsons\' house. Bedroom'
+    act_on_character 'Reanna Willson', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Would you like to go out for a drink with me?'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    wait_until_hour 21
+    go_to_room 'Willsons\' house'
+    act_on_character 'Reanna Willson', 'Go to the bar'
+    continue_until_unpaused
+    choose_input_action 'Ask how he met Reanna'
+    continue_until_unpaused
+    choose_input_action 'Lick-Drink-Shake-Lick-Drink-Shake-Lick-Suck'
+    choose_input_action 'Lick-Drink-Shake-Lick-Drink-Shake-Lick-Suck'
+    choose_input_action 'Lick-Drink-Shake-Lick-Drink-Shake-Lick-Suck'
+    continue_until_unpaused
+    fill_in_text_input 'yellow submarine'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    wait_until_hour 21
+    go_to_room 'Willsons\' house'
+    act_on_character 'Ted Willson', 'Examine'
+    act_on_character 'Ted Willson', 'Talk'
+    choose_input_action 'Chat'
+    act_on_object 'Photos of Reanna', 'Give'
+    choose_input_action 'Ted Willson'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    act_on_room 'Burglary'
+    act_on_room 'Burgle: go upstairs'
+    act_on_character 'Reanna Willson', 'Examine'
+    act_on_character 'Reanna Willson', 'Cast: Read sins'
+    continue_until_unpaused
+    act_on_object 'Reanna\'s clothes', 'Steal: search through'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    act_on_self 'Wait an hour'
+    act_on_self 'Wait an hour'
+    act_on_room 'Burglary'
+    go_direction 'North'
+    act_on_object 'wardrobe', 'Open'
+    act_on_object 'box', 'Examine'
+    act_on_object 'box', 'Open'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    act_on_room 'Burglary'
+    act_on_room 'Burgle: go upstairs'
+    go_to_room 'Willsons\' house. Bedroom'
+    act_on_character 'Reanna Willson', 'Kidnap Reanna'
+    continue_until_unpaused
+
+    act_on_character 'Reanna Willson', 'Examine'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Question1 fuck pics
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Fuck'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Question2 fuck pics (requires 1 tease buildup)
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Fuck'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Question3 fuck pics (requires 2 tease buildup)
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Fuck'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused
+
+    go_to_room 'ME F Williams house'
+    wait_until_hour 21
+    go_to_room 'Willsons\' house'
+    act_on_character 'Ted Willson', 'Bring Ted to Reanna'
+    continue_until_unpaused
+
+    go_to_room 'Willsons\' house'
+    go_direction 'North'
+    act_on_character 'Reanna Willson', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+
+    go_to_room 'Graveyard'
+    wait_until_hour 10
+
+    act_on_character 'Dada Blake', 'Talk'
+    choose_input_action 'Introduce yourself'
+    choose_input_action 'Lie: I came to visit an old friend of mine'
+    choose_input_action 'Andrew Brown'
+    act_on_character 'Dada Blake', 'Talk'
+    choose_input_action 'How was the funeral?'
+    act_on_character 'Dada Blake', 'Talk'
+    choose_input_action 'How was the final speech of the priest?'
+    continue_until_unpaused
+
+    go_to_room 'Church'
+    wait_until_hour 12
+    go_direction 'North'
+    act_on_object 'Drying clothes', 'Steal'
+    continue_until_unpaused
+
+    go_to_room 'Church'
+    wait_until_hour 16
+    act_on_object 'Confessional', 'confess your sins'
+    choose_input_action 'Egg on: I do not know how to behave'
+    continue_until_unpaused
+
+    go_to_room 'Graveyard'
+    act_on_character 'Dada Blake', 'Talk'
+    choose_input_action 'Lets give to the dead man what he deserves'
+    continue_until_unpaused
+    act_on_character 'Dada Blake', 'Cast: Read Sins'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_object 'Drug pills', 'Take'
+
+    go_to_room 'In front of a Bar'
+    wait_until_hour 19
+    go_direction 'In'
+    buy_alcohol 'Vodka'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Graveyard'
+    wait_until_hour 10
+    act_on_object 'Vodka', 'Give'
+    choose_input_action 'Dada Blake'
+    continue_until_unpaused
+    choose_input_action '"Lets drink for Andrew. Rest in peace, old friend."'
+    choose_input_action '"Lets drink for poor soul of Andrew again."'
+    choose_input_action 'Add a pill to the bottle'
+    continue_until_unpaused
+
+    # Fuck around on the first day getting all the pictures
+    go_to_room 'Graveyard'
+    wait_until_hour 10
+    act_on_character 'Dada Blake', 'Talk'
+    choose_input_action 'How are you going to live now?'
+    continue_until_unpaused
+    act_on_character 'Dada Blake', 'Go to Jefferson\'s company'
+    continue_until_unpaused
+
+    go_to_room 'Secretary office'
+    act_on_character 'Lisa (Secretary)', 'Examine'
+
+    go_to_room 'Open Office'
+    act_on_character 'Polly (Employee 1)', 'Examine'
+    act_on_character 'Mary (Employee 2)', 'Examine'
+    act_on_character 'Sandra (Employee 2)', 'Examine'
+
+    go_to_room 'Human Resources office'
+    act_on_character 'Elli (HR manager)', 'Examine'
+
+    go_to_room 'Alice Blunt\'s office'
+    act_on_character 'Alice Blunt', 'Examine'
+
+    go_to_room 'SysAdmin room'
+    act_on_character 'Kevin (SysAdmin)', 'Examine'
+
+    go_to_room 'Secretary office'
+    act_on_room 'Burglary: Boss office'
+    continue_until_unpaused
+
+    wait_until_hour(14, janitor: true)
+    act_on_room 'Burglary: Alisa Blunt\'s Office'
+    continue_until_unpaused
+
+    wait_until_hour(16, janitor: true)
+    act_on_room 'Burglary: HR office'
+    continue_until_unpaused
+
+    # Actually do the quest on day 2
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Graveyard'
+    wait_until_hour 10
+    act_on_character 'Dada Blake', 'Go to Jefferson\'s company'
+    continue_until_unpaused
+
+    wait_until_hour(12, janitor: true)
+    act_on_room 'Burglary: IT Office'
+    act_on_object 'Router', 'Unplug a wire'
+    choose_input_action 'Secretary'
+    continue_until_unpaused
+    choose_input_action 'Yes'
+    choose_input_action 'Tell that you are admin and ask for credentials'
+    continue_until_unpaused
+
+    go_to_room 'Corridor'
+    wait_until_hour(13, janitor: true)
+    act_on_room 'Burglary: Secretary office'
+    go_to_room 'Secretary office'
+
+    act_on_object 'Computer', 'Enter'
+    fill_in_text_input 'SuckItYourself'
+    choose_input_action 'Read e-mails'
+    continue_until_unpaused
+
+    act_on_room 'Burglary: Boss office'
+    act_on_object 'Wardrobe', 'Rummage'
+    go_direction 'South'
+    act_on_object 'Computer', 'Enter'
+    choose_input_action 'Write an e-mail'
+    continue_until_unpaused
+
+    go_to_room 'Human Resources office'
+    act_on_character 'Elli (HR manager)', 'Talk'
+    choose_input_action 'Fuck it, bitch. Come here!'
+    continue_until_unpaused
+
+    go_to_room 'Corridor'
+    go_direction 'Out'
+    continue_until_unpaused
+
+    go_to_room 'Graveyard'
+    act_on_character 'Dada Blake', 'Cast: Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Graveyard'
+    wait_until_hour 10
+    act_on_character 'Dada Blake', 'Cast: Irresistible lust'
     continue_until_unpaused
 
     puts image_reporter.percentage_seen_report

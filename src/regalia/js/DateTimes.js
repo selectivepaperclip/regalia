@@ -5,6 +5,7 @@ window.DateTimes = (function () {
         'Feb',
         'Mar',
         'Apr',
+        'May',
         'Jun',
         'Jul',
         'Aug',

@@ -185,7 +185,7 @@ var GameConditions = {
                 } else if (step3 == "Not Equals") {
                     bResult = replacedstring != stringToCompare;
                 } else if (step3 == "Contains") {
-                    bResult = stringToCompare.indexOf(replacedstring) > -1;
+                    bResult = stringToCompare.toLowerCase().indexOf(replacedstring.toLowerCase()) > -1;
                 } else if (step3 == "Greater Than") {
                     bResult = stringToCompare > replacedstring;
                 } else if (step3 == "Less Than") {

@@ -103,6 +103,11 @@ function ReplaceVariable(text, tempindex, replacementvalue) {
                 var arrayindex = text.substring(endindex2 + 1, endindex3).trim();
                 var actualindex = arrayindex;
                 var endindex4 = text.indexOf(")", endindex3 + 1);
+                if (endindex4 > endindex) {
+                    // suspected closing paren of second array index is outside of variable being replaced,
+                    // don't consider it an array index
+                    endindex4 = -1;
+                }
                 var actualindex2 = -1;
                 if (endindex4 != -1) {
                     try {

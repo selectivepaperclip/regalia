@@ -783,8 +783,8 @@ var GameCommands = {
                 if (tempvar != null) {
                     var ValueToSet = "";
                     var propname = part3;
-                    for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                        var curprop = temproom.CustomProperties[i];
+                    for (var i = 0; i < TheGame.Player.CustomProperties.length; i++) {
+                        var curprop = TheGame.Player.CustomProperties[i];
                         if (curprop.Name == propname) {
                             ValueToSet = curprop.Value;
                         }

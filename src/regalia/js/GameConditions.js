@@ -352,11 +352,9 @@ var GameConditions = {
                         temproom = Finder.room(roomname);
                     }
                     if (temproom != null) {
-                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                            var curprop = temproom.CustomProperties[i];
-                            if (curprop.Name == property) {
-                                return TestCustomProperty(curprop.Value, step3, step4);
-                            }
+                        var customProp = Finder.customProp(temproom, property);
+                        if (customProp) {
+                            return TestCustomProperty(customProp.Value, step3, step4);
                         }
                     }
                 }
@@ -367,14 +365,11 @@ var GameConditions = {
                 if (splits.length == 2) {
                     var roomname = splits[0];
                     var property = splits[1];
-                    var temproom = null;
-                    temproom = Finder.character(roomname);
-                    if (temproom != null) {
-                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                            var curprop = temproom.CustomProperties[i];
-                            if (curprop.Name == property) {
-                                return TestCustomProperty(curprop.Value, step3, step4);
-                            }
+                    var tempchar = Finder.character(roomname);
+                    if (tempchar != null) {
+                        var customProp = Finder.customProp(tempchar, property);
+                        if (customProp) {
+                            return TestCustomProperty(customProp.Value, step3, step4);
                         }
                     }
                 }
@@ -385,14 +380,11 @@ var GameConditions = {
                 if (splits.length == 2) {
                     var roomname = splits[0];
                     var property = splits[1];
-                    var temproom = null;
-                    temproom = Finder.timer(roomname);
-                    if (temproom != null) {
-                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                            var curprop = temproom.CustomProperties[i];
-                            if (curprop.Name == property) {
-                                return TestCustomProperty(curprop.Value, step3, step4);
-                            }
+                    var temptimer = Finder.timer(roomname);
+                    if (temptimer != null) {
+                        var customProp = Finder.customProp(temptimer, property);
+                        if (customProp) {
+                            return TestCustomProperty(customProp.Value, step3, step4);
                         }
                     }
                 }
@@ -403,14 +395,11 @@ var GameConditions = {
                 if (splits.length == 2) {
                     var roomname = splits[0];
                     var property = splits[1];
-                    var temproom = null;
-                    temproom = Finder.variable(roomname);
-                    if (temproom != null) {
-                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                            var curprop = temproom.CustomProperties[i];
-                            if (curprop.Name == property) {
-                                return TestCustomProperty(curprop.Value, step3, step4);
-                            }
+                    var tempvar = Finder.variable(roomname);
+                    if (tempvar != null) {
+                        var customProp = Finder.customProp(tempvar, property);
+                        if (customProp) {
+                            return TestCustomProperty(customProp.Value, step3, step4);
                         }
                     }
                 }
@@ -421,20 +410,18 @@ var GameConditions = {
                 if (splits.length == 2) {
                     var roomname = splits[0];
                     var property = splits[1];
-                    var temproom = null;
+                    var tempobj = null;
                     if (roomname == "<Self>") {
                         if (objectBeingActedUpon) {
-                            temproom = objectBeingActedUpon;
+                            tempobj = objectBeingActedUpon;
                         }
                     } else {
-                        temproom = Finder.object(roomname);
+                        tempobj = Finder.object(roomname);
                     }
-                    if (temproom != null) {
-                        for (var i = 0; i < temproom.CustomProperties.length; i++) {
-                            var curprop = temproom.CustomProperties[i];
-                            if (curprop.Name == property) {
-                                return TestCustomProperty(curprop.Value, step3, step4);
-                            }
+                    if (tempobj != null) {
+                        var customProp = Finder.customProp(tempobj, property);
+                        if (customProp) {
+                            return TestCustomProperty(customProp.Value, step3, step4);
                         }
                     }
                 }
@@ -442,11 +429,9 @@ var GameConditions = {
             }
             case "CT_Player_CustomPropertyCheck": {
                 var property = step2;
-                for (var i = 0; i < TheGame.Player.CustomProperties.length; i++) {
-                    var curprop = TheGame.Player.CustomProperties[i];
-                    if (curprop.Name == property) {
-                        return TestCustomProperty(curprop.Value, step3, step4);
-                    }
+                var customProp = Finder.customProp(TheGame.Player, property);
+                if (customProp) {
+                    return TestCustomProperty(customProp.Value, step3, step4);
                 }
                 break;
             }

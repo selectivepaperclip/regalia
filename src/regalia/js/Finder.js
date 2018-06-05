@@ -87,6 +87,14 @@ var Finder = {
             }
         }
         return null;
+    },
+    customProp: function (obj, propertyName) {
+        for (var i = 0; i < obj.CustomProperties.length; i++) {
+            var curprop = obj.CustomProperties[i];
+            if (curprop.Name == propertyName) {
+                return curprop;
+            }
+        }
     }
 };
 

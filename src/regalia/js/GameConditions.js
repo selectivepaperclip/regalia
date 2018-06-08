@@ -181,9 +181,9 @@ var GameConditions = {
                     return false;
                 }
                 if (step3 == "Equals") {
-                    bResult = replacedstring == stringToCompare;
+                    bResult = (replacedstring && replacedstring.toLowerCase()) == (stringToCompare && stringToCompare.toLowerCase());
                 } else if (step3 == "Not Equals") {
-                    bResult = replacedstring != stringToCompare;
+                    bResult = (replacedstring && replacedstring.toLowerCase()) != (stringToCompare && stringToCompare.toLowerCase());
                 } else if (step3 == "Contains") {
                     bResult = stringToCompare.toLowerCase().indexOf(replacedstring.toLowerCase()) > -1;
                 } else if (step3 == "Greater Than") {

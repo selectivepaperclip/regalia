@@ -5,9 +5,7 @@ var Globals = {
     bRunningTimers: false,
     bMasterTimer: false,
     bCancelMove: false,
-    bResetTimer: false,
     curActions: undefined,
-    currentTimer: null,
     currentImage: "",
     loopArgs: {
         object: null,

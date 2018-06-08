@@ -15,11 +15,10 @@ var GameTimers = {
             return !timer.LiveTimer;
         });
     },
-    runSingleTimer: function (timer) {
-        Globals.currentTimer = timer.Name;
-        this.runTimer(timer, function () {
-            if (Globals.bResetTimer) {
-                GameTimers.runSingleTimer(timer);
+    runSingleTimer: function (timer, checkActive) {
+        this.runTimer(timer, checkActive, function () {
+            if (timer._wasReset) {
+                GameTimers.runSingleTimer(timer, checkActive);
             }
         });
     },
@@ -29,13 +28,11 @@ var GameTimers = {
         }
 
         Globals.bRunningTimers = true;
-        Globals.bResetTimer = false;
-        Globals.currentTimer = "";
         this.staticTimers().forEach(function (timer) {
             runAfterPause(function (timer) {
                 return function () {
                     if (timer != null) {
-                        GameTimers.runSingleTimer(timer);
+                        GameTimers.runSingleTimer(timer, true);
                     }
                 };
             }(timer));
@@ -45,18 +42,18 @@ var GameTimers = {
             GameUI.refreshPanelItems();
         });
     },
-    runTimer: function (timer, callback) {
+    runTimer: function (timer, checkActive, callback) {
         if (!callback) {
             callback = function () { };
         }
 
-        Globals.bResetTimer = false;
-        if (!timer.Active) {
+        timer._wasReset = false;
+        if (checkActive && !timer.Active) {
             return;
         }
 
         timer.TurnNumber++;
-        if (timer.TurnNumber > timer.Length && timer.TType == "TT_LENGTH") {
+        if (checkActive && timer.TurnNumber > timer.Length && timer.TType == "TT_LENGTH") {
             if (!timer.Restart)
                 timer.Active = false;
             timer.TurnNumber = 0;
@@ -80,21 +77,30 @@ var GameTimers = {
 
         UpdateStatusBars();
         runNextAfterPause(function () {
-            if (Globals.bResetTimer)
+            if (!timer.Active) {
+                return;
+            }
+            if (timer._wasReset) {
                 return callback();
-            tempact = Finder.action(timer.Actions, "<<On Turn " +
-                timer.TurnNumber.toString() + ">>");
-            if (tempact != null)
+            }
+            tempact = Finder.action(timer.Actions, "<<On Turn " + timer.TurnNumber.toString() + ">>");
+            if (tempact != null) {
                 GameActions.processAction(tempact, false);
+            }
             UpdateStatusBars();
 
             runNextAfterPause(function () {
-                if (Globals.bResetTimer)
+                if (!timer.Active) {
+                    return;
+                }
+                if (timer._wasReset) {
                     return callback();
+                }
                 if (timer.TurnNumber == timer.Length) {
                     tempact = Finder.action(timer.Actions, "<<On Last Turn>>");
-                    if (tempact != null)
+                    if (tempact != null) {
                         GameActions.processAction(tempact, false);
+                    }
                 }
                 UpdateStatusBars();
                 callback();
@@ -111,7 +117,7 @@ var GameTimers = {
             timer.curtickcount += 1000;
             if (timer.curtickcount >= timer.TimerSeconds * 1000) {
                 timer.curtickcount = 0;
-                GameTimers.runTimer(timer);
+                GameTimers.runTimer(timer, true);
                 if (!skipRefresh) {
                     GameUI.refreshPanelItems();
                 }

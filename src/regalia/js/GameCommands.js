@@ -570,33 +570,18 @@ var GameCommands = {
                 break;
             }
             case "CT_EXECUTETIMER": {
-                var currentTimerOriginal = Globals.currentTimer;
-                Globals.bResetTimer = false;
-                Globals.currentTimer = "";
                 var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
-                    Globals.currentTimer = temptimer.Name;
-                    var tempact = Finder.action(temptimer.Actions, "<<On Each Turn>>");
-                    if (tempact != null) {
-                        GameActions.processAction(tempact, true);
-                        while (Globals.bResetTimer) {
-                            Globals.bResetTimer = false;
-                            GameActions.processAction(tempact, true);
-                        }
-                    }
+                    temptimer.TurnNumber = 0;
+                    GameTimers.runSingleTimer(temptimer, false);
                 }
-                Globals.currentTimer = currentTimerOriginal;
                 break;
             }
             case "CT_RESETTIMER": {
                 var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
                     temptimer.TurnNumber = 0;
-                    if (Globals.currentTimer == temptimer.Name) {
-                        Globals.bResetTimer = true;
-                    } else {
-                        Globals.bResetTimer = false;
-                    }
+                    temptimer._wasReset = false;
                 }
                 break;
             }

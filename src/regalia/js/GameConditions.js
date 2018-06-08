@@ -330,7 +330,7 @@ var GameConditions = {
                 return false;
             }
             case "CT_Player_In_Room": {
-                return TheGame.Player.CurrentRoom == step2;
+                return Finder.room(TheGame.Player.CurrentRoom) == Finder.room(step2);
             }
             case "CT_Player_In_RoomGroup": {
                 var testroom = Finder.room(TheGame.Player.CurrentRoom);

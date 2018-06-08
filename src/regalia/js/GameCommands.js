@@ -413,7 +413,7 @@ var GameCommands = {
             case "CT_ROOM_MOVE_ITEMS_TO_PLAYER": {
                 var temproom = null;
                 if (part2 == CurrentRoomGuid) {
-                    temproom = TheGame.Player.CurrentRoom;
+                    temproom = Finder.room(TheGame.Player.CurrentRoom);
                 } else {
                     temproom = Finder.room(part2);
                 }
@@ -623,7 +623,7 @@ var GameCommands = {
                         var propname = splits[1];
                         var temproom = null;
                         if (roomname == "<CurrentRoom>") {
-                            temproom = TheGame.Player.CurrentRoom;
+                            temproom = Finder.room(TheGame.Player.CurrentRoom);
                         } else {
                             temproom = Finder.room(roomname);
                         }
@@ -1027,13 +1027,13 @@ var GameCommands = {
             case "CT_SETROOMPIC": {
                 var temproom = null;
                 if (part2 == CurrentRoomGuid) {
-                    temproom = TheGame.Player.CurrentRoom;
+                    temproom = Finder.room(TheGame.Player.CurrentRoom);
                 } else {
                     temproom = Finder.room(part2);
                 }
                 if (temproom != null) {
                     temproom.RoomPic = part3;
-                    if (temproom == TheGame.Player.CurrentRoom) {
+                    if (temproom == Finder.room(TheGame.Player.CurrentRoom)) {
                         showImage(temproom.RoomPic);
                     }
                 }
@@ -1266,7 +1266,7 @@ var GameCommands = {
                         break;
                     }
                     Finder.character(part2).CurrentRoom = Finder.room(part3).UniqueID;
-                    if (part3 == TheGame.Player.CurrentRoom) {
+                    if (Finder.room(part3) == Finder.room(TheGame.Player.CurrentRoom)) {
                         var tempact = Finder.action(tempchar.Actions, "<<On Character Enter>>");
                         if (tempact != null)
                             GameActions.processAction(tempact, true);
@@ -1316,7 +1316,7 @@ var GameCommands = {
             case "CT_SETROOMDESCRIPTION": {
                 var temproom = null;
                 if (part2 == CurrentRoomGuid) {
-                    temproom = TheGame.Player.CurrentRoom;
+                    temproom = Finder.room(TheGame.Player.CurrentRoom);
                 } else {
                     temproom = Finder.room(part2);
                 }

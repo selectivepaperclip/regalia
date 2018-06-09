@@ -13,7 +13,7 @@ $(function() {
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    $('#regalia_version').text('Regalia 0.9.14');
+    $('#regalia_version').text('Regalia 0.9.15');
 
     $(document).keydown(function(e) {
         switch (e.keyCode) {

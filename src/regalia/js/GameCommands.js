@@ -112,16 +112,20 @@ var GameCommands = {
             }
             case "CT_VARIABLE_SET_RANDOMLY": {
                 var tempvar = Finder.variable(part2);
+                var randMin = parseInt(PerformTextReplacements(tempvar.dMin));
+                var randMax = parseInt(PerformTextReplacements(tempvar.dMax));
+                var randomValue = Math.floor(Math.random() * (randMax - randMin + 1) + randMin);
+
                 if (tempvar != null) {
                     var index = GetArrayIndex(part2, 0);
                     var index1a = GetArrayIndex(part2, 1);
                     if (index == -1) {
-                        tempvar.dNumType = Math.floor((Math.random() * (parseInt(tempvar.dMax) - parseInt(tempvar.dMin) + 1) + parseInt(tempvar.dMin)));
+                        tempvar.dNumType = randomValue;
                     } else {
                         if (index1a != -1)
-                            tempvar.VarArray[index][index1a] = Math.floor((Math.random() * (tempvar.dMax - tempvar.dMin) + tempvar.dMin));
+                            tempvar.VarArray[index][index1a] = randomValue;
                         else
-                            tempvar.VarArray[index] = Math.floor((Math.random() * (tempvar.dMax - tempvar.dMin) + tempvar.dMin));
+                            tempvar.VarArray[index] = randomValue;
                     }
                 }
                 break;

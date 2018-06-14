@@ -143,8 +143,13 @@ def set_game_variable(name, value)
                     "sString"
                   else
                     "dNumType"
-  end
-  page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].#{dest_property} = #{value}")
+                  end
+  dest_value = if value.class == String
+                 "'#{value}'"
+               else
+                 value
+               end
+  page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].#{dest_property} = #{dest_value}")
 end
 
 def freeze_game_variable(name)

@@ -1129,9 +1129,9 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Lara Jewel', 'Meet Vanessa and Rubi'
     continue_until_unpaused
     # Cheeze the statue-finding mission by setting a particular destination (VVV_H8)
-    set_game_variable('fountainDir', '1')
-    set_game_variable('StatueDir', '1')
-    set_game_variable('GraffitiDir', '1')
+    set_game_variable('fountainDir', '01')
+    set_game_variable('StatueDir', '01')
+    set_game_variable('GraffitiDir', '01')
     go_direction 'East'
     go_direction 'North'
     go_direction 'NorthEast'

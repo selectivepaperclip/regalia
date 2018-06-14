@@ -62,7 +62,12 @@ class Navigator
   end
 end
 
+def clear_main_text
+  page.execute_script("document.getElementById('MainText').innerHTML = ''")
+end
+
 def go_direction(direction)
+  clear_main_text
   page.find(".compass-direction.active[data-direction=\"#{direction}\"]").click
 end
 

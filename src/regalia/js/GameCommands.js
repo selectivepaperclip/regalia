@@ -576,8 +576,12 @@ var GameCommands = {
             case "CT_EXECUTETIMER": {
                 var temptimer = Finder.timer(part2);
                 if (temptimer != null) {
+                    var commandList = CommandLists.startNestedCommandList();
                     temptimer.TurnNumber = 0;
                     GameTimers.runSingleTimer(temptimer, false);
+                    runAfterPause(function () {
+                        CommandLists.finishNestedCommandList(commandList);
+                    });
                 }
                 break;
             }

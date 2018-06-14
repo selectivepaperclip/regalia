@@ -265,8 +265,7 @@ describe 'the lilith device', type: :feature, js: true do
   it 'can play through the game' do
     start_game 'The Lilith Device'
 
-    fill_in 'playernametext', with: 'Testplayer'
-    click_on 'playernamebutton'
+    fill_in_playername_input 'Testplayer'
 
     act_on_room 'Search'
     act_on_object 'Strange Stone', 'Touch'

@@ -7,12 +7,12 @@ var GameTimers = {
            return timer.Active && timer.LiveTimer;
         });
     },
-    staticTimers: function () {
+    activeStaticTimers: function () {
         if (!TheGame) {
             return [];
         }
         return TheGame.Timers.filter(function (timer) {
-            return !timer.LiveTimer;
+            return timer.Active && !timer.LiveTimer;
         });
     },
     runSingleTimer: function (timer, checkActive) {
@@ -28,10 +28,11 @@ var GameTimers = {
         }
 
         Globals.bRunningTimers = true;
-        this.staticTimers().forEach(function (timer) {
+        this.activeStaticTimers().forEach(function (timer) {
             runAfterPause(function (timer) {
                 return function () {
                     if (timer != null) {
+                        Logger.logExecutingTimer(timer);
                         GameTimers.runSingleTimer(timer, true);
                     }
                 };
@@ -48,16 +49,18 @@ var GameTimers = {
         }
 
         timer._wasReset = false;
-        if (checkActive && !timer.Active) {
-            return;
-        }
+        if (checkActive) {
+            if (!timer.Active) {
+                return;
+            }
 
-        timer.TurnNumber++;
-        if (checkActive && timer.TurnNumber > timer.Length && timer.TType == "TT_LENGTH") {
-            if (!timer.Restart)
-                timer.Active = false;
-            timer.TurnNumber = 0;
-            return;
+            timer.TurnNumber++;
+            if (timer.TurnNumber > timer.Length && timer.TType == "TT_LENGTH") {
+                if (!timer.Restart)
+                    timer.Active = false;
+                timer.TurnNumber = 0;
+                return;
+            }
         }
 
         var tempact = Finder.action(timer.Actions, "<<On Each Turn>>");

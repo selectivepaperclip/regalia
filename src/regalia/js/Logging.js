@@ -23,6 +23,12 @@ var Logger = {
             'Executing'
         );
     },
+    logExecutingTimer: function (timer) {
+        Logger.log(
+            'TIMER:',
+            timer.Name
+        )
+    },
     logEvaluatedCondition: function (condition, passed) {
         Logger.log(
             'CONDITION:',

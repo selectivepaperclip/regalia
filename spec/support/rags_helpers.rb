@@ -130,6 +130,11 @@ def fill_in_text_input(text)
   page.click_on 'textbutton'
 end
 
+def fill_in_playername_input(text)
+  fill_in 'playernametext', with: text
+  click_on 'playernamebutton'
+end
+
 def choose_input_action(action)
   page.find('.inputchoices', text: action).click
 end

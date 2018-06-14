@@ -111,8 +111,7 @@ describe 'mindshift', type: :feature, js: true do
     go_to_room "Bree's apartment (#303)"
     continue_until_unpaused
 
-    fill_in 'textinput', with: 'TestPlayer'
-    click_on 'textbutton'
+    fill_in_text_input 'TestPlayer'
     act_on_room 'Examine'
     act_on_character 'Bree', "What's going on?"
     act_on_character 'Bree', "Your apartment smells nice."

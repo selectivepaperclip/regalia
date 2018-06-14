@@ -207,16 +207,13 @@ describe 'evil inc', type: :feature, js: true do
     act_on_object('Old desk and chair', 'Take Test')
     continue_until_unpaused
 
-    fill_in 'textinput', with: 'johnny'
-    click_on 'textbutton'
+    fill_in_text_input 'johnny'
     continue_until_unpaused
 
-    fill_in 'textinput', with: 'incorrectly'
-    click_on 'textbutton'
+    fill_in_text_input 'incorrectly'
     continue_until_unpaused
 
-    fill_in 'textinput', with: 'meat'
-    click_on 'textbutton'
+    fill_in_text_input 'meat'
     continue_until_unpaused
 
     act_on_character('Dr. Evil', 'Talk')

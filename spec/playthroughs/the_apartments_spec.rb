@@ -193,8 +193,7 @@ describe 'the apartments', type: :feature, js: true do
     start_game('The Apartments')
 
     choose_input_action('New Game')
-    fill_in 'textinput', with: 'Testplayer'
-    click_on 'textbutton'
+    fill_in_text_input 'Testplayer'
 
     expect(page).to have_content('The Apartments')
 

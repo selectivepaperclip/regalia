@@ -253,8 +253,7 @@ module LilithDeviceHelper
   def quickstart(savegames_filename)
     start_game 'The Lilith Device'
 
-    fill_in 'playernametext', with: 'Testplayer'
-    click_on 'playernamebutton'
+    fill_in_text_input 'Testplayer'
 
     import_savegames(savegames_filename)
   end

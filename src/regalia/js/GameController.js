@@ -29,10 +29,12 @@ var GameController = {
 
         fn();
 
-        if (CommandLists.commandCount() == 0 && this.shouldRunCommands() && !wasRunningTimers) {
-            GameTimers.runTimerEvents();
-            UpdateStatusBars();
-        }
+        runAfterPause(function () {
+            if (CommandLists.commandCount() == 0 && GameController.shouldRunCommands() && !wasRunningTimers) {
+                GameTimers.runTimerEvents();
+                UpdateStatusBars();
+            }
+        });
     },
 
     pause: function () {

@@ -48,7 +48,16 @@ module MeAgainstTheWorldHelper
       "Down" => "Department store"
     },
     "Cloverstreet" => {
-      "North" => "My home"
+      "North" => "My home",
+      "East" => "Schoolstreet",
+      "SouthWest" => "Saya's backyard"
+    },
+    "Saya's backyard" => {
+      "NorthEast" => "Cloverstreet",
+      "In" => "Saya's room"
+    },
+    "Saya's room" => {
+      "Out" => "Saya's backyard"
     },
     "My home" => {
       "North" => "My room",
@@ -79,7 +88,8 @@ module MeAgainstTheWorldHelper
     },
     "Galileo bridge" => {
       "East" => "Ashford university gates",
-      "West" => "Copernicusstreet"
+      "West" => "Copernicusstreet",
+      "Down" => "Storm drain"
     },
     "Ashford university gates" => {
       # "North" => "Ashford university campus",
@@ -166,6 +176,56 @@ module MeAgainstTheWorldHelper
     "Goldenstreet" => {
       "East" => "Silverstreet"
     },
+    "Little dovestreet" => {
+      "North" => "Bar",
+      "NorthEast" => "Dead end Alley",
+      "East" => "Pigeonstreet"
+    },
+    "Bar" => {
+      "South" => "Little dovestreet",
+      "SouthWest" => "Bar toilets",
+      # "Up" => "Bar VIP-room",
+      "In" => "Bar interior"
+    },
+    "Bar toilets" => {
+      "NorthEast" => "Bar"
+    },
+    "Bar interior" => {
+      "Out" => "Bar"
+    },
+    "Dead end Alley" => {
+      "SouthWest" => "Little dovestreet"
+    },
+    "Pigeonstreet" => {
+      "South" => "Hawk street",
+      "West" => "Little dovestreet"
+    },
+    "Hawk street" => {
+      "North" => "Pigeonstreet"
+    },
+    "Warehouse" => {
+      "South" => "Warehouse loading bay",
+      "West" => "Warehouse locker room",
+      "Up" => "Warehouse office"
+    },
+    "Warehouse office" => {
+      "Down" => "Warehouse",
+      "In" => "Sewer"
+    },
+    "Sewer" => {
+      "NorthEast" => "Storm drain",
+      "Out" => "Warehouse office"
+    },
+    "Storm drain" => {
+      "SouthWest" => "Sewer",
+      "Up" => "Galileo bridge"
+    },
+    "Warehouse locker room" => {
+      "East" => "Warehouse"
+    },
+    "Warehouse loading bay" => {
+      "North" => "Warehouse"
+    },
   }
 
   def navigator
@@ -189,7 +249,8 @@ module MeAgainstTheWorldHelper
   def quickstart(savegames_filename)
     start_game 'Me Against the World'
 
-    choose_input_action 'By loading a saved game'
+    fill_in_playername_input 'Testplayer'
+    continue_until_unpaused
 
     import_savegames(savegames_filename)
   end
@@ -354,5 +415,124 @@ describe 'me against the world', type: :feature, js: true do
     act_on_character 'Rin Tohsaka', 'Hypnotize'
     continue_until_unpaused
     act_on_character 'Rin Tohsaka', 'Hypnotize again'
+
+    go_to_room 'Towerstreet'
+    act_on_object 'Towerstreet bus stop', 'Take bus'
+    choose_input_action 'Little dovestreet'
+
+    go_to_room 'Dead end Alley'
+    act_on_object 'Dumpster', 'Open'
+    act_on_object 'Dumpster', 'Search'
+    act_on_object 'Short sword', 'Take'
+
+    go_to_room 'Bar'
+    act_on_character 'Tifa', 'Ask where you can find \'the good stuff\'.'
+    act_on_character 'Rikku', 'Ask where you can find \'the good stuff\'.'
+    act_on_character 'Tifa', 'Buy for Rikku'
+    continue_until_unpaused
+    choose_input_action 'Yes'
+    continue_until_unpaused
+    act_on_character 'Rikku', 'Give drink'
+    act_on_character 'Rikku', 'Ask where you can find \'the good stuff\'.'
+    act_on_character 'Tifa', 'Buy for Rikku'
+    choose_input_action 'Yes'
+    act_on_character 'Rikku', 'Give strong drink'
+    act_on_character 'Rikku', 'Ask where you can find \'the good stuff\'.'
+    continue_until_unpaused
+    act_on_character 'Rei Miyamoto', 'Hypnotize'
+    continue_until_unpaused
+    go_to_room 'Bar toilets'
+    continue_until_unpaused
+
+    go_to_room 'Bar'
+    act_on_character 'Tifa', 'Buy'
+    choose_input_action 'Drink (6$)'
+    act_on_character 'Yuna', 'Give Yuna a drink'
+    act_on_character 'Tifa', 'Buy'
+    choose_input_action 'Drink (6$)'
+    act_on_character 'Yuna', 'Give Yuna a drink'
+    act_on_character 'Tifa', 'Buy'
+    choose_input_action 'Drink (6$)'
+    act_on_character 'Yuna', 'Give Yuna a drink'
+    act_on_character 'Tifa', 'Buy'
+    choose_input_action 'Drink (6$)'
+    act_on_character 'Yuna', 'Give Yuna a drink'
+    act_on_character 'Tifa', 'Buy'
+    choose_input_action 'Drink (6$)'
+    act_on_character 'Yuna', 'Give Yuna a drink'
+    act_on_character 'Tifa', 'Buy'
+    choose_input_action 'Drink (6$)'
+    continue_until_unpaused
+    act_on_character 'Yuna', 'Give Yuna a drink'
+
+    go_to_room 'Bar toilets'
+    act_on_character 'Yuna', 'Hypnotize'
+    continue_until_unpaused
+
+    go_to_room 'Bar'
+    go_direction 'In'
+    go_to_room 'Bar interior'
+    act_on_character 'Tifa', 'Hypnotize'
+    continue_until_unpaused
+
+    go_to_room 'Little dovestreet'
+    act_on_object 'Little Dovestreet bus stop', 'Take bus'
+    choose_input_action 'Cloverstreet'
+
+    go_to_room 'Saya\'s backyard'
+    act_on_room 'Search'
+    act_on_object 'A ladder', 'Use'
+
+    go_to_room 'Saya\'s room'
+    act_on_room 'Search'
+    act_on_character 'Saya', 'Hypnotize'
+
+    go_to_room 'Cloverstreet'
+    act_on_object 'Cellphone', 'Call'
+    choose_input_action 'Call Saeko'
+
+    go_to_room 'Department store'
+    act_on_character 'Saeko', 'Ambush'
+    act_on_character 'Saeko', 'Hypnotize'
+    act_on_character 'Saeko', 'Ask about drug ring'
+    continue_until_unpaused
+    choose_input_action 'Yes'
+    continue_until_unpaused
+
+    go_to_room 'Warehouse locker room'
+    act_on_room 'Search'
+    act_on_object 'Crane key', 'Take'
+    act_on_object 'Locker', 'Open'
+    act_on_object 'Locker', 'Search'
+    act_on_object 'Truck key', 'Take'
+
+    go_to_room 'Warehouse loading bay'
+    act_on_object 'Truck key', 'Use'
+    page.find(".RoomObjects", text: 'Crane', match: :first).click
+    choose_action 'Operate'
+    continue_until_unpaused
+    act_on_character 'Motoko', 'Search'
+
+    go_to_room 'Warehouse locker room'
+    act_on_object 'Breaker box', 'Open'
+    act_on_object 'Breaker box', 'Flip the breakers'
+
+    go_to_room 'Warehouse loading bay'
+    act_on_character 'Motoko', 'Search'
+
+    go_to_room 'Warehouse'
+    act_on_object 'Warehouse door', 'Unlock'
+    continue_until_unpaused
+    act_on_object 'Warehouse door', 'Open'
+
+    go_to_room 'Warehouse office'
+    act_on_room 'Search'
+    act_on_object 'Hidden hatch', 'Open'
+    go_to_room 'Sewer'
+    continue_until_unpaused
+
+    act_on_object 'Tentacle Monster', 'Fight'
+    act_on_object 'Piece of tentacle', 'Take'
+    act_on_character 'Natsuki', 'Hypnotize'
   end
 end

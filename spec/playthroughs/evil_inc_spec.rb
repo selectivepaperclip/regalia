@@ -274,9 +274,9 @@ describe 'evil inc', type: :feature, js: true do
     choose_self_action('Give order')
     choose_input_action('Mini Me - Stop Humping Me')
     continue_until_unpaused
-    go_direction('North')
-    continue_until_unpaused
     choose_self_action('Power+1')
+    continue_until_unpaused
+    go_direction('North')
 
     act_on_object('Lab Computer', 'Check Email')
     choose_input_action('List O\' Names')

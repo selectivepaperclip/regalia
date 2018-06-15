@@ -92,6 +92,14 @@ if game_js_content.match(%r([\r\n]+<br>))
   puts 'Found some suspicious newlines in Game.js, attempting to remove...'
   game_js_content.gsub!(%r([\r\n]+<br>), '<br>')
 end
+if rags_project_dir.match(/Apartments/)
+  if game_js_content.match(%r(\\\\"))
+    # replace double-backslashes followed by a double quote in Game.js text with triple-backslashes
+    puts 'Found some suspicious escape sequences (\\\\") in Game.js'
+    puts '  attempting to replace with (\\\\\\")'
+    game_js_content.gsub!(%r(\\\\"), '\\\\\\\\\\\\"')
+  end
+end
 File.write(File.join(rags_project_dir, 'regalia', 'game', 'Game.js'), game_js_content)
 
 puts "Done!"

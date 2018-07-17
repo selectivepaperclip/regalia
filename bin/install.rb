@@ -92,6 +92,17 @@ if game_js_content.match(%r([\r\n]+<br>))
   puts 'Found some suspicious newlines in Game.js, attempting to remove...'
   game_js_content.gsub!(%r([\r\n]+<br>), '<br>')
 end
+
+# replace any newlines in the roomdata section
+# TODO: it would be better if these were escaped or removed in RagsLib.dll, but it is more challenging
+newline_in_roomdata_regexp = %r(var roomdata.*?([\r\n]+.*?)+\s*var variabledata)
+if game_js_content.match(newline_in_roomdata_regexp)
+  puts 'Found some suspicious newlines in Game.js, attempting to remove...'
+  game_js_content.gsub!(newline_in_roomdata_regexp) do |content_with_newline|
+    content_with_newline.gsub(/[\r\n]+/, '')
+  end
+end
+
 if rags_project_dir.match(/Apartments/)
   if game_js_content.match(%r(\\\\"))
     # replace double-backslashes followed by a double quote in Game.js text with triple-backslashes

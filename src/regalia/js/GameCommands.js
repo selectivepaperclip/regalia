@@ -392,7 +392,7 @@ var GameCommands = {
                     if (part2 == CurrentRoomGuid) {
                         obj.locationtype = "LT_ROOM";
                         obj.locationname = TheGame.Player.CurrentRoom;
-                    } else if (part2 == VoidRoomGuid) {
+                    } else if (part2 == VoidRoomGuid || part2 === '<Void>') {
                         obj.locationtype = "LT_NULL";
                     } else {
                         obj.locationtype = "LT_ROOM";
@@ -475,7 +475,7 @@ var GameCommands = {
                     Tempobj.locationtype = "LT_ROOM";
                     if (part3 == CurrentRoomGuid) {
                         Tempobj.locationname = TheGame.Player.CurrentRoom;
-                    } else if (part3 == VoidRoomGuid) {
+                    } else if (part3 == VoidRoomGuid || part3 === '<Void>') {
                         Tempobj.locationtype = "LT_NULL";
                     } else {
                         var temp = Finder.room(part3);
@@ -1266,7 +1266,7 @@ var GameCommands = {
                     var tempact = Finder.action(tempchar.Actions, "<<On Character Enter>>");
                     if (tempact != null)
                         GameActions.processAction(tempact, true);
-                } else if (part3 == VoidRoomGuid) {
+                } else if (part3 == VoidRoomGuid || part3 === '<Void>') {
                     Finder.character(part2).CurrentRoom = VoidRoomGuid;
                 } else {
                     if (part3 == "") {

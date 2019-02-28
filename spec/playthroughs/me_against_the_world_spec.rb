@@ -407,6 +407,15 @@ describe 'me against the world', type: :feature, js: true do
     act_on_character 'Sakura Matou', 'Hypnotize'
     act_on_character 'Sakura Matou', 'Prana exchange'
 
+    go_to_room 'Living room'
+    act_on_room 'Search'
+
+    go_to_room 'bedroom'
+    act_on_object 'Wardrobe', 'Search'
+    act_on_object 'Blank memo', 'Take'
+    act_on_object 'Wardrobe', 'Open'
+    act_on_object 'Wardrobe', 'Search'
+
     go_to_room 'Rin\'s study'
     act_on_object 'Soda can', 'Throw'
     choose_input_action 'Rider'
@@ -415,6 +424,8 @@ describe 'me against the world', type: :feature, js: true do
     act_on_character 'Rin Tohsaka', 'Hypnotize'
     continue_until_unpaused
     act_on_character 'Rin Tohsaka', 'Hypnotize again'
+    act_on_object 'Rider\'s Blindfold', 'Take'
+    act_on_room 'Search'
 
     go_to_room 'Towerstreet'
     act_on_object 'Towerstreet bus stop', 'Take bus'
@@ -534,5 +545,65 @@ describe 'me against the world', type: :feature, js: true do
     act_on_object 'Tentacle Monster', 'Fight'
     act_on_object 'Piece of tentacle', 'Take'
     act_on_character 'Natsuki', 'Hypnotize'
+
+    go_to_room 'Flataustreet'
+    act_on_object 'Flataustreet bus stop', 'Take bus'
+    choose_input_action 'Cloverstreet'
+    go_to_room 'My home'
+    act_on_character 'Aki', 'Hypnotize'
+    act_on_character 'Aki', 'Go to Nerv'
+
+    go_to_room 'College gym'
+    act_on_character 'Haruhi', 'Hypnotize'
+    go_to_room 'Gym storage shed'
+    act_on_character 'Haruhi', 'Hypnotize'
+    continue_until_unpaused
+
+    go_to_room 'Schoolstreet'
+    act_on_object 'Cellphone', 'Call'
+    choose_input_action 'Misato'
+    continue_until_unpaused
+
+    go_to_room 'Nerv Command center'
+    act_on_object 'MAGI', 'Access'
+    choose_input_action 'Repair Unit-00 (50 credits)'
+
+    go_to_room 'Nerv Lab'
+    act_on_character 'Ritsuko', 'Research'
+    choose_input_action 'Dad\'s data (50$)'
+
+    go_to_room 'Personal room'
+    act_on_room 'Look around'
+    act_on_object 'Computer', 'Browse the web'
+    act_on_object 'Double king-size bed', 'Sleep'
+    continue_until_unpaused
+
+    go_to_room 'Reorientation room'
+    act_on_character 'Haruhi', 'Decide role'
+    choose_input_action 'Work'
+    act_on_character 'Aki', 'Decide role'
+    choose_input_action 'Work'
+    act_on_character 'Saber', 'Decide role'
+    choose_input_action 'Security'
+    act_on_character 'Xian Puu', 'Decide role'
+    choose_input_action 'Security'
+    act_on_character 'Rider', 'Decide role'
+    choose_input_action 'Security'
+    act_on_character 'Rin Tohsaka', 'Decide role'
+    act_on_character 'Sakura Matou', 'Decide role'
+    choose_input_action 'Research'
+    act_on_character 'Tifa', 'Decide role'
+    choose_input_action 'Work'
+    act_on_character 'Yuna', 'Decide role'
+    choose_input_action 'Research'
+    act_on_character 'Saya', 'Decide role'
+    choose_input_action 'Research'
+    act_on_character 'Saeko', 'Decide role'
+    choose_input_action 'Work'
+    act_on_character 'Rei Miyamoto', 'Decide role'
+    choose_input_action 'Work'
+    act_on_character 'Mai Tokiha', 'Decide role'
+    choose_input_action 'Research'
+    act_on_character 'Natsuki', 'Decide role'
   end
 end

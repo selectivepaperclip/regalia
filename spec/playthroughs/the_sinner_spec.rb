@@ -2,7 +2,7 @@ module TheSinnerHelper
   GAME_MAP = {
     'South-Eastern Crossroad' => {
       'NorthWest' => "In front of Alberston's house",
-      'North' => 'First Mid-Eastern Crossroad',
+      'North' => 'Mid-Eastern Crossroad',
       'NorthEast' => 'SW F Coxes house',
       'SouthEast' => "Rachel Hollinse's house",
       'SouthWest' => 'In front of my house',
@@ -25,7 +25,7 @@ module TheSinnerHelper
       'SouthWest' => 'In front of the farm'
     },
     'Mid-West Crossroad' => {
-      'NorthWest' => 'ME F Williams house',
+      'NorthWest' => "In front of Willson's house",
       'NorthEast' => 'ME F Museum',
       'South' => 'South-West Crossroad',
       'East' => 'Liberty Square',
@@ -34,13 +34,13 @@ module TheSinnerHelper
     'Liberty Square' => {
       'NorthWest' => 'In front of the University',
       'NorthEast' => 'Library [LS F Library]',
-      'East' => 'First Mid-Eastern Crossroad',
+      'East' => 'Mid-Eastern Crossroad',
       'SouthEast' => 'In front of Park',
       'South' => 'Mid-South Crossroad',
       'SouthWest' => 'In front of Police Station',
       'West' => 'Mid-West Crossroad'
     },
-    'First Mid-Eastern Crossroad' => {
+    'Mid-Eastern Crossroad' => {
       'NorthWest' => "In front of Kingston's house",
       'NorthEast' => 'In front of Old Lighthouse',
       'SouthEast' => 'Seafront',
@@ -78,14 +78,26 @@ module TheSinnerHelper
       'In' => "Alberstone's house"
     },
     "Alberstone's house" => {
-      'Out' => 'In front of Alberston\'s house'
+      "NorthWest" => "Albertons's house. Rose's Room",
+      "NorthEast" => "Albertons's house. Ann's Room",
+      "Out" => "In front of Alberston's house"
+    },
+    "Albertons's house. Rose's Room" => {
+      "SouthEast" => "Alberstone's house"
+    },
+    "Albertons's house. Ann's Room" => {
+      "SouthWest" => "Alberstone's house"
     },
     'In front of supermarket' => {
       'SouthEast' => 'Mid-South Crossroad',
       'In' => 'Supermarket'
     },
-    'Supermarket' => {
-      'Out' => 'In front of supermarket'
+    "Supermarket" => {
+      "North" => "MS Supermarket Inside",
+      "Out" => "In front of supermarket"
+    },
+    "MS Supermarket Inside" => {
+      "South" => "Supermarket"
     },
     'In front of a Bar' => {
       'SouthWest' => 'Mid-South Crossroad',
@@ -132,10 +144,10 @@ module TheSinnerHelper
       'In' => 'Church'
     },
     "Church" => {
-      "North" => "SE Church Backyard",
+      "North" => "Church Backyard",
       "Out" => "In front of the church"
     },
-    "SE Church Backyard" => {
+    "Church Backyard" => {
       "South" => "Church"
     },
     'In front of the graveyard' => {
@@ -148,19 +160,23 @@ module TheSinnerHelper
     'In front of the farm' => {
       'NorthEast' => 'South-West Crossroad'
     },
-    "ME F Williams house" => {
+    "In front of Willson's house" => {
       "SouthEast" => "Mid-West Crossroad",
       "In" => "Willsons' house"
     },
     "Willsons' house" => {
       "North" => "Willsons' house. Bedroom",
-      "Out" => "ME F Williams house"
+      "Out" => "In front of Willson's house"
     },
     "Willsons' house. Bedroom" => {
       "South" => "Willsons' house"
     },
-    'ME F Museum' => {
-      'SouthWest' => 'Mid-West Crossroad'
+    "ME F Museum" => {
+      "SouthWest" => "Mid-West Crossroad",
+      "In" => "ME Museum"
+    },
+    "ME Museum" => {
+      "Out" => "ME F Museum"
     },
     "ME F Abandoned house" => {
       "NorthWest" => "Mid-West Crossroad",
@@ -177,8 +193,28 @@ module TheSinnerHelper
     "University's Sport Ground" => {
       'East' => 'In front of the University'
     },
-    'University Entrance' => {
-      'Out' => 'In front of the University'
+    "University Entrance" => {
+      "NorthWest" => "Pythagoras room",
+      "North" => "Linnaeus room",
+      "NorthEast" => "Herodot room",
+      "East" => "Teacher's room",
+      "Out" => "In front of the University"
+    },
+    "Pythagoras room" => {
+      "SouthEast" => "University Entrance"
+    },
+    "Linnaeus room" => {
+      "South" => "University Entrance"
+    },
+    "Herodot room" => {
+      "SouthWest" => "University Entrance"
+    },
+    "Teacher's room" => {
+      "North" => "LS University - Principle office",
+      "West" => "University Entrance"
+    },
+    "LS University - Principle office" => {
+      "South" => "Teacher's room"
     },
     'Library [LS F Library]' => {
       'SouthWest' => 'Liberty Square',
@@ -206,20 +242,20 @@ module TheSinnerHelper
       'NorthEast' => 'Liberty Square'
     },
     "In front of Kingston's house" => {
-      'SouthEast' => 'First Mid-Eastern Crossroad'
+      'SouthEast' => 'Mid-Eastern Crossroad'
     },
     'In front of Old Lighthouse' => {
-      'SouthWest' => 'First Mid-Eastern Crossroad'
+      'SouthWest' => 'Mid-Eastern Crossroad'
     },
     "Seafront" => {
-      "NorthWest" => "First Mid-Eastern Crossroad",
+      "NorthWest" => "Mid-Eastern Crossroad",
       "East" => "Beach"
     },
     "Beach" => {
       "West" => "Seafront"
     },
     "In front of Jefferson's house" => {
-      'NorthEast' => 'First Mid-Eastern Crossroad',
+      'NorthEast' => 'Mid-Eastern Crossroad',
       'In' => "Jefferson's house"
     },
     "Jefferson's house" => {
@@ -253,6 +289,8 @@ module TheSinnerHelper
     },
   }
 
+  class RetryNavigationError < StandardError; end
+
   def navigator
     @navigator ||= Navigator.new(GAME_MAP)
   end
@@ -268,10 +306,24 @@ module TheSinnerHelper
       raise "Don't know anything about destination room (#{destination_room})"
     end
 
-    directions = navigator.navigation_directions(current_room, destination_room)
-    directions.each do |direction|
-      go_direction(direction)
-      continue_until_unpaused
+    begin
+      directions = navigator.navigation_directions(current_room, destination_room)
+      directions.each do |direction|
+        if page.all('#InputMenuTitle').length > 0 && page.all('#InputMenuTitle')[0].text.include?('What should you do?')
+          if page.find('#inputchoices').text.include?('Wait while the leader turns away and then hit him hard')
+            choose_input_action 'Wait while the leader turns away and then hit him hard'
+          else
+            choose_input_action 'Run away'
+          end
+          continue_until_unpaused
+          raise RetryNavigationError
+        end
+        go_direction(direction)
+        continue_until_unpaused
+      end
+    rescue RetryNavigationError
+      current_room = page.find('#RoomTitle').text
+      retry
     end
   end
 
@@ -283,6 +335,13 @@ module TheSinnerHelper
     continue_until_unpaused
 
     import_savegames(savegames_filename)
+  end
+
+  def wait_until_monday
+    until page.find('#statusbartext').text.match(/Monday/)
+      act_on_self 'Next Day'
+      continue_until_unpaused
+    end
   end
 
   def current_time
@@ -394,9 +453,11 @@ describe 'the sinner', type: :feature, js: true do
     # Gain the first level of 'Bad Boy'
     go_to_room 'SW F Coxes house'
     act_on_character 'Buffi', 'Kick the beast!'
+    continue_until_unpaused
 
     go_to_room 'Mid-South Crossroad'
     act_on_object 'litter bin', 'Kick'
+    continue_until_unpaused
 
     go_to_room 'In front of supermarket'
     act_on_room 'Draw a dick'
@@ -404,12 +465,15 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'Church'
     act_on_object 'basin holy water', 'Wash your hands'
+    continue_until_unpaused
 
     go_to_room 'Graveyard'
     act_on_room 'Pee'
+    continue_until_unpaused
 
     go_to_room 'ME F Abandoned house'
     act_on_room 'Throw a stone'
+    continue_until_unpaused
 
     go_to_room 'In front of the University'
     act_on_object 'mobile', 'Install porn image'
@@ -421,14 +485,17 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'Library [LS Library]'
     act_on_room 'Search'
+    continue_until_unpaused
     act_on_object 'Book about Sherlock Holmes', 'Tear out a page'
     continue_until_unpaused
 
     go_to_room 'Liberty Square'
     act_on_object 'Page', 'Throw it out'
+    continue_until_unpaused
 
     go_to_room 'Park'
     act_on_object 'ball', 'Kick it'
+    continue_until_unpaused
 
     # Learn 'Lie'
     go_to_room 'Your House'
@@ -478,13 +545,16 @@ describe 'the sinner', type: :feature, js: true do
 
     # Learn about Katie
     go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Examine'
+    act_on_character 'Katie Jewel', 'Talk'
+    choose_input_action 'What do you sell?'
+    # "Buy a cup of coffee" doesn't show up unless you leave and enter
+    go_direction 'Out'
+    go_direction 'In'
     act_on_character 'Katie Jewel', 'Buy a cup of coffee'
     continue_until_unpaused
     choose_input_action 'Lie: shrug'
     continue_until_unpaused
-    act_on_character 'Katie Jewel', 'Examine'
-    act_on_character 'Katie Jewel', 'Talk'
-    choose_input_action 'What do you sell?'
 
     # Learn 'Egg On'
     go_to_room 'Your House'
@@ -515,7 +585,7 @@ describe 'the sinner', type: :feature, js: true do
     # Learn about the Williams sex lives
     go_to_room 'Mid-West Crossroad'
     wait_until_hour 17
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     act_on_room 'Peep'
     continue_until_unpaused
 
@@ -559,10 +629,11 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Olivia Osborne', 'Cast: Read Sins'
     continue_until_unpaused
     wait_until_hour 20
-    go_to_room 'First Mid-Eastern Crossroad'
+    go_to_room 'Mid-Eastern Crossroad'
     act_on_character 'Olivia Osborne', 'Talk'
     choose_input_action 'Egg on'
     choose_input_action 'Lets go to watch a movie'
+    choose_input_action '"The Godfather"'
     continue_until_unpaused
 
     # Tell Scarlett that Olivia is on board
@@ -584,7 +655,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Take photos of the Kingstones
-    go_to_room 'First Mid-Eastern Crossroad'
+    go_to_room 'Mid-Eastern Crossroad'
     wait_until_hour 13
     go_to_room "In front of Kingston's house"
     act_on_room 'Spy on the house'
@@ -630,7 +701,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Rose Alberstone', 'Cast: Read sins'
 
     # Give Kingstones photos to Layla
-    go_to_room 'First Mid-Eastern Crossroad'
+    go_to_room 'Mid-Eastern Crossroad'
     wait_until_hour 10
     go_to_room 'Seafront'
     act_on_object 'Photos', 'Open'
@@ -695,7 +766,9 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     act_on_character 'Shady Guy', 'Talk'
+    continue_until_unpaused
     act_on_character 'Shady Guy', 'Ask for a joint'
+    continue_until_unpaused
 
     act_on_object 'joint', 'Give'
     choose_input_action 'Ann Alberstone'
@@ -787,9 +860,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Were you able to "borrow" an interesting book?'
     continue_until_unpaused
 
-    go_to_room 'In front of the farm'
-    choose_input_action 'Wait while the leader turns away and then hit him hard'
-
     # Start Chloe's seduction
     go_to_room 'SW Cox house'
     act_on_character 'Chloe Cox', 'Cast: Read sins'
@@ -797,10 +867,21 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'curtain', 'Steal: Open the curtain carefully.'
     continue_until_unpaused
 
+    # Go to next day (Monday) to open university
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Peep on Chloe through open curtain
+    go_to_room 'SW F Coxes house'
+    wait_until_hour 13
+    act_on_room 'Peep'
+    continue_until_unpaused
+
     # Learn about Vanessa's figurine
     go_to_room 'University Entrance'
     go_direction 'NorthEast'
-    wait_until_hour 13
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'Introduce yourself'
     act_on_character 'Helen Coombs', 'Examine'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'Ask about figurine.'
@@ -809,6 +890,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Learn next steps for Vanessa
     go_to_room 'Park'
+    wait_until_hour 19
     act_on_object 'Dagon figurine', 'Give'
     choose_input_action 'Vanessa Hadwin'
     continue_until_unpaused
@@ -818,6 +900,11 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get witchcraft book for Vanessa
+    go_to_room 'Reception'
+    act_on_character 'Norma Rowbottom', 'Talk'
+    choose_input_action 'Ask about access to old books'
+    choose_input_action 'Lie: I need old administrative books for a research'
+    continue_until_unpaused
     go_to_room 'Library [LS Library]'
     act_on_character 'Angela Colbert', 'Talk'
     choose_input_action 'Ask about access to old books'
@@ -830,13 +917,8 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Tell me about Norma'
     continue_until_unpaused
 
-    go_to_room 'SW F Coxes house'
-    act_on_room 'Peep'
-    continue_until_unpaused
-
     # Get Vodka for Norma
     go_to_room 'Mid-South Crossroad'
-    wait_until_hour 19
     go_to_room 'Bar'
     buy_alcohol 'Vodka', first: true
 
@@ -850,7 +932,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'For good sex!'
     choose_input_action 'For the Queen of the Party!'
     continue_until_unpaused
-    act_on_room 'Press the handle harder to get inside'
+    choose_input_action 'Press the handle harder to get inside'
     continue_until_unpaused
     act_on_character 'Layla Jefferson', 'Cast: Read sins'
     continue_until_unpaused
@@ -861,11 +943,10 @@ describe 'the sinner', type: :feature, js: true do
 
     go_direction 'North'
     act_on_character 'Isabel Jefferson', 'Search'
+    continue_until_unpaused
     go_direction 'South'
 
     # Compromise Norma
-    go_to_room 'Liberty Square'
-    wait_until_hour 21
     go_to_room 'Reception'
     act_on_character 'Norma Rowbottom', 'Compromise her'
     continue_until_unpaused
@@ -878,14 +959,20 @@ describe 'the sinner', type: :feature, js: true do
     act_on_room 'Search'
     act_on_object 'sex manual', 'Take'
 
-    go_to_room 'University Entrance'
-    go_direction 'NorthWest'
+    # Get good cognac for Quincy
+    go_to_room 'MS Supermarket Inside'
+    act_on_object 'Cognac shelves', 'buy a bottle of Cognac'
+    choose_input_action 'Normandian Mercier La Peraudieve'
 
+    go_to_room 'Pythagoras room'
     act_on_character 'Quincy Robson', 'Examine'
     act_on_character 'Quincy Robson', 'Talk'
+    choose_input_action 'Chat'
+    act_on_object 'Bottle of Cognac', 'Give'
+    choose_input_action 'Quincy Robson'
+    continue_until_unpaused
     act_on_character 'Quincy Robson', 'Cast: Read Sins'
     continue_until_unpaused
-    go_direction 'SouthEast'
 
     go_to_room "Alberstone's house"
     act_on_character 'Ann Alberstone', 'Talk'
@@ -920,7 +1007,8 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Ask about Layla\'s phone'
     act_on_character 'Rubi Patterson', 'Talk'
     choose_input_action 'Ask about Layla\'s phone'
-    act_on_character 'Creig Bolder', 'Ask about Layla\'s phone'
+    act_on_character 'Creig Bolder', 'Talk'
+    choose_input_action 'Ask about Layla\'s phone'
     continue_until_unpaused
 
     # Learn 'Burgling'
@@ -975,7 +1063,6 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
-
     # Add to Rose's sins with Ann's Sex Manual
     go_to_room 'Alberstone\'s house'
     go_direction 'NorthEast'
@@ -995,15 +1082,11 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Chat'
     continue_until_unpaused
 
-    act_on_object 'Door to the Herodotus Class', 'Skill: Burglary'
+    go_to_room 'Teacher\'s room'
+    act_on_object 'Key board', 'Steal a key'
+    go_to_room 'University Entrance'
+    act_on_object 'Door to the Herodotus Class', 'Unlock'
     continue_until_unpaused
-    act_on_object 'Door to the Herodotus Class', 'Open'
-    go_direction 'North'
-    go_direction 'South'
-    act_on_character 'Joe Spencer', 'Talk'
-    choose_input_action 'Tell Joe about unlocked room'
-    continue_until_unpaused
-    go_direction 'Out'
 
     # Start Wendy's darts quest
     go_to_room 'In front of the graveyard'
@@ -1071,6 +1154,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Start Rachel's seduction
+    set_character_custom_property('Rachel Hollinse', 'mood', 'bad') # this interaction only works in bad mood
     go_to_room 'Park'
     act_on_character 'Rachel Hollinse', 'Examine'
     act_on_character 'Rachel Hollinse', 'Talk'
@@ -1204,6 +1288,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Drink with Rachel
     go_to_room 'Bar'
+    set_character_custom_property('Rachel Hollinse', 'mood', 'good') # this interaction only works in good mood
     act_on_character 'Rachel Hollinse', 'Talk'
     choose_input_action 'Do you fancy a drink?'
     continue_until_unpaused
@@ -1256,28 +1341,9 @@ describe 'the sinner', type: :feature, js: true do
     act_on_room 'Buy a guided tour.'
     continue_until_unpaused
 
-    # Burgle the ambroxide
+    # Burgle the ambergris
     go_direction 'Out'
     wait_until_hour 21
-    act_on_room 'Burglary'
-    continue_until_unpaused
-    go_direction 'North'
-    go_direction 'East'
-    go_direction 'East'
-    go_direction 'South'
-    go_direction 'West'
-    # Perfumery hall
-    act_on_room 'Search'
-    act_on_room 'Search'
-    go_direction 'East'
-    act_on_room 'Search'
-    go_direction 'North'
-    go_direction 'West'
-    go_direction 'West'
-    go_direction 'South'
-    go_direction 'Out'
-
-    # Burgle the ambergris, not needed but since we're here...
     act_on_room 'Burglary'
     continue_until_unpaused
     go_direction 'North'
@@ -1287,12 +1353,30 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'North'
     go_direction 'North'
     go_direction 'East'
+    act_on_room 'Search'
     act_on_object 'ambergris', 'Take'
     go_direction 'West'
     go_direction 'South'
     act_on_room 'Search'
     go_direction 'South'
     go_direction 'East'
+    go_direction 'South'
+    go_direction 'Out'
+
+    # Burgle the ambroxide
+    act_on_room 'Burglary'
+    continue_until_unpaused
+    go_direction 'North'
+    go_direction 'East'
+    go_direction 'East'
+    go_direction 'South'
+    go_direction 'West'
+    act_on_room 'Search'
+    continue_until_unpaused
+    go_direction 'East'
+    go_direction 'North'
+    go_direction 'West'
+    go_direction 'West'
     go_direction 'South'
     go_direction 'Out'
 
@@ -1354,14 +1438,18 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Finish Joe's seduction
+    wait_until_monday
+
     go_to_room "University's Sport Ground"
-    act_on_room 'Peep'
+    act_on_room 'Peep' # possible missing text here
+    continue_until_unpaused
     choose_input_action 'Truth'
     act_on_room 'Peep'
     continue_until_unpaused
 
     # See Olivia's pics
     go_to_room 'Mid-South Crossroad'
+    wait_until_hour 11
     act_on_character 'Olivia Osborne', 'Cast: Irresistible lust'
     continue_until_unpaused
 
@@ -1377,6 +1465,20 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Intensive play'
     continue_until_unpaused
 
+    # Burgle Rachel
+    go_to_room 'South-Eastern Crossroad'
+    wait_until_hour 16
+    go_to_room 'Rachel Hollinse\'s house'
+    act_on_room 'Burglary'
+    continue_until_unpaused
+    choose_input_action 'Yes'
+    continue_until_unpaused
+
+    # Learn 'Cheating'
+    go_to_room 'Your House'
+    act_on_self 'Learn'
+    continue_until_unpaused
+
     act_on_self 'Next Day'
     continue_until_unpaused
 
@@ -1387,9 +1489,145 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Chloe'
     continue_until_unpaused
 
+    # Play Quincy at chess
+    go_to_room 'Pythagoras room'
+    act_on_character 'Quincy Robson', 'Pass the test'
+    continue_until_unpaused
+
+    # Try to keep the scores even
+    freeze_game_variable('QuincyChessRes')
+    set_game_variable('QuincyChessRes', "99") # it acts like a number but it's stored like a string
+    choose_input_action 'Play fair'
+    continue_until_unpaused
+
+    set_game_variable('QuincyChessRes', "10")
+    choose_input_action 'Play fair'
+    continue_until_unpaused
+
+    set_game_variable('QuincyChessRes', "99")
+    choose_input_action 'Play fair'
+    continue_until_unpaused
+
+    set_game_variable('QuincyChessRes', "10")
+    choose_input_action 'Play fair'
+    continue_until_unpaused
+
+    set_game_variable('QuincyChessRes', "99")
+    choose_input_action 'Play fair'
+    continue_until_unpaused
+
+    choose_input_action 'Give in'
+    continue_until_unpaused
+
+    # Learn about Coombs envy
+    go_to_room 'Herodot room'
+    act_on_room 'Examine'
+    act_on_object 'Awards', 'Examine'
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'Could you tell me more about this award, it seems important?'
+    continue_until_unpaused
+
+    # Steal figurine for Coombs
+    go_to_room 'Jefferson\'s house'
+    act_on_room 'Burglary: Go to Layla\'s bedroom'
+    act_on_object 'Glass case', 'Examine'
+    act_on_object 'Glass case', 'Take a figurine'
+    continue_until_unpaused
+    choose_input_action(['First', 'Second', 'Third', 'Fourth', 'Fifth'][page.evaluate_script("Finder.variable('FigurinePos').VarArray.indexOf('Astarte')")])
+    continue_until_unpaused
+
+    # Grind out Coombs' paper
+    go_to_room 'Herodot room'
+    act_on_object 'female figurine', 'Give'
+    choose_input_action 'Helen Coombs'
+    continue_until_unpaused
+    act_on_character 'Helen Coombs', 'Cast: Read sins'
+    continue_until_unpaused
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'How is the work on the paper going?'
+
+    # Day 1 after paper start
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Tessa start
+    go_to_room 'Linnaeus room'
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Introduce yourself'
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'How are your first days in the University?'
+    continue_until_unpaused
+
+    go_to_room 'University Entrance'
+    act_on_character 'Rubi Patterson', 'Talk'
+    choose_input_action 'What do you think about Ms Clayton?'
+    go_to_room 'Linnaeus room'
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Students say that you...'
+    choose_input_action 'too young'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    act_on_self 'Add 6 hours'
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'How is the work on the paper going?'
+
+    # Day 2 after paper start
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Linnaeus room'
+    act_on_room 'Hide'
+    continue_until_unpaused
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Tell about Creig'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    act_on_self 'Add 6 hours'
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'How is the work on the paper going?'
+
+    # Day 3 after paper start
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Linnaeus room'
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Ask about the conversation with Creig'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    act_on_self 'Add 6 hours'
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'How is the work on the paper going?'
+    continue_until_unpaused
+
+    # Day 4+ after paper start
+    wait_until_monday
+    go_to_room 'Herodot room'
+    act_on_self 'Add 6 hours'
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'How is the work on the paper going?'
+    continue_until_unpaused
+    act_on_object 'papers', 'Make a copy'
+
+    go_to_room 'Your House'
+    act_on_object 'laptop', 'Report plagiarism'
+    go_to_room 'Herodot room'
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'Was the paper accepted?'
+    continue_until_unpaused
+
+    # Investigate Helen Coombs on the computer
+    go_to_room 'Your House'
+    act_on_object 'laptop', 'Read eMail'
+    act_on_object 'laptop', 'Search', match: :last
+    fill_in_text_input 'Helen Coombs'
+    act_on_object 'laptop', 'Search', match: :last
+    fill_in_text_input 'Nellie UniTor'
+    continue_until_unpaused
+
     # See Layla's pics
-    go_to_room 'First Mid-Eastern Crossroad'
-    wait_until_hour 14
+    go_to_room 'Mid-Eastern Crossroad'
     go_to_room 'Jefferson\'s house'
     go_direction 'West'
     act_on_character 'Layla Jefferson', 'Cast: Irresistible lust'
@@ -1397,10 +1635,22 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Ann and Scarlett to sex
-    go_to_room "Alberstone's house"
-    go_direction 'NorthEast'
+    go_to_room "Albertons's house. Ann's Room"
+    until main_text.include?('You enter the room and see Ann')
+      go_direction 'SouthWest'
+      go_direction 'NorthEast'
+    end
+    continue_until_unpaused
+    go_to_room "Albertons's house. Ann's Room"
     act_on_character 'Ann Alberstone', 'Talk'
+    continue_until_unpaused
     choose_input_action 'Meet with Scarlett'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room "In front of Alberston's house"
+    wait_until_hour 16
+    go_to_room "Albertons's house. Ann's Room"
     act_on_character 'Ann Alberstone', 'Go to Jeffersons'
     continue_until_unpaused
 
@@ -1413,6 +1663,8 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'East'
 
     # Try to convince Joe to see Scarlett
+    act_on_self 'Next Day'
+    continue_until_unpaused
     go_to_room "University's Sport Ground"
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'Speak about Scarlett'
@@ -1428,6 +1680,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Finish Rubi's seduction
     go_to_room 'Library [LS Library]'
+    wait_until_hour 18
     act_on_character 'Rubi Patterson', 'Talk'
     choose_input_action 'Chat'
     continue_until_unpaused
@@ -1452,7 +1705,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Scarlett to suggest Joe repair computers
-    go_to_room 'First Mid-Eastern Crossroad'
+    go_to_room 'Mid-Eastern Crossroad'
     wait_until_hour 20
     go_to_room 'Jefferson\'s house'
     act_on_character 'Scarlett Jefferson', 'Talk'
@@ -1460,6 +1713,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # See Layla party pics
+    go_to_room 'Jefferson\'s house'
     act_on_character 'Layla Jefferson', 'Cast: Irresistible lust'
     choose_input_action 'Layla'
     continue_until_unpaused
@@ -1473,24 +1727,16 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
-    # Burgle Rachel
-    go_to_room 'South-Eastern Crossroad'
-    wait_until_hour 16
-    go_to_room 'Rachel Hollinse\'s house'
-    act_on_room 'Burglary'
-    continue_until_unpaused
-    choose_input_action 'Yes'
-    continue_until_unpaused
-
     # Get Joe and Scarlett to have sex
     go_to_room "University Entrance"
+    wait_until_hour 16
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'You should visit Scarlett'
     choose_input_action 'Ask to repair computer of Scarlett for money.'
     continue_until_unpaused
 
     # Finish Scarlett's seduction
-    go_to_room 'First Mid-Eastern Crossroad'
+    go_to_room 'Mid-Eastern Crossroad'
     wait_until_hour 20
     go_to_room 'Jefferson\'s house'
     act_on_object 'Photos of Scarlett and Joe', 'Give'
@@ -1629,12 +1875,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_first_input_action 'Layla'
     continue_until_unpaused
 
-    # See Vanessa school pics
-    go_to_room 'University Entrance'
-    act_on_character 'Vanessa Hadwin', 'Cast: Irresistible lust'
-    choose_input_action 'Vanessa'
-    continue_until_unpaused
-
     # Get Katie blackmail pics
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 16
@@ -1680,6 +1920,12 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'South'
     act_on_character 'Lara Jewel', 'Cast: Irresistible lust'
     choose_input_action 'Lara'
+    continue_until_unpaused
+
+    # See Vanessa school pics
+    go_to_room 'University Entrance'
+    act_on_character 'Vanessa Hadwin', 'Cast: Irresistible lust'
+    choose_input_action 'Vanessa'
     continue_until_unpaused
 
     # Finish Katie's seduction
@@ -1759,13 +2005,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Dildo', 'Take'
     go_direction 'SouthEast'
 
-    # Wait till Monday
-    act_on_self 'Next Day'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
+    wait_until_monday
 
     # Trigger Father's entrance
     go_to_room 'University Entrance'
@@ -1863,6 +2103,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Introduce yourself'
     choose_input_action 'when you shut up and stop playing a bitch'
     act_on_object 'Nessa\'s bike', 'Steal: Cut the wire'
+    continue_until_unpaused
 
     go_to_room 'Biker\'s camp'
     act_on_character 'Gina Blaze', 'Talk'
@@ -1883,6 +2124,7 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'NorthWest'
     act_on_object 'Photos of Gina', 'Give'
     choose_input_action 'Quincy Robson'
+    continue_until_unpaused
     go_direction 'SouthEast'
     go_direction 'East'
     act_on_character 'Xavier Bryson', 'Examine'
@@ -1970,15 +2212,19 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
     continue_until_unpaused
 
+    # Reanna quest
+    go_to_room "In front of Willson's house"
+    wait_until_hour 20
     go_to_room 'Willsons\' house'
     act_on_character 'Reanna Willson', 'Examine'
     act_on_character 'Reanna Willson', 'Talk'
     choose_input_action 'I would like to apologise'
     continue_until_unpaused
+
     act_on_self 'Next Day'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     wait_until_hour 17
     act_on_room 'Peep'
     continue_until_unpaused
@@ -1986,12 +2232,13 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     go_to_room 'Willsons\' house. Bedroom'
+
     act_on_character 'Reanna Willson', 'Talk'
     choose_input_action 'Egg on'
     choose_input_action 'Would you like to go out for a drink with me?'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     wait_until_hour 21
     go_to_room 'Willsons\' house'
     act_on_character 'Reanna Willson', 'Go to the bar'
@@ -2007,7 +2254,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     wait_until_hour 21
     go_to_room 'Willsons\' house'
     act_on_character 'Ted Willson', 'Examine'
@@ -2019,7 +2266,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     act_on_room 'Burglary'
     act_on_room 'Burgle: go upstairs'
     act_on_character 'Reanna Willson', 'Examine'
@@ -2028,7 +2275,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Reanna\'s clothes', 'Steal: search through'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     act_on_self 'Wait an hour'
     act_on_self 'Wait an hour'
     act_on_room 'Burglary'
@@ -2040,7 +2287,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     act_on_room 'Burglary'
     act_on_room 'Burgle: go upstairs'
     go_to_room 'Willsons\' house. Bedroom'
@@ -2128,7 +2375,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Leave'
     continue_until_unpaused
 
-    go_to_room 'ME F Williams house'
+    go_to_room "In front of Willson's house"
     wait_until_hour 21
     go_to_room 'Willsons\' house'
     act_on_character 'Ted Willson', 'Bring Ted to Reanna'
@@ -2139,13 +2386,13 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Reanna Willson', 'Cast: Irresistible lust'
     continue_until_unpaused
 
-
     go_to_room 'Graveyard'
     wait_until_hour 10
 
     act_on_character 'Dada Blake', 'Talk'
     choose_input_action 'Introduce yourself'
     choose_input_action 'Lie: I came to visit an old friend of mine'
+    continue_until_unpaused
     choose_input_action 'Andrew Brown'
     act_on_character 'Dada Blake', 'Talk'
     choose_input_action 'How was the funeral?'
@@ -2284,6 +2531,397 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Graveyard'
     wait_until_hour 10
     act_on_character 'Dada Blake', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Back to Tessa and Helen
+    go_to_room 'University Entrance'
+    act_on_character 'Rubi Patterson', 'Talk'
+    choose_input_action 'Seduce Creig'
+    continue_until_unpaused
+
+    wait_until_monday
+    go_to_room 'Linnaeus room'
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'What are you going to do about Creig?'
+    continue_until_unpaused
+    act_on_character 'Tessa Clayton', 'Cast: Read Sins'
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Keeping Creig as an obidient student is more beneficial.'
+    continue_until_unpaused
+    act_on_character 'Tessa Clayton', 'Cast: Read Sins'
+    continue_until_unpaused
+    wait_until_hour 19
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Lets go for a drink'
+    continue_until_unpaused
+
+    act_on_character 'Tessa Clayton', 'Play Draughts'
+    continue_until_unpaused
+    player_piece = page.find('#MainText').text.match(/Ok, you play (white|black)/)[1]
+    opponent_piece = (%w(white black) - [player_piece])[0]
+
+    choose_input_action 'Advance'
+    choose_input_action 'Ask about the award'
+    act_on_object 'Captured pieces', ["Take a ", player_piece, " checker"].join
+    act_on_object 'Board', ["Remove a ", opponent_piece, " piece"].join
+    skip_next_live_timer
+    choose_input_action 'Defend'
+    choose_input_action 'Drop a piece'
+    act_on_object 'Board', ["Put a ", player_piece, " piece on board"].join
+    act_on_object 'Captured pieces', ["Take a ", opponent_piece, " checker"].join
+    skip_next_live_timer
+    choose_input_action 'Advance'
+    choose_input_action 'Touch her leg'
+    act_on_object 'Board', ["Remove a ", player_piece, " piece"].join
+    skip_next_live_timer
+    choose_input_action 'Advance'
+    continue_until_unpaused
+
+    # Learn 'Forgery'
+    # Seem to need to leave and enter the house before you're able to learn
+    go_direction 'Out'
+    go_direction 'In'
+    act_on_self 'Learn'
+    continue_until_unpaused
+
+    go_to_room 'Linnaeus room'
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Cast: Read Sins'
+    continue_until_unpaused
+
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Talk'
+    choose_input_action 'Do you have Hpnotiq?'
+
+    go_to_room 'Supermarket'
+    act_on_character 'Clerk', 'Talk'
+    choose_input_action 'Do you have Hpnotiq?'
+    continue_until_unpaused
+    choose_input_action 'Because you will fuck her as a worthless whore'
+    continue_until_unpaused
+
+    go_to_room 'Seafront'
+    wait_until_hour 20
+    act_on_character 'Prostitute', 'Examine'
+    act_on_character 'Prostitute', 'Talk'
+    choose_input_action 'Invite her to a bar'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Linnaeus room'
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Talk'
+    choose_input_action 'Invite her to a small party in a bar'
+    wait_until_hour 19
+    act_on_character 'Tessa Clayton', 'Go to bar'
+    continue_until_unpaused
+
+    # Get the last Tessa pics
+    go_to_room 'Linnaeus room'
+    wait_until_hour 10
+    act_on_character 'Tessa Clayton', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Back to Helen Coombs
+    go_to_room 'Supermarket'
+    act_on_character 'Wendy\'s mother', 'Talk'
+    choose_input_action 'Ask about Helen Coombs'
+    continue_until_unpaused
+
+    go_to_room 'Supermarket'
+    act_on_character 'Wendy\'s mother', 'Go to Helen'
+    continue_until_unpaused
+
+    go_to_room 'Herodot room'
+    wait_until_hour 13
+    act_on_character 'Helen Coombs', 'Cast: Read sins'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Supermarket'
+    act_on_character 'Wendy\'s mother', 'Talk'
+    choose_input_action 'Speak about Helen again'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    wait_until_hour 13
+    act_on_character 'Helen Coombs', 'Talk'
+    choose_input_action 'Lie: Mr. Bryson asked you to come'
+    act_on_object 'Helen\'s handbag', 'Examine'
+    act_on_object 'Helen\'s handbag', 'Rummage inner pocket'
+    act_on_object 'Helen\'s handbag', 'Rummage outer pocket'
+    act_on_object 'Helen\'s handbag', 'Rummage zipped pocket'
+    act_on_object 'Helen\'s handbag', 'Rummage main part'
+    act_on_object 'Helen\'s handbag', 'Rummage secondary part'
+    skip_next_live_timer
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Supermarket'
+    act_on_character 'Wendy\'s mother', 'Talk'
+    choose_input_action 'Tell Anabelle about the prescription'
+    act_on_character 'Wendy\'s mother', 'Forge the prescription'
+    choose_input_action 'Armentadoln'
+    choose_input_action 'Amberson'
+    choose_input_action 'Signature 2'
+
+    wait_until_monday
+    go_to_room 'Supermarket'
+    act_on_character 'Wendy\'s mother', 'Talk'
+    choose_input_action 'About prescription'
+    go_to_room 'Herodot room'
+    wait_until_hour 13
+    act_on_object 'Helen\'s handbag', 'Substitute the pills'
+    continue_until_unpaused
+    act_on_character 'Helen Coombs', 'Cast: Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    wait_until_hour 13
+    act_on_character 'Helen Coombs', 'Cast: Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    wait_until_hour 13
+    act_on_character 'Helen Coombs', 'Cast: Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    continue_until_unpaused
+    go_to_room 'Herodot room'
+    wait_until_hour 13
+    act_on_character 'Helen Coombs', 'Cast: Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+    act_on_character 'Helen Coombs', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Back to Quincy
+    go_to_room 'University Entrance'
+    act_on_object 'University rules note', 'Read'
+    go_to_room 'Pythagoras room'
+    act_on_character 'Quincy Robson', 'Talk'
+    choose_input_action 'Ask about his plan to eleminate vice-president Bryson.'
+    act_on_character 'Quincy Robson', 'Talk'
+    choose_input_action 'Report to Quincy'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'University\'s Sport Ground'
+    wait_until_hour 10
+    act_on_room 'Panty Robbery'
+    continue_until_unpaused
+    act_on_object 'Rubi\'s locker', 'find panties'
+    choose_input_action 'in a bag'
+    continue_until_unpaused
+    act_on_object 'Eliza\'s locker', 'find panties'
+    choose_input_action 'on the floor'
+    continue_until_unpaused
+    act_on_object 'Mia\'s locker', 'find panties'
+    choose_input_action 'in the locker'
+    continue_until_unpaused
+    act_on_object 'Kate\'s locker', 'find panties'
+    choose_input_action 'between clothes'
+    continue_until_unpaused
+    act_on_object 'Emma\'s locker', 'find panties'
+    choose_input_action 'on the locker'
+    continue_until_unpaused
+    act_on_object 'Dakota\'s locker', 'find panties'
+    choose_input_action 'on the floor'
+    continue_until_unpaused
+
+    wait_until_monday
+    go_to_room 'Pythagoras room'
+    act_on_character 'Quincy Robson', 'Talk'
+    choose_input_action 'Ask about Mr Bryson'
+    continue_until_unpaused
+
+    # Principal
+    act_on_character 'Quincy Robson', 'Talk'
+    choose_input_action 'Introduce to the Principal'
+    continue_until_unpaused
+    go_to_room 'In front of the University'
+    act_on_character 'Group of students', 'Spy on them'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'LS University - Principle office'
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Report on students behaviour'
+    choose_input_action 'Report about students kissing each other.'
+    continue_until_unpaused
+
+    go_to_room 'University Entrance'
+    act_on_character 'Group of students', 'Spy on them'
+    continue_until_unpaused
+    go_to_room 'LS University - Principle office'
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Report on students behaviour'
+    choose_input_action 'Report about students touching each other.'
+    continue_until_unpaused
+
+    go_to_room 'University\'s Sport Ground'
+    act_on_character 'Group of students', 'Spy on them'
+    continue_until_unpaused
+    go_to_room 'LS University - Principle office'
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Report on students behaviour'
+    choose_input_action 'Report about students humiliate each other.'
+    continue_until_unpaused
+    choose_input_action 'Spanking'
+
+    # See student stripping scene
+    go_to_room 'University Entrance'
+    act_on_character 'Group of students', 'Spy on them'
+    continue_until_unpaused
+    choose_input_action 'No'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'University Entrance'
+    act_on_character 'Group of students', 'Spy on them'
+    continue_until_unpaused
+    choose_input_action 'Yes'
+    continue_until_unpaused
+
+    go_to_room 'In front of the University'
+    act_on_character 'Group of students', 'Spy on them'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'University\'s Sport Ground'
+    act_on_character 'Carli', 'Examine'
+    freeze_game_variable('CarliRnd')
+    set_game_variable('CarliRnd', "20") # force carli interaction to reveal secret
+    act_on_character 'Carli', 'Spy on her'
+    continue_until_unpaused
+    act_on_room 'Peep'
+    continue_until_unpaused
+    skip_next_live_timer
+
+    go_to_room 'LS University - Principle office'
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Report about Carli'
+    continue_until_unpaused
+    choose_input_action 'Search her'
+    continue_until_unpaused
+    choose_input_action 'Search her pussy'
+    continue_until_unpaused
+
+    # Leave and enter to see next scene
+    go_direction 'South'
+    go_direction 'North'
+    continue_until_unpaused
+
+    go_to_room 'LS University - Principle office'
+    act_on_character 'Jacob Rosinstein', 'Cast: Read sins'
+    continue_until_unpaused
+    go_to_room 'University Entrance'
+    act_on_character 'Rubi Patterson', 'Talk'
+    choose_input_action 'Ask about Molly'
+    continue_until_unpaused
+    act_on_character 'Molly Elton', 'Examine'
+    act_on_object 'camera', 'Shoot'
+    choose_input_action 'Molly Elton'
+    continue_until_unpaused
+
+    go_to_room 'Your House'
+    act_on_object 'laptop', 'Photoshop Molly\'s photos'
+    choose_input_action 'Make a decision'
+    ['Samantha Rone', 'Krystal Orchid', 'Alice March'].each do |viable_person|
+      if page.all('.inputchoices', text: viable_person).length > 0
+        choose_input_action viable_person
+        break
+      end
+    end
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'LS University - Principle office'
+    act_on_object 'Photos of nude Molly', 'Give'
+    choose_input_action 'Jacob Rosinstein'
+    continue_until_unpaused
+    go_to_room 'Teacher\'s room'
+    wait_until_hour 12
+    act_on_object 'Principle door', 'Unlock'
+    continue_until_unpaused
+
+    wait_until_monday
+    go_to_room 'LS University - Principle office'
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Have you already tried the sweet cherry of Molly Elton?'
+    continue_until_unpaused
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Threaten her to expel'
+    continue_until_unpaused
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Give her a bad mark for a test'
+    continue_until_unpaused
+    act_on_character 'Jacob Rosinstein', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Blackmail her'
+    continue_until_unpaused
+    act_on_object 'Photos of nude Molly', 'Blackmail Molly'
+    continue_until_unpaused
+
+    go_to_room 'University Entrance'
+    wait_until_hour 10
+    act_on_object 'Envelop for Molly', 'Give'
+    choose_input_action 'Molly Elton'
+    continue_until_unpaused
+    wait_until_hour 12
+    until current_time[:minute] == 50
+      act_on_self 'Wait 10 minutes'
+    end
+    act_on_character 'Molly Elton', 'Go to the Principal\'s office.'
+    continue_until_unpaused
+
+    wait_until_hour 20
+    act_on_object 'Principle door', 'Unlock'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Pay a visit to the university'
+    continue_until_unpaused
+
+    go_to_room 'Pythagoras room'
+    act_on_room 'Look for the main switch'
+
+    go_to_room 'University Entrance'
+    act_on_character 'Molly Elton', 'Talk'
+    choose_input_action 'Chat'
+    act_on_character 'Molly Elton', 'Talk'
+    choose_input_action 'Ask Molly for help'
+
+    go_to_room 'Pythagoras room'
+    wait_until_hour 20
+    act_on_object 'Main switch panel', 'Switch off the light'
     continue_until_unpaused
 
     puts image_reporter.percentage_seen_report

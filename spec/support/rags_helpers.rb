@@ -62,6 +62,10 @@ class Navigator
   end
 end
 
+def main_text
+  page.find('#MainText').text
+end
+
 def clear_main_text
   page.execute_script("document.getElementById('MainText').innerHTML = ''")
 end
@@ -85,19 +89,24 @@ def click_on_object(object)
   page.find(".RoomObjects", text: object).click
 end
 
-def act_on_object(object, action)
+def act_on_object(object, action, match: nil)
   click_on_object(object)
-  choose_action(action)
+  choose_action(action, match: match)
 end
 
-def act_on_character(character, action)
+def act_on_character(character, action, match: nil)
   click_on_character(character)
-  choose_action(action)
+  choose_action(action, match: match)
 end
 
-def choose_action(action)
+def choose_action(action, match: nil)
+  match = :first unless match
   within '#Actionchoices' do
-    page.find(".ActionChoices", text: action, match: :first).click
+    if match == :first
+      page.find(".ActionChoices", text: action, match: match).click
+    elsif match == :last
+      page.all(".ActionChoices", text: action).last.click
+    end
   end
 end
 
@@ -154,11 +163,15 @@ def set_game_variable(name, value)
                else
                  value
                end
-  page.evaluate_script("TheGame.Variables.filter(function (v) { return v.varname === '#{name}' })[0].#{dest_property} = #{dest_value}")
+  page.evaluate_script("Finder.variable('#{name}').#{dest_property} = #{dest_value}")
 end
 
 def freeze_game_variable(name)
   page.evaluate_script("cheatFreezes.variables['#{name}'] = true")
+end
+
+def set_character_custom_property(character, name, value)
+  page.execute_script("Finder.character('#{character}').CustomProperties.filter(function (p) { return p.Name == '#{name}' })[0].Value = '#{value}'")
 end
 
 def skip_next_live_timer

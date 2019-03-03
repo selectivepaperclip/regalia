@@ -15,9 +15,32 @@ $(function() {
 
     $('#regalia_version').text('Regalia 0.9.18');
 
+    function toggleBigPictureMode(on) {
+        if (on === undefined) {
+            on = !$('body').hasClass('big-picture-mode');
+        }
+
+        if (on) {
+            $('body').addClass('big-picture-mode');
+            $('#shrink_ui').hide();
+            $('#unshrink_ui').show();
+        } else {
+            $('body').removeClass('big-picture-mode');
+            $('#shrink_ui').show();
+            $('#unshrink_ui').hide();
+        }
+    }
+
+    $("#shrink_ui").click(function () {
+        toggleBigPictureMode(true);
+    });
+    $("#unshrink_ui").click(function () {
+        toggleBigPictureMode(false);
+    });
+
     $(document).keydown(function(e) {
         switch (e.keyCode) {
-            case 32:
+            case 32: // Space
                 {
                     if (GameController.gamePaused) {
                         e.preventDefault();
@@ -34,6 +57,10 @@ $(function() {
                 {
                     handleFileSelect(true);
                     break;
+                }
+            case 192: // Backtick
+                {
+                    toggleBigPictureMode();
                 }
         }
     });

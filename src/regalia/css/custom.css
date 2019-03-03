@@ -39,6 +39,10 @@ body {
     flex: 0 0 auto;
 }
 
+.big-picture-mode #PlayerRow {
+    height: 10%;
+}
+
 #statusbar {
     height: 30px;
     flex: 0 0 auto;

@@ -32,22 +32,22 @@ var GameActions = {
         GameCommands.addCommands(runNext, bPassed ? act.PassCommands : act.FailCommands);
     },
 
-    processAction: function(Action, bTimer, objectBeingActedActedUpon) {
+    processAction: function(action, bTimer, objectBeingActedUpon) {
         var act = null;
         Globals.bMasterTimer = bTimer;
 
-        if (getObjectClass(Action) == "action" || Action.actionparent != null) //"actionparent" in Action)
-            act = Action;
+        if (getObjectClass(action) == "action" || action.actionparent != null) //"actionparent" in action)
+            act = action;
         else {
             for (var i = 0; i < Globals.curActions.length; i++) {
-                if (Globals.curActions[i].name == Action) {
+                if (Globals.curActions[i].name == action) {
                     act = Globals.curActions[i];
                     break;
                 }
             }
         }
 
-        var commandList = CommandLists.startNestedCommandList({obj: objectBeingActedActedUpon, act: act});
+        var commandList = CommandLists.startNestedCommandList({obj: objectBeingActedUpon, act: act});
 
         if (act.InputType === "None") {
             this.executeAction(act, bTimer);

@@ -110,24 +110,23 @@ function GetActionCount(Actions) {
     return count;
 }
 
-var imageUrls = {};
-function imageUrl(imageName) {
-    if (imageUrls[imageName]) {
-        return imageUrls[imageName];
+var imagePaths = {};
+function imagePath(imageName) {
+    if (imagePaths[imageName]) {
+        return imagePaths[imageName];
     }
-    // In case the filesystem is very case-sensitive,
-    // search for the image with this name in the list
-    // of images so we can be sure to use the right case
-    var lowerCaseImageName = imageName.toLowerCase();
-    var gameImage = TheGame.Images.find(function (image) {
-        return image.TheName.toLowerCase() === lowerCaseImageName;
-    });
+
+    var gameImage = GetGameImage(imageName);
     if (!gameImage) {
         console.log("Unable to find any image named '" + imageName + "'");
         return '';
     }
-    imageUrls[imageName] = "url('images/" + gameImage.TheName.replace(/'/g, '\\\'') + "')";
-    return imageUrls[imageName];
+    imagePaths[imageName] = "images/" + gameImage.TheName.replace(/'/g, '\\\'');
+    return imagePaths[imageName];
+}
+
+function imageUrl(imageName) {
+    return "url('" + imagePath(imageName) + "')";
 }
 
 function SetRoomThumb(ImageName) {
@@ -178,7 +177,18 @@ function renderMainImageAndLayers() {
     layers = layers.concat(mainImageExtraLayers);
 
     ImageRecorder.sawImage(Globals.currentImage);
-    $("#MainImg").css("background-image", imageUrl(Globals.currentImage));
+    var fileParts = Globals.currentImage.split('.');
+    var fileExtension = fileParts[fileParts.length - 1].toLowerCase();
+    if (fileExtension === 'mp4' || fileExtension === 'webm') {
+        var $videoTag = $('<video autoplay controls width="100%"><source src="' + imagePath(Globals.currentImage) + '" type="video/' + fileExtension + '">Sorry, your browser doesn\'t support this video.</video>');
+
+        $("#MainVideo").empty();
+        $("#MainVideo").append($videoTag);
+        $("#MainImg").css("background-image", "");
+    } else {
+        $("#MainVideo").empty();
+        $("#MainImg").css("background-image", imageUrl(Globals.currentImage));
+    }
 
     for (var i = 0; i < layers.length; i++) {
         ImageRecorder.sawImage(layers[i]);

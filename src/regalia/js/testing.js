@@ -13,7 +13,7 @@ $(function() {
         alert('The File APIs are not fully supported in this browser.');
     }
 
-    $('#regalia_version').text('Regalia 0.9.19');
+    $('#regalia_version').text('Regalia 0.9.20');
 
     function toggleBigPictureMode(on) {
         if (on === undefined) {
@@ -392,13 +392,15 @@ $(function() {
     receivedText();
 });
 
-function GetGameImage(ImageName) {
-    for (var i = 0; i < TheGame.Images.length; i++) {
-        if (TheGame.Images[i].TheName == ImageName) {
-            return TheGame.Images[i];
-        }
-    }
-    return null;
+function GetGameImage(imageName) {
+    // In case the filesystem is very case-sensitive,
+    // search for the image with this name in the list
+    // of images so we can be sure to use the right case
+    var lowerCaseImageName = imageName.toLowerCase();
+    var gameImage = TheGame.Images.find(function (image) {
+        return image.TheName.toLowerCase() === lowerCaseImageName;
+    });
+    return gameImage;
 }
 
 function GetDestinationRoomName(CurDirection) {

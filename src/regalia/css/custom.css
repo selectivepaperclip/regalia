@@ -200,6 +200,10 @@ body {
     right: 0;
 }
 
+#MainVideo {
+    width: 100%;
+}
+
 #RoomThumbImg, .RoomLayeredImage,
 #PlayerImg, .PortraitLayeredImage,
 #MainImg, .MainLayeredImage,

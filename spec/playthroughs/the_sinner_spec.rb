@@ -309,7 +309,8 @@ module TheSinnerHelper
     begin
       directions = navigator.navigation_directions(current_room, destination_room)
       directions.each do |direction|
-        if page.all('#InputMenuTitle').length > 0 && page.all('#InputMenuTitle')[0].text.include?('What should you do?')
+        menu_titles = page.all('#InputMenuTitle', minimum: 0)
+        if menu_titles.length > 0 && menu_titles[0].text.include?('What should you do?')
           if page.find('#inputchoices').text.include?('Wait while the leader turns away and then hit him hard')
             choose_input_action 'Wait while the leader turns away and then hit him hard'
           else
@@ -398,7 +399,7 @@ module TheSinnerHelper
       while true
         go_direction 'Out'
 
-        break if page.first('#inputmenu', text: 'Answer to him')
+        break if page.first('#inputmenu', text: 'Answer to him', minimum: 0)
 
         go_to_room 'Bar'
       end
@@ -674,7 +675,7 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'In front of Old Lighthouse'
     go_direction 'In'
-    until (continue_button = page.all('#Continue', visible: true)[0])
+    until (continue_button = page.all('#Continue', visible: true, minimum: 0)[0])
       act_on_room 'Spy on Kingstones'
     end
     continue_until_unpaused
@@ -730,7 +731,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Stall until drinking contest
     Timeout.timeout(5) do
-      while page.all('#inputmenu', visible: true).length == 0
+      while page.all('#inputmenu', visible: true, minimum: 0).length == 0
         act_on_character 'Ann Alberstone', 'Examine'
       end
     end
@@ -2848,7 +2849,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'laptop', 'Photoshop Molly\'s photos'
     choose_input_action 'Make a decision'
     ['Samantha Rone', 'Krystal Orchid', 'Alice March'].each do |viable_person|
-      if page.all('.inputchoices', text: viable_person).length > 0
+      if page.all('.inputchoices', text: viable_person, minimum: 0).length > 0
         choose_input_action viable_person
         break
       end

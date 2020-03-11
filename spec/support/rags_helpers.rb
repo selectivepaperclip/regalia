@@ -76,7 +76,7 @@ def go_direction(direction)
 end
 
 def continue_until_unpaused
-  while (continue_button = page.all('#Continue', visible: true)[0])
+  while (continue_button = page.all('#Continue', visible: true, minimum: 0)[0])
     click_on 'Continue'
   end
 end
@@ -112,7 +112,7 @@ end
 
 def has_action?(action)
   within '#Actionchoices' do
-    page.all(".ActionChoices", text: action).length > 0
+    page.all(".ActionChoices", text: action, minimum: 0).length > 0
   end
 end
 
@@ -183,7 +183,7 @@ def skip_all_live_timers
   page.find('.live-timer-display-rows tr')
 
   # Keep dismissing the live timers until they're all gone
-  while page.all('.live-timer-display-rows tr').length > 0
+  while page.all('.live-timer-display-rows tr', minimum: 0).length > 0
     page.find('.live-timer-display-rows tr', match: :first).click
   end
 end

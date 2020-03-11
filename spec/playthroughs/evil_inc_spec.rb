@@ -153,7 +153,7 @@ module EvilIncHelper
   end
 
   def powers_choice?
-    input_menu_title = page.all('#InputMenuTitle')[0]
+    input_menu_title = page.all('#InputMenuTitle', minimum: 0)[0]
     input_menu_title && input_menu_title.text.match(/Use Powers/)
   end
 

@@ -679,7 +679,7 @@ describe 'the lilith device', type: :feature, js: true do
 
   def handle_ch1_sleep_event
     continue_until_unpaused
-    if page.all('.VisibleCharacters', text: 'Rin').length > 0
+    if page.all('.VisibleCharacters', text: 'Rin', minimum: 0).length > 0
       act_on_character 'Rin', 'Make your choice'
       choose_input_action 'Decline her offer'
       continue_until_unpaused

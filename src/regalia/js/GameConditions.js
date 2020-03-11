@@ -358,7 +358,7 @@ var GameConditions = {
                         }
                     }
                 }
-                break;
+                return false;
             }
             case "CT_Character_CustomPropertyCheck": {
                 var splits = step2.split(":");
@@ -373,7 +373,7 @@ var GameConditions = {
                         }
                     }
                 }
-                break;
+                return false;
             }
             case "CT_Timer_CustomPropertyCheck": {
                 var splits = step2.split(":");
@@ -388,7 +388,7 @@ var GameConditions = {
                         }
                     }
                 }
-                break;
+                return false;
             }
             case "CT_Variable_CustomPropertyCheck": {
                 var splits = step2.split(":");
@@ -403,7 +403,7 @@ var GameConditions = {
                         }
                     }
                 }
-                break;
+                return false;
             }
             case "CT_Item_CustomPropertyCheck": {
                 var splits = step2.split(":");
@@ -425,7 +425,7 @@ var GameConditions = {
                         }
                     }
                 }
-                break;
+                return false;
             }
             case "CT_Player_CustomPropertyCheck": {
                 var property = step2;
@@ -433,7 +433,7 @@ var GameConditions = {
                 if (customProp) {
                     return TestCustomProperty(customProp.Value, step3, step4);
                 }
-                break;
+                return false;
             }
             case "CT_Variable_Comparison": {
                 return this.testVariable(step2, step3, step4);

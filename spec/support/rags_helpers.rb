@@ -144,12 +144,22 @@ def fill_in_playername_input(text)
   click_on 'playernamebutton'
 end
 
-def choose_input_action(action)
-  page.find('.inputchoices', text: action).click
+def choose_input_action(action, match: nil, exact_match: false)
+  if exact_match
+    find_params = {exact_text: action}
+  else
+    find_params = {text: action}
+  end
+  find_params[:match] = match if match
+  page.find('.inputchoices', find_params).click
+end
+
+def choose_exact_input_action(action)
+  page.find('.inputchoices', exact_text: action).click
 end
 
 def choose_first_input_action(action)
-  page.find('.inputchoices', text: action, match: :first).click
+  choose_input_action(match: :first)
 end
 
 def set_game_variable(name, value)

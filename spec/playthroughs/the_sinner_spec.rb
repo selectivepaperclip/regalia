@@ -157,8 +157,32 @@ module TheSinnerHelper
     'Graveyard' => {
       'Out' => 'In front of the graveyard'
     },
-    'In front of the farm' => {
-      'NorthEast' => 'South-West Crossroad'
+    "In front of the farm" => {
+      "NorthEast" => "South-West Crossroad",
+      "West" => "Barn",
+      "In" => "Farm house. Living room"
+    },
+    "Barn" => {
+      "East" => "In front of the farm"
+    },
+    "Farm house. Living room" => {
+      "NorthWest" => "Farm. Mary's bedroom",
+      "North" => "Farm. Simon's room",
+      "NorthEast" => "Farm. Joshua and Abigail's room",
+      "East" => "Pool [SE Farm - Pool]",
+      "Out" => "In front of the farm"
+    },
+    "Farm. Mary's bedroom" => {
+      "SouthEast" => "Farm house. Living room"
+    },
+    "Farm. Simon's room" => {
+      "South" => "Farm house. Living room"
+    },
+    "Farm. Joshua and Abigail's room" => {
+      "SouthWest" => "Farm house. Living room"
+    },
+    "Pool [SE Farm - Pool]" => {
+      "West" => "Farm house. Living room"
     },
     "In front of Willson's house" => {
       "SouthEast" => "Mid-West Crossroad",
@@ -238,8 +262,16 @@ module TheSinnerHelper
     'Deeper Park' => {
       'South' => 'Park'
     },
-    'In front of Police Station' => {
-      'NorthEast' => 'Liberty Square'
+    "In front of Police Station" => {
+      "NorthEast" => "Liberty Square",
+      "In" => "Police Station"
+    },
+    "Police Station" => {
+      "North" => "Cells",
+      "Out" => "In front of Police Station"
+    },
+    "Cells" => {
+      "South" => "Police Station"
     },
     "In front of Kingston's house" => {
       'SouthEast' => 'Mid-Eastern Crossroad'
@@ -260,9 +292,9 @@ module TheSinnerHelper
     },
     "Jefferson's house" => {
       'Out' => "In front of Jefferson's house",
-      'West' => 'Pool'
+      'West' => 'Pool [FME Jefferson house pool]'
     },
-    'Pool' => {
+    'Pool [FME Jefferson house pool]' => {
       'East' => "Jefferson's house"
     },
     "Corridor" => {
@@ -295,11 +327,24 @@ module TheSinnerHelper
     @navigator ||= Navigator.new(GAME_MAP)
   end
 
-  def go_to_room(destination_room)
+  def reverse_direction(d)
+    {
+      "NorthWest" => "SouthEast",
+      "North" => "South",
+      "NorthEast" => "SouthWest",
+      "East" => "West",
+      "SouthEast" => "NorthWest",
+      "South" => "North",
+      "SouthWest" => "NorthEast",
+      "West" => "East",
+    }[d]
+  end
+
+  def go_to_room(destination_room, beware_creig: false)
     current_room = page.find('#RoomTitle').text
-    if current_room == 'Library'
+    if current_room == 'Library' || current_room == 'Pool'
       fancy_room_name = page.evaluate_script('Finder.room(TheGame.Player.CurrentRoom).Name')
-      current_room = "Library [#{fancy_room_name}]"
+      current_room = "#{current_room} [#{fancy_room_name}]"
     end
 
     unless GAME_MAP[destination_room]
@@ -308,7 +353,7 @@ module TheSinnerHelper
 
     begin
       directions = navigator.navigation_directions(current_room, destination_room)
-      directions.each do |direction|
+      while (direction = directions.shift)
         menu_titles = page.all('#InputMenuTitle', minimum: 0)
         if menu_titles.length > 0 && menu_titles[0].text.include?('What should you do?')
           if page.find('#inputchoices').text.include?('Wait while the leader turns away and then hit him hard')
@@ -321,6 +366,11 @@ module TheSinnerHelper
         end
         go_direction(direction)
         continue_until_unpaused
+        if beware_creig
+          if page.first(".VisibleCharacters", text: "Creig Bolder", minimum: 0)
+            directions.unshift(reverse_direction(direction))
+          end
+        end
       end
     rescue RetryNavigationError
       current_room = page.find('#RoomTitle').text
@@ -338,11 +388,15 @@ module TheSinnerHelper
     import_savegames(savegames_filename)
   end
 
-  def wait_until_monday
-    until page.find('#statusbartext').text.match(/Monday/)
+  def wait_until_day(day)
+    until page.find('#statusbartext').text.match(/#{day}/)
       act_on_self 'Next Day'
       continue_until_unpaused
     end
+  end
+
+  def wait_until_weekday
+    wait_until_day "(Monday|Tuesday|Wednesday|Thursday|Friday)"
   end
 
   def current_time
@@ -362,12 +416,12 @@ module TheSinnerHelper
       raise 'Cannot wait for past hour'
     end
     if current_time[:minute] != 0
-      (current_time[:minute] / 10).times do
-        if janitor
+      if janitor
+        ((60 - current_time[:minute]) / 10).times do
           act_on_self 'Quick Clean'
-        else
-          act_on_self 'Wait 10 minutes'
         end
+      else
+        execute_script('Finder.variable(\'CDate\').VarArray[2] = "0"')
       end
     end
     hours_to_wait = hour.to_i - current_time[:hour]
@@ -380,13 +434,18 @@ module TheSinnerHelper
       end
 
       if hours_to_wait >= 6
-        act_on_self 'Add 6 hours'
+        act_on_self 'Wait 6 hours'
         hours_to_wait -= 6
       else
         act_on_self 'Wait an hour'
         hours_to_wait -= 1
       end
     end
+  end
+
+  def set_time(hour, minute)
+    execute_script("Finder.variable('CDate').VarArray[1] = \"#{hour}\"")
+    execute_script("Finder.variable('CDate').VarArray[2] = \"#{minute}\"")
   end
 
   def buy_alcohol(alcohol, first: false)
@@ -571,7 +630,6 @@ describe 'the sinner', type: :feature, js: true do
 
     # Start learning about the party
     go_to_room 'University Entrance'
-    wait_until_hour 10
     act_on_character 'Scarlett Jefferson', 'Examine'
     act_on_character 'Scarlett Jefferson', 'Talk'
     choose_input_action 'Ask about the party'
@@ -629,6 +687,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     act_on_character 'Olivia Osborne', 'Cast: Read Sins'
     continue_until_unpaused
+
     wait_until_hour 20
     go_to_room 'Mid-Eastern Crossroad'
     act_on_character 'Olivia Osborne', 'Talk'
@@ -685,6 +744,14 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Your House'
     act_on_self 'Learn'
     continue_until_unpaused
+
+    go_to_room 'Seafront'
+    continue_until_unpaused
+    wait_until_hour 22
+    go_direction 'East'
+    act_on_room 'Peep'
+    continue_until_unpaused
+    act_on_object 'sexy dress', 'Steal'
 
     act_on_self 'Next Day'
     continue_until_unpaused
@@ -751,17 +818,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'You should relax'
     continue_until_unpaused
 
-    go_direction 'Out'
-    wait_until_hour 22
-    go_to_room 'Seafront'
-    go_direction 'East'
-    act_on_room 'Peep'
-    continue_until_unpaused
-    act_on_object 'sexy dress', 'Steal'
-    go_direction 'West'
-
-    go_to_room "In front of Jefferson's house"
-    go_direction 'In'
     act_on_object 'sexy dress', 'Give'
     choose_input_action 'Ann Alberstone'
     continue_until_unpaused
@@ -1118,6 +1174,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     act_on_room 'Burglary'
     go_to_room 'SW Cox house'
+    continue_until_unpaused
     act_on_object 'laptop', 'Check Browser history'
     continue_until_unpaused
 
@@ -1131,7 +1188,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     go_to_room "Alberstone's house"
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
-    choose_first_input_action 'Rose'
+    choose_exact_input_action 'Rose'
     continue_until_unpaused
 
     # Learn Advanced Sex
@@ -1268,7 +1325,7 @@ describe 'the sinner', type: :feature, js: true do
     wait_until_hour 16
     go_to_room 'Supermarket'
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
-    choose_first_input_action 'Rose'
+    choose_exact_input_action 'Rose'
     continue_until_unpaused
 
     # Watch Vanessa do some sex
@@ -1403,6 +1460,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Park'
     act_on_character 'Rachel Hollinse', 'Talk'
     choose_input_action 'Egg on'
+    set_character_custom_property('Rachel Hollinse', 'mood', 'good') # this interaction only works in good mood
     choose_input_action 'Tell the boss about the facebook page.'
     continue_until_unpaused
     act_on_character 'Rachel Hollinse', 'Cast: Read sins'
@@ -1431,6 +1489,7 @@ describe 'the sinner', type: :feature, js: true do
 
     # Finish Vanessa's seduction
     go_to_room 'Park'
+    wait_until_hour 19
     act_on_character 'Vanessa Hadwin', 'Talk'
     choose_input_action 'Chat'
     choose_input_action 'Yes'
@@ -1439,7 +1498,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Finish Joe's seduction
-    wait_until_monday
+    wait_until_day("Monday")
 
     go_to_room "University's Sport Ground"
     act_on_room 'Peep' # possible missing text here
@@ -1569,7 +1628,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'too young'
     continue_until_unpaused
     go_to_room 'Herodot room'
-    act_on_self 'Add 6 hours'
+    act_on_self 'Wait 6 hours'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'How is the work on the paper going?'
 
@@ -1584,7 +1643,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Tell about Creig'
     continue_until_unpaused
     go_to_room 'Herodot room'
-    act_on_self 'Add 6 hours'
+    act_on_self 'Wait 6 hours'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'How is the work on the paper going?'
 
@@ -1597,15 +1656,15 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Ask about the conversation with Creig'
     continue_until_unpaused
     go_to_room 'Herodot room'
-    act_on_self 'Add 6 hours'
+    act_on_self 'Wait 6 hours'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'How is the work on the paper going?'
     continue_until_unpaused
 
     # Day 4+ after paper start
-    wait_until_monday
+    wait_until_day("Monday")
     go_to_room 'Herodot room'
-    act_on_self 'Add 6 hours'
+    act_on_self 'Wait 6 hours'
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'How is the work on the paper going?'
     continue_until_unpaused
@@ -1642,14 +1701,20 @@ describe 'the sinner', type: :feature, js: true do
       go_direction 'NorthEast'
     end
     continue_until_unpaused
-    go_to_room "Albertons's house. Ann's Room"
+
+    # Mary Stone 1
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Barn'
+    act_on_character 'Girl', 'Talk'
+    choose_input_action 'Introduce yourself'
+    continue_until_unpaused
+
+    # More Scarlett
+    go_to_room "Alberstone's house"
     act_on_character 'Ann Alberstone', 'Talk'
     continue_until_unpaused
     choose_input_action 'Meet with Scarlett'
-
-    act_on_self 'Next Day'
-    continue_until_unpaused
-    go_to_room "In front of Alberston's house"
     wait_until_hour 16
     go_to_room "Albertons's house. Ann's Room"
     act_on_character 'Ann Alberstone', 'Go to Jeffersons'
@@ -1678,6 +1743,11 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'You should visit Scarlett'
     choose_input_action 'Scarlett wants to fuck with you'
+
+    # Mary Stone 2
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Ask about the farm'
 
     # Finish Rubi's seduction
     go_to_room 'Library [LS Library]'
@@ -1725,8 +1795,15 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Rubi'
     continue_until_unpaused
 
+    # Mary Stone 3
     act_on_self 'Next Day'
     continue_until_unpaused
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'what do you do for fun?'
+    continue_until_unpaused
+    go_to_room 'Park'
+    act_on_object 'newspaper kiosk', 'Buy a magazine'
 
     # Get Joe and Scarlett to have sex
     go_to_room "University Entrance"
@@ -1746,7 +1823,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Pride'
     continue_until_unpaused
     act_on_character 'Scarlett Jefferson', 'Cast: Irresistible lust'
-    choose_first_input_action 'Scarlett'
+    choose_exact_input_action 'Scarlett'
     continue_until_unpaused
 
     # See Scarlett/Layla pics
@@ -1755,8 +1832,23 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Layla and Scarlett'
     continue_until_unpaused
 
+    # Mary Stone 4
     act_on_self 'Next Day'
     continue_until_unpaused
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Would you like to read some news about music industry?'
+    continue_until_unpaused
+    go_direction 'East'
+    go_direction 'West'
+    choose_input_action 'Punch him in the solar plexus'
+    continue_until_unpaused
+    go_to_room 'Your House'
+    act_on_object 'laptop', 'Search for a trending pop clip'
+    choose_input_action 'Copy'
+    choose_input_action 'Fergie - MILF'
+    choose_input_action 'Proceed'
 
     # Get Katie's request to beat up Joe
     go_to_room 'Bar'
@@ -1766,9 +1858,8 @@ describe 'the sinner', type: :feature, js: true do
 
     # See Scarlett university pics
     go_to_room 'University Entrance'
-    wait_until_hour 10
     act_on_character 'Scarlett Jefferson', 'Cast: Irresistible lust'
-    choose_first_input_action 'Scarlett'
+    choose_exact_input_action 'Scarlett'
     continue_until_unpaused
 
     # See Rubi university pics
@@ -1855,25 +1946,51 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Rachel'
     continue_until_unpaused
 
+    # Mary Stone 5 / Abigail Start
     act_on_self 'Next Day'
     continue_until_unpaused
-
-    # See Scarlett indoor pics
-    go_to_room 'Jefferson\'s house'
-    act_on_character 'Scarlett Jefferson', 'Cast: Irresistible lust'
-    choose_first_input_action 'Scarlett'
+    go_to_room 'In front of the farm'
+    act_on_character 'Girl', 'Talk'
+    choose_input_action 'Introduce yourself'
+    choose_input_action 'Hey, Beautiful!'
+    continue_until_unpaused
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'New sexy pop video'
+    choose_input_action 'Proceed'
+    continue_until_unpaused
+    choose_input_action 'Proceed'
+    continue_until_unpaused
+    act_on_room 'Burglary'
+    go_to_room 'Farm. Mary\'s bedroom'
+    go_to_room 'Farm. Simon\'s room'
+    act_on_object 'Wardrobe_Simon', 'Open'
+    act_on_object 'Bible', 'Read'
+    act_on_object 'Simon\'s diary', 'Read'
+    fill_in_text_input '8924'
     continue_until_unpaused
 
-    # See Layla indoor pics
-    go_to_room 'Jefferson\'s house'
-    act_on_character 'Layla Jefferson', 'Cast: Irresistible lust'
-    choose_first_input_action 'Layla'
-    continue_until_unpaused
-
-    # See Layla Seafront pics
+    # Eve Rock 1
     go_to_room 'Seafront'
-    act_on_character 'Layla Jefferson', 'Cast: Irresistible lust'
-    choose_first_input_action 'Layla'
+    wait_until_hour 20
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Why did you decide to work as a prostitute?'
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Cool tattoo!'
+    continue_until_unpaused
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Tell me about your work'
+    choose_input_action 'Do you like it?'
+    choose_input_action 'Ask about the service she offers'
+    choose_input_action 'Do nothing, be as futher from the road as possible'
+    continue_until_unpaused
+
+    # Abigail 2
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'In front of the farm'
+    act_on_character 'Abigail Stone', 'Talk'
+    choose_input_action 'Why are you always running away from me?'
     continue_until_unpaused
 
     # Get Katie blackmail pics
@@ -1888,13 +2005,50 @@ describe 'the sinner', type: :feature, js: true do
 
     # Get more Rum
     go_to_room 'Mid-South Crossroad'
-    wait_until_hour 20
+    wait_until_hour 19
     go_to_room 'Bar'
     buy_alcohol 'Rum'
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'May I offer something to drink to a longly girl?'
+    continue_until_unpaused
+    choose_input_action 'Red'
+    continue_until_unpaused
+    choose_input_action 'Groin'
+    continue_until_unpaused
+    choose_input_action 'Your parents threw you out of the house'
+    continue_until_unpaused
+    choose_input_action 'He discovered she was not a virgin'
+    continue_until_unpaused
+    choose_input_action 'Brother'
+    continue_until_unpaused # Triggers next day
+
+    # Abigail 3
+    go_to_room 'In front of the farm'
+    act_on_character 'Abigail Stone', 'Talk'
+    choose_input_action 'Talk to her about the weather'
+    continue_until_unpaused
+
+    # Eve Rock 2
+    go_to_room 'Seafront'
+    wait_until_hour 20
+    act_on_character 'Two thugs and Eve', 'Examine'
+    act_on_character 'Two thugs and Eve', 'Do something'
+    choose_input_action 'Fight'
+    choose_input_action 'Hit the small thug to kidney (high chance)'
+    choose_input_action 'Hit small thug to head (high chance)'
+    choose_input_action 'Proceed'
+    choose_input_action 'Block'
+    choose_input_action 'Block'
+    choose_input_action 'Hit the big thug to kidney (high chance)'
+    continue_until_unpaused
+    choose_input_action 'Proceed'
+    continue_until_unpaused
 
     # Finish Lara's seduction
     go_to_room 'Mid-South Crossroad'
     go_to_room "Jewel's house"
+    wait_until_hour 22
     act_on_character 'Lara Jewel', 'Talk'
     choose_input_action 'One more bottle of rum?'
     continue_until_unpaused
@@ -1904,6 +2058,12 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Why are you a virgin still?'
     choose_input_action 'A free woman'
     choose_input_action 'What are you dreaming about while masturbate?'
+    continue_until_unpaused # Triggers next day
+
+    # Abigail 4
+    go_to_room 'In front of the farm'
+    act_on_character 'Abigail Stone', 'Talk'
+    choose_input_action 'Tell me about yourself'
     continue_until_unpaused
 
     # Get Lara's home pics
@@ -1940,7 +2100,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Katie and Lara'
     continue_until_unpaused
     act_on_character 'Katie Jewel', 'Cast: Irresistible lust'
-    choose_first_input_action 'Katie'
+    choose_exact_input_action 'Katie'
     continue_until_unpaused
 
     # Get Lara's park pics
@@ -1948,7 +2108,7 @@ describe 'the sinner', type: :feature, js: true do
     wait_until_hour 18
     go_to_room 'Park'
     act_on_character 'Lara Jewel', 'Cast: Irresistible lust'
-    choose_first_input_action 'Lara'
+    choose_exact_input_action 'Lara'
     continue_until_unpaused
 
     # Get Katie's bar pics
@@ -1956,7 +2116,42 @@ describe 'the sinner', type: :feature, js: true do
     wait_until_hour 20
     go_to_room 'Bar'
     act_on_character 'Katie Jewel', 'Cast: Irresistible lust'
-    choose_first_input_action 'Katie'
+    choose_exact_input_action 'Katie'
+    continue_until_unpaused
+
+    # Eve gets kidnapped
+    go_to_room 'Seafront'
+    continue_until_unpaused
+
+    # Abigail 5
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'In front of the farm'
+    act_on_character 'Abigail Stone', 'Talk'
+    choose_input_action 'What do you do for fun?'
+    continue_until_unpaused
+    go_to_room 'MS Supermarket Inside'
+    act_on_object 'Food department', 'Buy Crisps'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # See Scarlett indoor pics
+    go_to_room 'Jefferson\'s house'
+    act_on_character 'Scarlett Jefferson', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Scarlett'
+    continue_until_unpaused
+
+    # See Layla indoor pics
+    go_to_room 'Jefferson\'s house'
+    act_on_character 'Layla Jefferson', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Layla'
+    continue_until_unpaused
+
+    # See Layla Seafront pics
+    go_to_room 'Seafront'
+    act_on_character 'Layla Jefferson', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Layla'
     continue_until_unpaused
 
     act_on_self 'Next Day'
@@ -1965,7 +2160,7 @@ describe 'the sinner', type: :feature, js: true do
     # See remaining Ann and Rose home pics
     go_to_room "Alberstone's house"
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
-    choose_first_input_action 'Rose'
+    choose_exact_input_action 'Rose'
     continue_until_unpaused
     act_on_character 'Ann Alberstone', 'Cast: Irresistible lust'
     choose_input_action 'Ann and Rose'
@@ -1974,7 +2169,7 @@ describe 'the sinner', type: :feature, js: true do
     # See Rose park pics
     go_to_room 'Park'
     act_on_character 'Rose Alberstone', 'Cast: Irresistible lust'
-    choose_first_input_action 'Rose'
+    choose_exact_input_action 'Rose'
     continue_until_unpaused
 
     # See Rubi's park pics
@@ -1985,10 +2180,14 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Rubi'
     continue_until_unpaused
 
-    # See Vanessa's post-seduction sport pics
-    go_to_room "University's Sport Ground"
-    act_on_character 'Vanessa Hadwin', 'Cast: Irresistible lust'
-    choose_input_action 'Vanessa'
+    # Abigail 6
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'In front of the farm'
+    act_on_character 'Abigail Stone', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'I have something tasty for you'
+    choose_input_action 'Crisps'
     continue_until_unpaused
 
     # See Rubi's post-seduction library pics
@@ -2006,11 +2205,228 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Dildo', 'Take'
     go_direction 'SouthEast'
 
-    wait_until_monday
+    # Abigail 7
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Ask about arranged marriage'
+    continue_until_unpaused
+
+    # Rescue Eve
+    go_to_room 'Police Station'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Rescue Eve'
+    continue_until_unpaused
+    act_on_character 'Olivia Osborne', 'Rescue Eve'
+    continue_until_unpaused
+    act_on_character 'Masked man', 'Talk'
+    act_on_character 'Masked man', 'Hit him'
+    continue_until_unpaused
+    choose_input_action 'Ok, fine! What is the deal?'
+    continue_until_unpaused
+    go_direction 'NorthEast'
+    go_direction 'East'
+    act_on_character 'Cumbucket', 'Play with her'
+    choose_input_action 'humiliation+hooked ass+feet pain'
+    continue_until_unpaused
+    choose_input_action 'hard fix+humiliation+breast pain+stimulation+oral'
+    continue_until_unpaused
+    act_on_character 'Dancingass', 'Play with her'
+    choose_input_action 'ass plug+cane+flaggelation+breast pain+stimulation'
+    continue_until_unpaused
+    choose_input_action 'flaggelation+sticked ass+stimulation'
+    continue_until_unpaused
+    act_on_character 'Highcunt', 'Play with her'
+    choose_input_action 'humiliation+flaggelation+sigaretes+feet pain'
+    continue_until_unpaused
+    choose_input_action 'humiliation+sex+flaggelation+electricity+breast pain'
+    continue_until_unpaused
+    act_on_character 'Sisbitch', 'Play with her'
+    choose_input_action 'breast pain+feet pain+stimulation'
+    continue_until_unpaused
+    choose_input_action 'masked+humiliation+riding crop+breast pain+stimulation'
+    continue_until_unpaused
+    act_on_character 'Eve Rock', 'Play with her'
+    continue_until_unpaused
+    choose_input_action 'Whipping+stick fuck+fisting'
+    continue_until_unpaused
+    choose_input_action 'Suffocation+breast pain+stimulation'
+    continue_until_unpaused
+
+    go_direction 'NorthEast'
+    go_direction 'East'
+    act_on_character 'Whitewhore', 'Gangbang time!'
+    continue_until_unpaused
+    act_on_object 'Monitoring room door', 'Knock'
+    continue_until_unpaused
+    act_on_character 'Tatsiana/Whitewhore, Luke, Rick and Jim', 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Rest'
+
+    go_direction 'West'
+    go_direction 'SouthEast'
+    act_on_character 'Rob', 'Watch'
+    choose_input_action 'Watch'
+    choose_input_action 'Watch'
+    choose_input_action 'Stop'
+    act_on_character 'Rob', 'Attack'
+    choose_input_action 'Whip him with the gun'
+    continue_until_unpaused
+    go_direction 'SouthWest'
+    go_direction 'West'
+    go_direction 'North'
+
+    act_on_room 'Hide'
+    act_on_self 'Wait 5 minutes'
+    act_on_self 'Wait 5 minutes'
+    act_on_self 'Wait 5 minutes'
+    act_on_self 'Wait 5 minutes'
+    act_on_self 'Wait 5 minutes'
+    act_on_character 'Jim', 'Attack'
+    choose_input_action 'Hit him to head'
+
+    go_direction 'South'
+    go_direction 'NorthEast'
+    go_direction 'East'
+    act_on_character 'Luke', 'Talk'
+    choose_input_action 'Propose a double fun'
+    continue_until_unpaused
+    act_on_character 'Luke', 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Participate'
+    choose_input_action 'Rest'
+    act_on_character 'Luke', 'Attack'
+    choose_input_action 'Hit him to head'
+    choose_input_action 'Proceed'
+
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'It is me!'
+    act_on_character 'Eve Rock', 'Set her free'
+    continue_until_unpaused
+    go_direction 'NorthWest'
+    go_direction 'West'
+    continue_until_unpaused
+    choose_input_action 'Proceed'
+    continue_until_unpaused
+    choose_input_action 'Point the gun at him'
+    continue_until_unpaused
+
+    # Abigail 8
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Did your father had an arranged marriage?'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'You are Evangelina Stone!'
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Should I call you Eve or Evangeline?'
+
+    go_to_room 'In front of the farm'
+    wait_until_hour 17
+    act_on_room 'Peep'
+    continue_until_unpaused
+
+    go_to_room 'Mid-Eastern Crossroad'
+    wait_until_hour 20
+    go_to_room 'Seafront'
+    continue_until_unpaused
+    go_to_room 'Your House'
+    continue_until_unpaused
+
+    act_on_object 'Paul\'s Revolver', 'Shoot'
+    continue_until_unpaused
+
+    act_on_object 'Paul\'s Revolver', 'Give'
+    choose_input_action 'Carelessly through it to him'
+    act_on_object 'A revolver', 'Get it out'
+    skip_next_live_timer
+    skip_next_live_timer
+    continue_until_unpaused
+    act_on_object 'Paul\'s Revolver', 'Shoot'
+    continue_until_unpaused
+    act_on_object 'Paul\'s Revolver', 'Give'
+    choose_input_action 'Let it fall'
+    continue_until_unpaused
+    act_on_object 'A revolver', 'Give'
+    choose_input_action 'Paul Borowski'
+    continue_until_unpaused
+    act_on_object 'Paul\'s Revolver', 'Kick it to Eve'
+    continue_until_unpaused # Advances day
+
+    # Mary / Eve proof
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'I know your sister'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Ask for the proof'
+    act_on_character 'Eve Rock', 'Cast: Irresistible lust'
+    choose_input_action 'Eve'
+    continue_until_unpaused
+
+    go_to_room 'Mid-South Crossroad'
+    wait_until_hour 19
+    go_to_room 'Bar'
+    act_on_character 'Eve Rock', 'Cast: Irresistible lust'
+    choose_input_action 'Eve'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # More Mary / Abigail
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Tell Mary about Abigail'
+
+    # Reanna's panties for Mary
+    go_to_room 'In front of Willson\'s house'
+    wait_until_hour 10
+    act_on_room 'Burglary'
+    go_to_room 'Willsons\' house. Bedroom'
+    act_on_object 'wardrobe', 'Open'
+    act_on_object 'Panties of Reanna', 'Take'
+    go_to_room 'Barn'
+    act_on_object 'Panties of Reanna', 'Give'
+    choose_input_action 'Mary Stone'
+
+    # Eve's photos for Mary
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Ask for the proof again'
+
+    # Abigail's photos for Mary
+    go_to_room 'In front of the farm'
+    wait_until_hour 17
+    act_on_room 'Peep'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Share photos with Mary
+    go_to_room 'Barn'
+    act_on_object 'Photos of Abigail', 'Give'
+    choose_input_action 'Mary Stone'
+    continue_until_unpaused
+    act_on_object 'Photos of Eve', 'Give'
+    choose_input_action 'Mary Stone'
+    continue_until_unpaused
 
     # Trigger Father's entrance
     go_to_room 'University Entrance'
-    wait_until_hour 10
     act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
@@ -2030,6 +2446,13 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Father Becker', 'Prank'
     continue_until_unpaused
 
+    # See Vanessa's post-seduction sport pics
+    go_to_room "University's Sport Ground"
+    wait_until_hour 16
+    act_on_character 'Vanessa Hadwin', 'Cast: Irresistible lust'
+    choose_input_action 'Vanessa'
+    continue_until_unpaused
+
     # Get Father drunk
     go_to_room 'In front of a Bar'
     wait_until_hour 20
@@ -2047,9 +2470,14 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Father Becker'
     continue_until_unpaused
 
-    # Confess Sins with Wendy
     act_on_self 'Next Day'
     continue_until_unpaused
+
+    # Joshua Death Event
+    go_to_room 'Barn'
+    continue_until_unpaused
+
+    # Confess Sins with Wendy
     go_to_room 'In front of the graveyard'
     wait_until_hour 16
     act_on_character 'Wendy', 'Go to confess sins'
@@ -2060,9 +2488,15 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Angela Colbert', 'Go to confess sins'
     continue_until_unpaused
 
-    # See confessional pics
+    # Joshua Death Peep 1
+    go_to_room 'In front of the farm'
+    act_on_room 'Peep'
+    continue_until_unpaused
+
     act_on_self 'Next Day'
     continue_until_unpaused
+
+    # See confessional pics
     go_to_room 'Church'
     wait_until_hour 16
     act_on_object 'Confessional', 'Cast: Irresistible lust'
@@ -2070,6 +2504,315 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Confessional', 'Cast: Irresistible lust'
     continue_until_unpaused
     act_on_object 'Confessional', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Joshua Death Peep 2
+    # Abigail peep scene 2
+    go_to_room 'In front of the farm'
+    act_on_room 'Peep'
+    continue_until_unpaused
+
+    # Mary burgle peep scene 1
+    wait_until_hour 22
+    execute_script("Finder.character('Simon Stone').CurrentRoom = Finder.room('SE Farm - Mary bedroom').UniqueID")
+    act_on_room 'Burglary'
+    go_direction 'NorthWest'
+    choose_input_action 'Yes'
+    continue_until_unpaused # Advances day
+
+    # Abigail peep scene 3
+    go_to_room 'In front of the farm'
+    wait_until_hour 17
+    act_on_room 'Peep'
+    continue_until_unpaused
+
+    # Mary burgle peep scene 2
+    wait_until_hour 22
+    execute_script("Finder.character('Simon Stone').CurrentRoom = Finder.room('SE Farm - Mary bedroom').UniqueID")
+    act_on_room 'Burglary'
+    go_direction 'NorthWest'
+    choose_input_action 'Yes'
+    continue_until_unpaused # Advances day
+
+    # Abigail burgle peep scene
+    go_to_room 'In front of the farm'
+    wait_until_hour 22
+    execute_script("Finder.character('Simon Stone').CurrentRoom = Finder.room('SE Farm - Joshua and Abigail bedroom').UniqueID")
+    act_on_room 'Burglary'
+    go_direction 'NorthEast'
+    choose_input_action 'Yes'
+    continue_until_unpaused # Advances day
+
+    # Tell Olivia about the murder
+    go_to_room 'Police Station'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Tell Olivia about Simon'
+    continue_until_unpaused
+    go_to_room 'In front of the farm'
+    wait_until_hour 13
+    act_on_room 'Peep'
+    continue_until_unpaused
+
+    # Solve the case
+    go_to_room 'Mid-South Crossroad'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Propose Olivia your help with investigating Joshua\'s death'
+    go_to_room 'In front of the farm'
+    wait_until_hour 17
+    act_on_room 'Knock'
+    continue_until_unpaused
+    act_on_character 'Simon Stone', 'Cast: Read mind'
+    go_to_room 'Barn'
+    choose_input_action 'Examine the floor'
+    choose_input_action 'Examine at the ladder from below'
+    choose_input_action 'Examine the place of the fall'
+    choose_input_action 'Examine the entrance'
+    choose_input_action 'Examine the second entrance'
+    choose_input_action 'Go up'
+    choose_input_action 'Examine sacks'
+    choose_input_action 'Examine empty bottles'
+    choose_input_action 'Examine the straw'
+    choose_input_action 'Examine the upper part of the ladder'
+    choose_input_action 'Examine the pitchfork'
+    choose_input_action 'Go down'
+    choose_input_action 'Exit'
+    wait_until_hour 22
+    act_on_room 'Burglary'
+    # Move Simon to mary's room to interrogate abigail
+    execute_script("Finder.character('Simon Stone').CurrentRoom = Finder.room('SE Farm - Mary bedroom').UniqueID")
+    go_direction 'NorthEast'
+    continue_until_unpaused
+    choose_input_action 'Did you notice anything strange that evening?'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused # Advances day
+
+    go_to_room 'In front of the farm'
+    wait_until_hour 22
+    act_on_room 'Burglary'
+    # Move Simon to abigail's room to interrogate mary
+    execute_script("Finder.character('Simon Stone').CurrentRoom = Finder.room('SE Farm - Joshua and Abigail bedroom').UniqueID")
+    go_direction 'NorthWest'
+    choose_input_action 'Tell me about that evening'
+    continue_until_unpaused
+    choose_input_action 'Ask about Joshua fears'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused # Advances day
+
+    go_to_room 'In front of the farm'
+    act_on_room 'Examine the bathroom window'
+    wait_until_hour 22
+    act_on_room 'Burglary'
+    # Move Simon to mary's room to interrogate abigail
+    execute_script("Finder.character('Simon Stone').CurrentRoom = Finder.room('SE Farm - Mary bedroom').UniqueID")
+    go_direction 'NorthEast'
+    continue_until_unpaused
+    choose_input_action 'Ask about the dirt in the bathroom'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused # Advances day
+
+    go_to_room 'Police Station'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Report about Stones'
+    choose_input_action 'Report about footprints'
+    continue_until_unpaused
+    choose_input_action 'Report about the backdoor lock'
+    continue_until_unpaused
+    choose_input_action 'Report about the dirt behind the straw'
+    continue_until_unpaused
+    choose_input_action 'Report about the ladder'
+    continue_until_unpaused
+    choose_input_action 'Report about a pitchfork'
+    continue_until_unpaused
+    choose_input_action 'Report about a black man outside'
+    continue_until_unpaused
+    choose_input_action 'Report about Simon being out of the house'
+    continue_until_unpaused
+    choose_input_action 'Report about Joshua fears'
+    continue_until_unpaused
+    choose_input_action 'Report about dirt traces outside the bathroom'
+    continue_until_unpaused
+    choose_input_action 'Report about dirty clothes of Simon'
+    continue_until_unpaused
+    choose_input_action 'I know it was Simon!'
+    choose_input_action 'Summarise the findings'
+    continue_until_unpaused
+
+    # Dildo hunt
+    go_to_room 'In front of Willson\'s house'
+    wait_until_hour 10
+    act_on_room 'Burglary'
+    go_direction 'North'
+    act_on_object 'BigDildo', 'Take'
+    go_direction 'South'
+
+    go_to_room 'In front of Bolder\'s house'
+    wait_until_hour 12
+    act_on_room 'Burglary'
+    go_direction 'NorthWest'
+    act_on_object 'Wardrobe_Bolders', 'Open'
+    act_on_object 'Small vibrator', 'Take'
+    go_direction 'SouthEast'
+    go_direction 'Out'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Start mary's final steps
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'How are you?'
+
+    # Dildo tryouts for abigail
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 13
+    act_on_character 'Abigail Stone', 'Cast: Read Mind'
+    continue_until_unpaused
+    go_direction 'NorthEast'
+    act_on_object 'Joshua and Abigail\' wardrobe', 'Put'
+    choose_input_action 'Big dildo'
+    continue_until_unpaused
+    go_to_room 'Farm house. Living room'
+    go_direction 'NorthEast'
+    act_on_object 'Joshua and Abigail\' wardrobe', 'Put'
+    choose_input_action 'medium dildo'
+    continue_until_unpaused
+    go_to_room 'Farm house. Living room'
+    go_direction 'NorthEast'
+    act_on_object 'Joshua and Abigail\' wardrobe', 'Put'
+    choose_input_action 'small dildo'
+    continue_until_unpaused
+
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 17
+    act_on_character 'Abigail Stone', 'Cast: Induction to sin'
+    choose_input_action 'Anger'
+    continue_until_unpaused
+    act_on_character 'Abigail Stone', 'Punish her'
+
+    go_to_room 'Liberty Square'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Ask for Simon\'s tools'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Mary card game
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Would you like playing cards?'
+    continue_until_unpaused
+    choose_input_action 'How she lets you choosing the card'
+    continue_until_unpaused
+    choose_input_action 'closer to the bottom'
+    continue_until_unpaused
+    choose_input_action 'The way she shuffles the cards'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Ask about Mary\'s card trick'
+
+    # Abigail punish
+    go_to_room "Farm house. Living room"
+    wait_until_hour 17
+    act_on_character 'Abigail Stone', 'Punish her'
+    choose_input_action 'Flogger'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Mary card finish
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Would you like playing cards?'
+    continue_until_unpaused
+    choose_input_action 'The way she shuffles the cards'
+    continue_until_unpaused
+    choose_input_action 'quickly turn the card'
+    continue_until_unpaused
+    choose_input_action 'How she looks for your card'
+    continue_until_unpaused
+
+    # Mary extra scene
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 13
+    act_on_character 'Mary Stone', 'Cast: Irresistible lust'
+    choose_input_action 'Mary'
+    continue_until_unpaused
+
+    # Abigail punish 2
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 17
+    act_on_character 'Abigail Stone', 'Punish her'
+    choose_input_action 'Flogger'
+    continue_until_unpaused
+    choose_input_action 'Hook her ass'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Mary extra scene
+    go_to_room 'Barn'
+    act_on_character 'Mary Stone', 'Cast: Irresistible lust'
+    choose_input_action 'Mary'
+    continue_until_unpaused
+
+    # Abigail punish 3
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 17
+    act_on_character 'Abigail Stone', 'Punish her'
+    choose_input_action 'Flogger'
+    continue_until_unpaused
+    choose_input_action 'Stick to her mouth'
+    continue_until_unpaused
+    choose_input_action 'Fuck her mouth'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Abigail punish 4
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 17
+    act_on_character 'Abigail Stone', 'Punish her'
+    choose_input_action 'Flogger'
+    continue_until_unpaused
+    choose_input_action 'Hook her ass'
+    continue_until_unpaused
+    choose_exact_input_action 'Fuck her'
+    continue_until_unpaused
+
+    # Mary inside scene
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 20
+    act_on_character 'Mary Stone', 'Cast: Irresistible lust'
+    choose_input_action 'Mary'
+    continue_until_unpaused
+
+    # Mary + abigail
+    go_to_room 'Farm house. Living room'
+    act_on_character 'Mary Stone', 'Talk'
+    choose_input_action 'Speak about Abigail'
+    continue_until_unpaused
+
+    go_to_room 'Farm house. Living room'
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Abigail'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    wait_until_hour 13
+    go_to_room 'Farm house. Living room'
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_input_action 'Abigail and Mary'
     continue_until_unpaused
 
     # Meet Gina
@@ -2384,9 +3127,12 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'Willsons\' house'
     go_direction 'North'
+
     act_on_character 'Reanna Willson', 'Cast: Irresistible lust'
     continue_until_unpaused
 
+    act_on_self 'Next Day'
+    continue_until_unpaused
     go_to_room 'Graveyard'
     wait_until_hour 10
 
@@ -2499,8 +3245,6 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Corridor'
     wait_until_hour(13, janitor: true)
     act_on_room 'Burglary: Secretary office'
-    go_to_room 'Secretary office'
-
     act_on_object 'Computer', 'Enter'
     fill_in_text_input 'SuckItYourself'
     choose_input_action 'Read e-mails'
@@ -2540,7 +3284,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Seduce Creig'
     continue_until_unpaused
 
-    wait_until_monday
+    wait_until_day("Monday")
     go_to_room 'Linnaeus room'
     wait_until_hour 10
     act_on_character 'Tessa Clayton', 'Talk'
@@ -2604,17 +3348,16 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Because you will fuck her as a worthless whore'
     continue_until_unpaused
 
-    go_to_room 'Seafront'
-    wait_until_hour 20
-    act_on_character 'Prostitute', 'Examine'
-    act_on_character 'Prostitute', 'Talk'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Eve Rock', 'Talk'
     choose_input_action 'Invite her to a bar'
     continue_until_unpaused
 
-    act_on_self 'Next Day'
-    continue_until_unpaused
     go_to_room 'Linnaeus room'
-    wait_until_hour 10
     act_on_character 'Tessa Clayton', 'Talk'
     choose_input_action 'Invite her to a small party in a bar'
     wait_until_hour 19
@@ -2672,7 +3415,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Amberson'
     choose_input_action 'Signature 2'
 
-    wait_until_monday
+    wait_until_day("Monday")
     go_to_room 'Supermarket'
     act_on_character 'Wendy\'s mother', 'Talk'
     choose_input_action 'About prescription'
@@ -2747,7 +3490,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'on the floor'
     continue_until_unpaused
 
-    wait_until_monday
+    wait_until_day("Monday")
     go_to_room 'Pythagoras room'
     act_on_character 'Quincy Robson', 'Talk'
     choose_input_action 'Ask about Mr Bryson'
@@ -2867,7 +3610,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Principle door', 'Unlock'
     continue_until_unpaused
 
-    wait_until_monday
+    wait_until_day("Monday")
     go_to_room 'LS University - Principle office'
     act_on_character 'Jacob Rosinstein', 'Talk'
     choose_input_action 'Have you already tried the sweet cherry of Molly Elton?'
@@ -2925,9 +3668,386 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Main switch panel', 'Switch off the light'
     continue_until_unpaused
 
+    # Eve start reunion
+    go_to_room 'Seafront'
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Ask about family reunion'
+    continue_until_unpaused
+
+    # Tessa beach scene
+    act_on_character 'Tessa Clayton', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Eve farm scenes
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Farm. Mary\'s bedroom'
+    act_on_character 'Eve Rock', 'Examine'
+    act_on_character 'Eve Rock', 'Talk'
+    choose_input_action 'Chat'
+    act_on_character 'Eve Rock', 'Cast: Irresistible lust'
+    choose_input_action 'Eve'
+    continue_until_unpaused
+
+    wait_until_hour 12
+    go_to_room 'Pool [SE Farm - Pool]'
+    act_on_character 'Eve Rock', 'Cast: Irresistible lust'
+    choose_input_action 'Eve'
+    continue_until_unpaused
+
+    # More abigail scenes
+    go_to_room 'Barn'
+    wait_until_hour 17
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Abigail'
+    continue_until_unpaused
+    go_to_room 'Barn'
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_input_action 'Abigail and Mary'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'In front of the farm'
+    wait_until_hour 15
+    go_to_room 'Pool [SE Farm - Pool]'
+    continue_until_unpaused # In case the easter egg event fires
+    go_to_room 'Pool [SE Farm - Pool]'
+    act_on_character 'Mary Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Mary'
+    continue_until_unpaused
+
+    # Eve guest easter egg
+    wait_until_day 'Tuesday'
+    go_to_room 'In front of the farm'
+    wait_until_hour 9
+    go_direction 'In'
+    continue_until_unpaused
+
+    # Abigail prost (tuesdays only)
+    go_to_room 'Seafront'
+    wait_until_hour 20
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Abigail'
+    continue_until_unpaused
+
+    # Abigail pool easter egg
+    wait_until_day 'Thursday'
+    go_to_room "Farm house. Living room"
+    wait_until_hour 15
+    go_to_room 'Pool [SE Farm - Pool]'
+    continue_until_unpaused
+    go_to_room 'Pool [SE Farm - Pool]'
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Abigail'
+    continue_until_unpaused
+
+    # Abigail + eve easter egg
+    go_to_room "In front of the farm"
+    wait_until_hour 20
+    go_direction "In"
+    continue_until_unpaused
+
+    # Mary prost (unfortunately not enough time to do it on the same thursday)
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    wait_until_day 'Thursday'
+    go_to_room "Seafront"
+    wait_until_hour 20
+    act_on_character 'Mary Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Mary'
+    continue_until_unpaused
+
+    # Clive's ousting
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Police Station'
+    continue_until_unpaused
+
+    go_to_room 'Police Station'
+    act_on_character 'Clive Coleman', 'Examine'
+    act_on_character 'Clive Coleman', 'Talk'
+    choose_input_action 'Ask about retirement'
+    continue_until_unpaused
+    go_to_room 'Cells'
+    act_on_character 'Leo Coleman', 'Examine'
+    act_on_character 'Leo Coleman', 'Talk'
+    choose_input_action 'Chat'
+    go_to_room 'Police Station'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Speak about Leo'
+    continue_until_unpaused
+    go_to_room 'Cells'
+    act_on_character 'Leo Coleman', 'Talk'
+    choose_input_action 'Speak about his work'
+    continue_until_unpaused
+    go_to_room 'Police Station'
+    act_on_object 'Clive\'s table', 'Examine'
+    act_on_object 'Camera manual', 'Examine'
+    act_on_object 'Camera manual', 'Read'
+    continue_until_unpaused
+    go_to_room 'Your House'
+    act_on_object 'laptop', 'Search for IP cameras'
+    choose_input_action 'DCS-7513'
+    wait_until_day 'Tuesday'
+    go_to_room 'Mid-Eastern Crossroad'
+    wait_until_hour 20
+    go_to_room 'Seafront'
+    continue_until_unpaused
+    go_to_room 'Cells'
+    act_on_character 'Abigail Stone', 'Cast: Irresistible lust'
+    choose_exact_input_action 'Abigail'
+    continue_until_unpaused # Advances day
+
+    go_to_room 'Police Station'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'About Clive Coleman'
+    continue_until_unpaused
+
+    # Creig the witcher
+    go_to_room 'South-Eastern Crossroad'
+    continue_until_unpaused
+
+    go_to_room 'Police Station'
+    continue_until_unpaused
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Accuse Creig'
+    continue_until_unpaused
+
+    # Olivia taken
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Peep creig with mom
+    go_to_room "In front of Bolder's house"
+    act_on_room 'Peep'
+    continue_until_unpaused
+
+    # Burgle creig
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room "In front of Bolder's house"
+    act_on_room 'Peep'
+    continue_until_unpaused
+    act_on_object 'Old witchraft book', 'Take'
+    continue_until_unpaused
+    act_on_room 'Get out'
+
+    go_to_room 'Deeper Park'
+    act_on_room 'Search'
+    choose_input_action 'Oak'
+    continue_until_unpaused
+
+    go_to_room 'Church'
+    act_on_object 'Ritual chalice', 'Steal'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Farm house. Living room'
+    wait_until_hour 13
+    act_on_character 'Abigail Stone', 'Talk'
+    choose_input_action 'Do you squirt?'
+    act_on_character 'Abigail Stone', 'Ask for some squirt'
+    continue_until_unpaused
+
+    # Keep fiddling around to see all creig ntr pics
+    wait_until_hour 16
+    continue_until_unpaused
+    wait_until_hour 20
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    wait_until_hour 10
+    continue_until_unpaused
+    wait_until_hour 16
+    continue_until_unpaused
+    wait_until_hour 20
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    wait_until_hour 10
+    continue_until_unpaused
+    wait_until_hour 16
+    continue_until_unpaused
+    wait_until_hour 20
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    wait_until_weekday
+    go_to_room 'Herodot room'
+    act_on_object 'chalk', 'Steal'
+
+    go_to_room 'In front of a Bar'
+    wait_until_hour 19
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+    choose_input_action 'Gin'
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'In front of Bolder\'s house'
+    act_on_room 'Peep'
+    continue_until_unpaused
+    act_on_object 'Old witchraft book', 'Take'
+    continue_until_unpaused
+
+    go_to_room 'In front of a Bar'
+    wait_until_hour 19
+    go_to_room 'Bar'
+    continue_until_unpaused
+    choose_input_action 'Help the Hunter'
+    continue_until_unpaused
+
     puts image_reporter.percentage_seen_report
     if image_reporter.percentage_seen_for_game > 50
       image_reporter.report_missing_images('tmp/thesinner_missing_images.txt')
     end
+
+    # Hunter quest
+    act_on_room 'Write a denouncement letter'
+    choose_input_action 'Make your choice'
+    choose_input_action 'Template 1'
+    choose_input_action 'Creig Bolder'
+    go_to_room 'In front of the church', beware_creig: true
+    act_on_object 'Church\'s mail box', 'Drop a mail'
+
+    go_to_room 'Your House', beware_creig: true
+    act_on_room 'Write a denouncement letter'
+    choose_input_action 'Make your choice'
+    choose_input_action 'Template 2'
+    choose_input_action 'Joe Spencer'
+    go_to_room 'In front of the church', beware_creig: true
+    act_on_object 'Church\'s mail box', 'Drop a mail'
+
+    go_to_room 'Your House', beware_creig: true
+    act_on_room 'Write a denouncement letter'
+    choose_input_action 'Make your choice'
+    choose_input_action 'Template 3'
+    choose_input_action 'Conrad Jefferson'
+    go_to_room 'In front of the church', beware_creig: true
+    act_on_object 'Church\'s mail box', 'Drop a mail'
+
+    go_to_room 'Your House', beware_creig: true
+    act_on_room 'Write a denouncement letter'
+    choose_input_action 'Make your choice'
+    choose_input_action 'Template 4'
+    choose_input_action 'Quincy Robson'
+    go_to_room 'In front of the church', beware_creig: true
+    act_on_object 'Church\'s mail box', 'Drop a mail'
+    # Kill the rest of the day since you're not allowed to sleep
+    go_direction 'In'
+    while !main_text.include?('It is too late. I should go to sleep')
+      go_direction 'Out'
+      go_direction 'In'
+    end
+    continue_until_unpaused
+
+    # Hunter day 2 - hex bag
+    act_on_room 'Look around'
+    act_on_object 'kitchen', 'Open'
+    act_on_object 'Knife', 'Take'
+    act_on_object 'your bed', 'Look under'
+    act_on_object 'Old sneakers', 'Take the laces out'
+    act_on_object 'your bed', 'Look closer'
+    act_on_object 'pillow', 'Cut the pillow'
+    act_on_object 'Knife', 'Cut your hair'
+    act_on_object 'Knife', 'Cut yourself'
+    choose_input_action 'your shoulder'
+    act_on_object 'Waste bin', 'Rummage the waste bin'
+    choose_input_action 'Chicken bones'
+    act_on_object 'Old witchraft book', 'Cast'
+    choose_input_action 'Hex bags'
+    choose_input_action 'your hair'
+    choose_input_action 'your blood'
+    choose_input_action 'tissue'
+    choose_input_action 'shoelaces'
+    choose_input_action 'Chicken bones'
+    choose_input_action 'Finish'
+    continue_until_unpaused
+    act_on_object 'kitchen', 'Hide the hex bag'
+    act_on_object 'Knife', 'Wash the knife'
+    act_on_object 'kitchen', 'Clean Kitchen'
+
+    # More ingredients
+    go_to_room 'Beach'
+    act_on_room 'Walk alone the shore'
+
+    go_to_room 'ME Museum'
+    act_on_room 'Shop'
+
+    go_to_room 'Barn'
+    act_on_room 'Search for poultry manure'
+
+    go_to_room 'In front of Bolder\'s house'
+    act_on_room 'Burglary'
+    go_direction 'East'
+    act_on_object 'Creig\'s comb', 'Remove hair'
+    go_direction 'West'
+
+    go_direction 'NorthWest'
+    continue_until_unpaused
+    go_direction 'Out'
+    continue_until_unpaused
+    # Kill the rest of the day since you're not allowed to sleep
+    go_to_room 'In front of my house'
+    set_time 23, 40
+    go_direction 'In'
+    while !main_text.include?('It is too late. I should go to sleep')
+      go_direction 'Out'
+      go_direction 'In'
+    end
+    continue_until_unpaused
+
+    go_to_room 'In front of Bolder\'s house', beware_creig: true
+    go_direction 'In'
+    continue_until_unpaused
+    act_on_room 'Peep'
+    continue_until_unpaused
+    go_direction 'North'
+    act_on_character 'Girl in a cell', 'Examine'
+    act_on_character 'Girl in a cell', 'Talk'
+    choose_input_action 'Hello'
+    choose_input_action 'Yes'
+    act_on_character 'Girl in a cell', 'Talk'
+    choose_input_action 'The master is not pleased with you! I must take his sperm!'
+    go_direction 'South'
+    go_direction 'Out'
+    go_to_room 'Your House', beware_creig: true
+    act_on_object 'Old witchraft book', 'Cast'
+    choose_input_action 'Face borrowing'
+    choose_input_action 'seaweeds'
+    choose_input_action 'poultry manure'
+    choose_input_action 'Creig\'s sperm'
+    choose_input_action 'perfume'
+    choose_input_action 'Finish'
+    continue_until_unpaused
+
+    go_to_room 'In front of Bolder\'s house', beware_creig: true
+    act_on_room 'Burglary'
+    go_direction 'NorthEast'
+    continue_until_unpaused
+    act_on_object 'Wardrobe', 'Hide the old witchcraft book'
+    continue_until_unpaused
+    go_direction 'SouthWest'
+    go_direction 'Out'
+    # Kill the rest of the day since you're not allowed to sleep
+    go_to_room 'In front of my house', beware_creig: true
+    set_time 23, 40
+    go_direction 'In'
+    while !main_text.include?('It is too late. I should go to sleep')
+      go_direction 'Out'
+      go_direction 'In'
+    end
+    continue_until_unpaused
+    puts image_reporter.percentage_seen_report
+    if image_reporter.percentage_seen_for_game > 50
+      image_reporter.report_missing_images('tmp/thesinner_missing_images.txt')
+    end
+
+    export_savegames 'tmp/play_around_070'
+    # TODO: lust tessa at the beach on a weekend (~17:00?)
   end
 end

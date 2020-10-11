@@ -134,7 +134,11 @@ module TheSinnerHelper
       "South" => "Biker's camp"
     },
     "Unruly's camp" => {
-      "West" => "Biker's camp"
+      "West" => "Biker's camp",
+      "In" => "Bonnie_tent"
+    },
+    "Bonnie_tent" => {
+      "Out" => "Unruly's camp"
     },
     "Biker gym" => {
       "North" => "Biker's camp"
@@ -276,8 +280,12 @@ module TheSinnerHelper
     "In front of Kingston's house" => {
       'SouthEast' => 'Mid-Eastern Crossroad'
     },
-    'In front of Old Lighthouse' => {
-      'SouthWest' => 'Mid-Eastern Crossroad'
+    "In front of Old Lighthouse" => {
+      "SouthWest" => "Mid-Eastern Crossroad",
+      "In" => "Top of Old Lighthouse"
+    },
+    "Top of Old Lighthouse" => {
+      "Out" => "In front of Old Lighthouse"
     },
     "Seafront" => {
       "NorthWest" => "Mid-Eastern Crossroad",
@@ -474,7 +482,7 @@ module TheSinnerHelper
   end
 end
 
-# Tested with TheSinner 0.17
+# Tested with TheSinner 0.75
 describe 'the sinner', type: :feature, js: true do
   let!(:image_reporter) { ImageReporter.new('TheSinner', page) }
 
@@ -1907,21 +1915,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Rachel'
     continue_until_unpaused
 
-    # See Rachel home pics
-    go_to_room 'South-Eastern Crossroad'
-    wait_until_hour 16
-    go_to_room 'Rachel Hollinse\'s house'
-    act_on_room 'Burglary'
-    continue_until_unpaused
-    choose_input_action 'Yes'
-    continue_until_unpaused
-    act_on_character 'Rachel Hollinse', 'Cast: Irresistible lust'
-    choose_input_action 'Rachel'
-    continue_until_unpaused
-    go_direction 'South'
-    go_direction 'Out'
-    go_direction 'NorthWest'
-
     # See Rachel bar pics and progress Katie quest
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 20
@@ -2927,35 +2920,6 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'In'
     continue_until_unpaused
 
-    go_to_room 'Reception'
-    act_on_character 'Angela Colbert', 'Talk'
-    choose_input_action 'Ask about Gina'
-    continue_until_unpaused
-
-    go_to_room 'Immortals\' camp'
-    act_on_character 'Maryam', 'Talk'
-    choose_input_action 'Tell Maryam that Gina is a lesbian'
-    continue_until_unpaused
-
-    go_to_room 'Bar'
-    act_on_character 'Katie Jewel', 'Talk'
-    choose_input_action 'Ask to seduce Gina'
-
-    go_to_room 'Biker\'s camp'
-    wait_until_hour 14
-    act_on_character 'Gina Blaze', 'Talk'
-    choose_input_action 'Visit Katie'
-    continue_until_unpaused
-
-    go_to_room 'Biker gym'
-    act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
-    continue_until_unpaused
-
-    go_to_room 'Biker\'s camp'
-    wait_until_hour 20
-    act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
-    continue_until_unpaused
-
     # Reanna quest
     go_to_room "In front of Willson's house"
     wait_until_hour 20
@@ -3332,6 +3296,334 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Learn'
     continue_until_unpaused
 
+    #quickstart 'tmp/learned_forgery_save_2020-10-10-23-23-24.json'
+
+    # Maryam 1
+    go_to_room 'Biker gym'
+    act_on_character 'Girl', 'Talk'
+    choose_input_action 'Introduce yourself'
+    choose_input_action 'Compliment her figure'
+    continue_until_unpaused
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'Tell me about the camp'
+    continue_until_unpaused
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'You have a very strong body!'
+    continue_until_unpaused
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'How is the fest going?'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Black Jack', 'Talk'
+    choose_input_action 'Find a girl for a bike wash'
+    continue_until_unpaused
+    go_to_room 'MS Supermarket Inside'
+    act_on_object 'Food department', 'Buy orange juice'
+    go_to_room 'In front of a Bar'
+    wait_until_hour 19
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Buy alcoholic beverage'
+    choose_input_action 'Vodka'
+    act_on_object 'Orange juice', 'Mix screwdriver cocktail'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_object 'Bike Wash (Unruly)', 'Examine'
+    continue_until_unpaused
+    act_on_room 'Look for a cute girl'
+
+    girl_answer_map = {
+      "She has lost her job" => "You will be well paid for that",
+      "She is an arrogant model" => "Everyone will admire you",
+      "she was alone and no guys were around" => "Show everyone how beautiful is a buxom girl can be",
+      "she only recently came to the country" => "Everyone does this. This is a usual practice.",
+      "She just finished her high school education" => "This will be the hottest adventure in your life",
+    }
+    girl_answer_map.each do |text, answer|
+      if main_text.include?(text)
+        choose_input_action answer
+        continue_until_unpaused
+        break
+      end
+    end
+
+    go_to_room 'Biker gym'
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'Tell Maryam about Gina'
+    continue_until_unpaused
+
+    # Bonnie 1
+    go_to_room 'Bonnie_tent'
+    act_on_character 'Bonnie Sly', 'Examine'
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'What do you need from me?'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Troublemakers', 'Talk'
+    choose_input_action 'Warning: You guys cause too many troubles here!'
+    continue_until_unpaused
+    choose_input_action 'Play along: So, others are not REAL bikers?'
+    continue_until_unpaused
+    choose_input_action 'Silence: Say nothing'
+    continue_until_unpaused
+    choose_input_action 'Attack: Strike first'
+    continue_until_unpaused
+
+    go_to_room 'Bonnie_tent'
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'About a job'
+    continue_until_unpaused
+
+    go_to_room 'Reception'
+    act_on_character 'Angela Colbert', 'Talk'
+    choose_input_action 'Ask about Gina'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'Tell Maryam that Gina is a lesbian'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Bar'
+    act_on_character 'Katie Jewel', 'Talk'
+    choose_input_action 'Ask to seduce Gina'
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 14
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Visit Katie'
+    continue_until_unpaused
+
+    go_to_room 'Biker gym'
+    act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 20
+    act_on_character 'Gina Blaze', 'Cast: Irresistible Lust'
+    continue_until_unpaused
+
+    # Maryam 4
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Biker gym'
+    act_on_character 'Maryam', 'Cast Induce to sin'
+    choose_input_action 'Anger'
+    continue_until_unpaused
+    act_on_character 'Maryam', 'Cast Induce to sin'
+    choose_input_action 'Pride'
+    continue_until_unpaused
+    act_on_character 'Maryam', 'Cast Induce to sin'
+    choose_input_action 'Lust'
+    continue_until_unpaused
+
+    # Bonnie 2
+    go_to_room 'In front of Kingston\'s house'
+    wait_until_hour 22
+    act_on_room 'Fucking Whores!'
+    continue_until_unpaused
+    act_on_room 'Peep to the living room'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'No'
+    go_direction 'West'
+    act_on_room 'Peep into bedroom'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'No'
+    go_direction 'East'
+    act_on_room 'Peep to the living room'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'No'
+    go_direction 'West'
+    act_on_room 'Peep into bedroom'
+    choose_input_action 'No'
+    go_direction 'North'
+    act_on_room 'Search for golden dildo'
+    go_direction 'South'
+    act_on_room 'Peep behind the iron door'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'Yes'
+    choose_input_action 'No'
+    act_on_room 'Go To Garage'
+    continue_until_unpaused
+
+    # Bonnie 3
+    go_to_room 'Biker\'s camp'
+    continue_until_unpaused
+    go_to_room 'Unruly\'s camp'
+    act_on_character 'Olivia Osborne', 'Talk'
+    continue_until_unpaused
+    act_on_character 'Olivia Osborne', 'Cast Irresistible lust'
+    continue_until_unpaused
+    go_direction 'In'
+    continue_until_unpaused
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Hound', 'Talk'
+    choose_input_action 'Lead me to the Bulldog'
+    continue_until_unpaused
+    act_on_character 'Hound', 'Talk'
+    choose_input_action 'Lets catch the bitch'
+    continue_until_unpaused
+    act_on_character 'Hound', 'To the farm'
+    continue_until_unpaused
+    go_direction 'In'
+    act_on_character 'Bonnie Sly', 'Cast: Induce sins'
+    choose_input_action 'Anger'
+    continue_until_unpaused
+    act_on_character 'Bonnie Sly', 'Play with Bonnie'
+    choose_input_action 'Simply tie her'
+    choose_input_action 'Fuck her mouth'
+    choose_input_action 'Fuck her ass'
+    choose_input_action 'Bottom up'
+    choose_input_action 'Offer your help'
+    continue_until_unpaused
+    choose_input_action 'Face to you'
+    continue_until_unpaused
+    act_on_character 'Hound', 'To the camp'
+    continue_until_unpaused
+
+    # Maryam 5 - start
+    go_to_room 'Biker gym'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Bonnie 4
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Hound', 'To the farm'
+    continue_until_unpaused
+    go_direction 'In'
+    act_on_character 'Bonnie Sly', 'Play with Bonnie'
+    choose_input_action 'Fix inside a wall'
+    choose_input_action 'Give her the knife'
+    continue_until_unpaused
+    go_direction 'Out'
+    act_on_object 'Hound\'s bike', 'Search'
+    act_on_object 'Hound\'s bike', 'Steal the gun'
+    choose_input_action 'Yes'
+    go_direction 'In'
+    act_on_room 'Wait'
+    go_direction 'Out'
+    act_on_character 'Gigi and Bonnie', 'Threaten with gun'
+    continue_until_unpaused
+    choose_input_action 'Give her a knife and lead her back'
+    continue_until_unpaused
+    act_on_room 'Wait'
+    act_on_character 'Hound', 'To the camp'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Maryam 5 - the rest
+    go_to_room 'Biker gym'
+    continue_until_unpaused
+    go_to_room 'Cells'
+    act_on_character 'Maryam', 'Talk'
+    choose_input_action 'Do you know who is accusing you?'
+    continue_until_unpaused
+    go_to_room 'Bonnie_tent'
+    act_on_character 'Bonnie Sly', 'Cast: Irresistible lust'
+    continue_until_unpaused
+    go_to_room 'Bonnie_tent'
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'What has happened to Gigi?'
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'Go to train Gigi'
+    continue_until_unpaused
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'Go to train Gigi'
+    continue_until_unpaused
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'Ask about fake driving licenses'
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Angie', 'Examine'
+    act_on_character 'Angie', 'Talk'
+    choose_input_action 'Is it you who blackmail Maryam?'
+    act_on_character 'Angie', 'Talk'
+    choose_input_action 'I need a photo of you'
+    continue_until_unpaused
+
+    go_to_room 'Bonnie_tent'
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'Access to driving licence forging equipment'
+    continue_until_unpaused
+    go_to_room 'Biker\'s camp'
+    act_on_object 'Fake Driving License', 'Give'
+    choose_input_action 'Angie'
+    continue_until_unpaused
+    go_to_room 'Mid-South Crossroad'
+    act_on_character 'Olivia Osborne', 'Talk'
+    choose_input_action 'Ask about the charges against Maryam'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'University Entrance'
+    wait_until_hour 10
+    act_on_character 'Angie', 'Spy on her'
+    continue_until_unpaused
+    go_to_room 'Top of Old Lighthouse'
+    wait_until_hour 15
+    act_on_room 'Spy on Kingstones'
+    continue_until_unpaused
+    go_to_room 'In front of a Bar'
+    wait_until_hour 21
+    go_to_room 'Bar'
+    act_on_character 'Angie', 'Spy on her'
+    continue_until_unpaused
+    go_to_room 'Mid-South Crossroad'
+    wait_until_hour 23
+    act_on_character 'Angie', 'Spy on her'
+    continue_until_unpaused # falls asleep
+
+    go_to_room 'Police Station'
+    act_on_object 'Photos of Angie', 'Give'
+    choose_input_action 'Olivia Osborne'
+    continue_until_unpaused
+    go_to_room 'Cells'
+    continue_until_unpaused
+    act_on_character 'Maryam', 'Cast Induce to sin'
+    choose_input_action 'Anger'
+    continue_until_unpaused
+
+    # Maryam / Bonnie photo cleanup
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    go_to_room 'Biker gym'
+    act_on_character 'Maryam', 'Cast Irresistible lust'
+    continue_until_unpaused
+    go_to_room 'Immortals\' camp'
+    wait_until_hour 13
+    act_on_character 'Maryam', 'Cast Irresistible lust'
+    continue_until_unpaused
+    go_to_room 'Biker\'s camp'
+    wait_until_hour 17
+    act_on_character 'Maryam', 'Cast Irresistible lust'
+    continue_until_unpaused
+    wait_until_hour 20
+    act_on_character 'Bonnie Sly', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    wait_until_day("Monday")
     go_to_room 'Linnaeus room'
     wait_until_hour 10
     act_on_character 'Tessa Clayton', 'Cast: Read Sins'
@@ -3402,7 +3694,7 @@ describe 'the sinner', type: :feature, js: true do
     act_on_object 'Helen\'s handbag', 'Rummage zipped pocket'
     act_on_object 'Helen\'s handbag', 'Rummage main part'
     act_on_object 'Helen\'s handbag', 'Rummage secondary part'
-    skip_next_live_timer
+    skip_all_live_timers
     continue_until_unpaused
 
     act_on_self 'Next Day'
@@ -3419,6 +3711,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Supermarket'
     act_on_character 'Wendy\'s mother', 'Talk'
     choose_input_action 'About prescription'
+    continue_until_unpaused
     go_to_room 'Herodot room'
     wait_until_hour 13
     act_on_object 'Helen\'s handbag', 'Substitute the pills'
@@ -3906,7 +4199,7 @@ describe 'the sinner', type: :feature, js: true do
       image_reporter.report_missing_images('tmp/thesinner_missing_images.txt')
     end
 
-    # Hunter quest
+    # Hunter quest - the stuff after here can work but it's pretty flaky and doesn't add a lot of new content
     act_on_room 'Write a denouncement letter'
     choose_input_action 'Make your choice'
     choose_input_action 'Template 1'
@@ -4046,8 +4339,5 @@ describe 'the sinner', type: :feature, js: true do
     if image_reporter.percentage_seen_for_game > 50
       image_reporter.report_missing_images('tmp/thesinner_missing_images.txt')
     end
-
-    export_savegames 'tmp/play_around_070'
-    # TODO: lust tessa at the beach on a weekend (~17:00?)
   end
 end

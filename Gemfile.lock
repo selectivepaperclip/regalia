@@ -16,10 +16,12 @@ GEM
     dotenv (2.7.5)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
+    nokogiri (1.10.9)
+      mini_portile2 (~> 2.4.0)
     nokogiri (1.10.9-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     public_suffix (4.0.1)
-    rack (2.0.7)
+    rack (2.2.3)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     regexp_parser (1.6.0)
@@ -48,6 +50,7 @@ GEM
       nokogiri (~> 1.8)
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES

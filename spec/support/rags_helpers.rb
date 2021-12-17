@@ -81,21 +81,32 @@ def continue_until_unpaused
   end
 end
 
-def click_on_character(character)
-  page.find(".VisibleCharacters", text: character).click
+def click_on_character(character, match: nil)
+  if match == :first
+    page.find(".VisibleCharacters", text: character, match: match).click
+  else
+    page.find(".VisibleCharacters", text: character).click
+  end
 end
 
 def click_on_object(object)
   page.find(".RoomObjects", text: object).click
 end
 
-def act_on_object(object, action, match: nil)
-  click_on_object(object)
+def act_on_object(object, action, match: nil, room_or_inventory: nil)
+  if room_or_inventory == :room
+    puts "within the scope"
+    within '#RoomObjectsPanel' do
+      click_on_object(object)
+    end
+  else
+    click_on_object(object)
+  end
   choose_action(action, match: match)
 end
 
 def act_on_character(character, action, match: nil)
-  click_on_character(character)
+  click_on_character(character, match: match)
   choose_action(action, match: match)
 end
 

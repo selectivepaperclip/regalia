@@ -390,7 +390,7 @@ module TheSinnerHelper
     start_game 'TheSinner'
 
     act_on_object 'Game', 'Start New Game (Skip entry)'
-    choose_input_action 'Easy (+5 points per sin)'
+    choose_input_action 'Easy (+2 points per sin)'
     continue_until_unpaused
 
     import_savegames(savegames_filename)
@@ -482,7 +482,7 @@ module TheSinnerHelper
   end
 end
 
-# Tested with TheSinner 0.75
+# Tested with TheSinner 0.90
 describe 'the sinner', type: :feature, js: true do
   let!(:image_reporter) { ImageReporter.new('TheSinner', page) }
 
@@ -498,7 +498,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     fill_in_text_input 'TestPlayer'
     continue_until_unpaused
-    choose_input_action 'Easy (+5 points per sin)'
+    choose_input_action 'Easy (+2 points per sin)'
     continue_until_unpaused
 
     go_to_room 'In front of the University'
@@ -515,7 +515,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     fill_in_text_input 'TestPlayer'
     # choose_input_action 'Normal (+2 points per sin)'
-    choose_input_action 'Easy (+5 points per sin)'
+    choose_input_action 'Easy (+2 points per sin)'
     continue_until_unpaused
 
     # Gain the first level of 'Bad Boy'
@@ -554,7 +554,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Library [LS Library]'
     act_on_room 'Search'
     continue_until_unpaused
-    act_on_object 'Book about Sherlock Holmes', 'Tear out a page'
+    act_on_object '"The Sign of the Four"', 'Tear out a page'
     continue_until_unpaused
 
     go_to_room 'Liberty Square'
@@ -662,6 +662,17 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Lie'
     continue_until_unpaused
 
+    # Learn about Angela
+    go_to_room 'Library [LS Library]'
+    act_on_character 'Angela Colbert', 'Examine'
+    act_on_character 'Angela Colbert', 'Talk'
+    choose_input_action 'Do you like your job?'
+    continue_until_unpaused
+    act_on_character 'Angela Colbert', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Leave earlier'
+    continue_until_unpaused
+
     act_on_self 'Next Day'
     continue_until_unpaused
 
@@ -722,7 +733,14 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Learn'
     continue_until_unpaused
 
-    # Take photos of the Kingstones
+    # Start Chloe's seduction (+2 BB)
+    go_to_room 'SW Cox house'
+    act_on_character 'Chloe Cox', 'Cast: Read sins'
+    continue_until_unpaused
+    act_on_object 'curtain', 'Steal: Open the curtain carefully.'
+    continue_until_unpaused
+
+    # Take photos of the Kingstones (+4 BB)
     go_to_room 'Mid-Eastern Crossroad'
     wait_until_hour 13
     go_to_room "In front of Kingston's house"
@@ -748,20 +766,53 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     go_direction 'Out'
 
-    # Learn 'Drinking'
-    go_to_room 'Your House'
-    act_on_self 'Learn'
+    # Meet Gina (+2 BB)
+    go_to_room "Biker's camp"
+    act_on_character 'Girl', 'Examine', match: :first
+    while evaluate_script('Globals.currentImage') != "GinaNorm.jpg"
+      go_direction 'Out'
+      go_direction 'In'
+      act_on_character 'Girl', 'Examine', match: :first
+    end
+
+    act_on_character 'Girl', 'Talk', match: :first
+    choose_input_action 'Introduce yourself'
+    choose_input_action 'Compliment the bike'
+
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'You are not like other girls here'
+    continue_until_unpaused
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Tell me about the camp'
+    continue_until_unpaused
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Which gang is yours?'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'How do you plan to join the gang?'
+    act_on_character 'Black Jack', 'Talk'
+    choose_input_action 'Beer'
+    act_on_character 'Black Jack', 'Talk'
+    choose_input_action 'Race'
+    act_on_character 'Gina Blaze', 'Talk'
+    choose_input_action 'Tell Gina about race participants'
+    go_to_room 'Dragon rider\'s camp'
+    act_on_object 'Nessa\'s bike', 'Steal: Cut the wire'
     continue_until_unpaused
 
+    # Steal a dress (+2 BB)
     go_to_room 'Seafront'
     continue_until_unpaused
-    wait_until_hour 22
     go_direction 'East'
     act_on_room 'Peep'
     continue_until_unpaused
     act_on_object 'sexy dress', 'Steal'
+    continue_until_unpaused
 
+    # Learn 'Drinking'
     act_on_self 'Next Day'
+    continue_until_unpaused
+    act_on_self 'Learn'
     continue_until_unpaused
 
     # Increase Rose's sin
@@ -842,22 +893,16 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Lust'
     continue_until_unpaused
 
-    # Learn 'Fighting'
-    act_on_self 'Learn'
-    continue_until_unpaused
-
-    # Learn about Norma and Angela
-    go_to_room 'Library [LS Library]'
-    act_on_character 'Angela Colbert', 'Examine'
-    act_on_character 'Angela Colbert', 'Talk'
-    choose_input_action 'Tell me about Norma'
-    continue_until_unpaused
-    act_on_character 'Angela Colbert', 'Talk'
-    choose_input_action 'Do you like your job?'
-    continue_until_unpaused
-    act_on_character 'Angela Colbert', 'Talk'
-    choose_input_action 'Egg on'
-    choose_input_action 'Leave earlier'
+    # Start Rachel's seduction
+    set_character_custom_property('Rachel Hollinse', 'mood', 'bad') # this interaction only works in bad mood
+    go_to_room 'Park'
+    act_on_character 'Rachel Hollinse', 'Examine'
+    act_on_character 'Rachel Hollinse', 'Talk'
+    choose_input_action 'Chat'
+    go_to_room 'Liberty Square'
+    go_to_room 'Park'
+    act_on_character 'Rachel Hollinse', 'Talk'
+    choose_input_action 'Go-Go-Go!'
     continue_until_unpaused
 
     # Learn about Rubi
@@ -925,18 +970,8 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Were you able to "borrow" an interesting book?'
     continue_until_unpaused
 
-    # Start Chloe's seduction
-    go_to_room 'SW Cox house'
-    act_on_character 'Chloe Cox', 'Cast: Read sins'
-    continue_until_unpaused
-    act_on_object 'curtain', 'Steal: Open the curtain carefully.'
-    continue_until_unpaused
-
-    # Go to next day (Monday) to open university
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
     # Peep on Chloe through open curtain
+    wait_until_weekday
     go_to_room 'SW F Coxes house'
     wait_until_hour 13
     act_on_room 'Peep'
@@ -982,12 +1017,7 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Tell me about Norma'
     continue_until_unpaused
 
-    # Get Vodka for Norma
-    go_to_room 'Mid-South Crossroad'
-    go_to_room 'Bar'
-    buy_alcohol 'Vodka', first: true
-
-    # Increase Layla's sin
+    # Increase Layla's sin (+2 BB)
     go_to_room 'Jefferson\'s house'
     act_on_character 'Layla Jefferson', 'Talk'
     choose_input_action 'Lets drink!'
@@ -1005,15 +1035,65 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Egg on'
     choose_input_action 'Who is the best sucker?'
     continue_until_unpaused
-
+   
     go_direction 'North'
     act_on_character 'Isabel Jefferson', 'Search'
     continue_until_unpaused
     go_direction 'South'
 
-    # Compromise Norma
-    go_to_room 'Reception'
-    act_on_character 'Norma Rowbottom', 'Compromise her'
+    # Drink with Rachel (+2 BB)
+    go_to_room 'Bar'
+    set_character_custom_property('Rachel Hollinse', 'mood', 'good') # this interaction only works in good mood
+    act_on_character 'Rachel Hollinse', 'Talk'
+    choose_input_action 'Do you fancy a drink?'
+    continue_until_unpaused
+
+    # Reanna quest (+2 BB)
+    go_to_room "In front of Willson's house"
+    wait_until_hour 20
+    go_to_room 'Willsons\' house'
+    act_on_character 'Reanna Willson', 'Examine'
+    act_on_character 'Reanna Willson', 'Talk'
+    choose_input_action 'I would like to apologise'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room "In front of Willson's house"
+    wait_until_hour 17
+    act_on_room 'Peep'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'Willsons\' house. Bedroom'
+
+    act_on_character 'Reanna Willson', 'Talk'
+    choose_input_action 'Egg on'
+    choose_input_action 'Would you like to go out for a drink with me?'
+    continue_until_unpaused
+
+    go_to_room "In front of Willson's house"
+    wait_until_hour 21
+    go_to_room 'Willsons\' house'
+
+    act_on_character 'Reanna Willson', 'Go to the bar'
+    continue_until_unpaused
+    choose_input_action 'Ask how he met Reanna'
+    continue_until_unpaused
+    3.times do
+      choices = page.all('.inputchoices').map(&:text)
+      choose_input_action((choices - ['Lick-Shake-Lick-Drink-Shake-Lick-Drink-Suck']).first)
+    end
+    continue_until_unpaused
+    fill_in_text_input 'yellow submarine'
+    continue_until_unpaused
+
+    # Learn 'Fighting'
+    go_direction 'Out' # seems buggy -- since the last action triggered a sleep, 'Learn' doesn't show up yet
+    go_direction 'In'
+    act_on_self 'Learn'
     continue_until_unpaused
 
     # Get Ann to blow Quincy
@@ -1076,6 +1156,47 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Ask about Layla\'s phone'
     continue_until_unpaused
 
+    # Get Vodka for Norma
+    go_to_room 'Mid-South Crossroad'
+    wait_until_hour 20
+    go_to_room 'Bar'
+    buy_alcohol 'Vodka', first: true
+
+    # Compromise Norma
+    go_to_room 'Reception'
+    act_on_character 'Norma Rowbottom', 'Compromise her'
+    continue_until_unpaused
+
+    # Get a Drone
+    go_to_room 'Beach'
+    act_on_character 'Guy on the beach', 'Talk'
+    choose_input_action 'Can I play with your drone?'
+    choose_input_action 'Punch him in solar plexus'
+    continue_until_unpaused
+
+    # Bonnie 0 - Troublemakers (+4 PP)
+    go_to_room 'Biker\'s camp'
+    go_direction 'East'
+    choose_input_action 'Try to pass'
+    continue_until_unpaused
+
+    go_to_room 'Bonnie_tent'
+    act_on_character 'Bonnie Sly', 'Examine'
+    act_on_character 'Bonnie Sly', 'Talk'
+    choose_input_action 'What do you need from me?'
+    continue_until_unpaused
+
+    go_to_room 'Biker\'s camp'
+    act_on_character 'Troublemakers', 'Talk'
+    choose_input_action 'Warning: You guys cause too many troubles here!'
+    continue_until_unpaused
+    choose_input_action 'Play along: So, others are not REAL bikers?'
+    continue_until_unpaused
+    choose_input_action 'Silence: Say nothing'
+    continue_until_unpaused
+    choose_input_action 'Attack: Strike first'
+    continue_until_unpaused
+
     # Learn 'Burgling'
     go_to_room 'Your House'
     act_on_self 'Learn'
@@ -1098,7 +1219,9 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Layla'
     continue_until_unpaused
 
+    wait_until_weekday
     go_to_room 'University Entrance'
+    wait_until_hour 16
     act_on_character 'Joe Spencer', 'Talk'
     choose_input_action 'Go to park with Lara'
     act_on_character 'Joe Spencer', 'Talk'
@@ -1110,8 +1233,6 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Liberty Square'
     wait_until_hour 18
     go_to_room 'Library [LS Library]'
-    act_on_character 'Angela Colbert', 'Cast: Read sins'
-    continue_until_unpaused
     act_on_character 'Rubi Patterson', 'Talk'
     choose_input_action 'Were you able to "borrow" an interesting book?'
     continue_until_unpaused
@@ -1120,7 +1241,10 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 22
     go_to_room 'Bar'
+
     act_on_character 'Wendy', 'Make graffiti'
+    continue_until_unpaused
+    choose_input_action 'No'
     continue_until_unpaused
     choose_input_action 'Lie: I fucked my own sister'
     continue_until_unpaused
@@ -1199,11 +1323,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_exact_input_action 'Rose'
     continue_until_unpaused
 
-    # Learn Advanced Sex
-    go_to_room 'Your House'
-    act_on_self 'Learn'
-    continue_until_unpaused
-
     # Beat Wendy at Darts
     go_to_room 'Mid-South Crossroad'
     wait_until_hour 21
@@ -1219,16 +1338,36 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
 
-    # Start Rachel's seduction
-    set_character_custom_property('Rachel Hollinse', 'mood', 'bad') # this interaction only works in bad mood
-    go_to_room 'Park'
-    act_on_character 'Rachel Hollinse', 'Examine'
-    act_on_character 'Rachel Hollinse', 'Talk'
-    choose_input_action 'Chat'
-    go_to_room 'Liberty Square'
-    go_to_room 'Park'
-    act_on_character 'Rachel Hollinse', 'Talk'
-    choose_input_action 'Go-Go-Go!'
+    # Burgling spree (+2 BB)
+    go_to_room "In front of Jewel's house"
+    wait_until_hour 10
+    act_on_room 'Burglary'
+
+    # Reanna's panties for Mary (+2 BB)
+    go_to_room 'In front of Willson\'s house'
+    act_on_room 'Burglary'
+    go_to_room 'Willsons\' house. Bedroom'
+    act_on_object 'wardrobe', 'Open'
+    act_on_object 'BigDildo', 'Take'
+    act_on_object 'Panties of Reanna', 'Take'
+
+    # Bolder dildo (+2 BB)
+    go_to_room 'In front of Bolder\'s house'
+    wait_until_hour 12
+    act_on_room 'Burglary'
+    continue_until_unpaused
+    go_direction 'NorthWest'
+    act_on_object 'Wardrobe_Bolders', 'Open'
+    act_on_object 'Small vibrator', 'Take'
+    go_direction 'SouthEast'
+    go_direction 'Out'
+
+    # Learn Advanced Sex
+    go_to_room 'Your House'
+    act_on_self 'Learn'
+    continue_until_unpaused
+
+    act_on_self 'Next Day'
     continue_until_unpaused
 
     # Start Lara's sins
@@ -1352,14 +1491,9 @@ describe 'the sinner', type: :feature, js: true do
     act_on_room 'Peep'
     continue_until_unpaused
 
-    # Drink with Rachel
-    go_to_room 'Bar'
-    set_character_custom_property('Rachel Hollinse', 'mood', 'good') # this interaction only works in good mood
-    act_on_character 'Rachel Hollinse', 'Talk'
-    choose_input_action 'Do you fancy a drink?'
-    continue_until_unpaused
-
     # Start Katie's seduction
+    act_on_self 'Next Day'
+    continue_until_unpaused
     go_to_room 'Bar'
     act_on_object 'briefcase', 'Steal'
     act_on_character 'Katie Jewel', 'Buy a cup of coffee'
@@ -1412,6 +1546,8 @@ describe 'the sinner', type: :feature, js: true do
     wait_until_hour 21
     act_on_room 'Burglary'
     continue_until_unpaused
+    choose_input_action 'No'
+    continue_until_unpaused
     go_direction 'North'
     go_direction 'West'
     act_on_room 'Search'
@@ -1432,6 +1568,8 @@ describe 'the sinner', type: :feature, js: true do
     # Burgle the ambroxide
     act_on_room 'Burglary'
     continue_until_unpaused
+    choose_input_action 'No'
+    continue_until_unpaused
     go_direction 'North'
     go_direction 'East'
     go_direction 'East'
@@ -1449,6 +1587,8 @@ describe 'the sinner', type: :feature, js: true do
     # Burgle the storehouse with Wendy
     go_to_room 'Bar'
     act_on_character 'Wendy', 'Go for burglary'
+    continue_until_unpaused
+    choose_input_action 'No'
     continue_until_unpaused
     act_on_object 'RowB', 'Open'
     page.find(".RoomObjects", text: 'Shelf B-I', match: :first).click
@@ -1542,12 +1682,144 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Yes'
     continue_until_unpaused
 
-    # Learn 'Cheating'
-    go_to_room 'Your House'
-    act_on_self 'Learn'
+    # More Reanna
+    go_to_room "In front of Willson's house"
+    wait_until_hour 21
+    go_to_room 'Willsons\' house'
+    act_on_character 'Ted Willson', 'Examine'
+    act_on_character 'Ted Willson', 'Talk'
+    choose_input_action 'Chat'
+    act_on_object 'Photos of Reanna', 'Give'
+    choose_input_action 'Ted Willson'
+    continue_until_unpaused
+    act_on_self 'Next Day'
     continue_until_unpaused
 
+    go_to_room "In front of Willson's house"
+    act_on_room 'Burglary'
+    act_on_room 'Burgle: go upstairs'
+    act_on_character 'Reanna Willson', 'Examine'
+    act_on_character 'Reanna Willson', 'Cast: Read sins'
+    continue_until_unpaused
+    act_on_object 'Reanna\'s clothes', 'Steal: search through'
+    continue_until_unpaused
+
+    go_to_room "In front of Willson's house"
+    act_on_self 'Wait an hour'
+    act_on_self 'Wait an hour'
+    act_on_room 'Burglary'
+    go_direction 'North'
+    act_on_object 'wardrobe', 'Open'
+    act_on_object 'box', 'Examine'
+    act_on_object 'box', 'Open'
+    continue_until_unpaused
     act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room "In front of Willson's house"
+    act_on_room 'Burglary'
+    act_on_room 'Burgle: go upstairs'
+    go_to_room 'Willsons\' house. Bedroom'
+    act_on_character 'Reanna Willson', 'Kidnap Reanna'
+    continue_until_unpaused
+
+    act_on_character 'Reanna Willson', 'Examine'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Question1 fuck pics
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Fuck'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Question2 fuck pics (requires 1 tease buildup)
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Fuck'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    # Question3 fuck pics (requires 2 tease buildup)
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Fuck'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+
+    go_to_room 'ME Abandoned house'
+    act_on_character 'Reanna Willson', 'Question Reanna'
+    choose_input_action 'Tease'
+    continue_until_unpaused
+    choose_input_action 'Leave'
+    continue_until_unpaused
+
+    go_to_room "In front of Willson's house"
+    wait_until_hour 21
+    go_to_room 'Willsons\' house'
+    act_on_character 'Ted Willson', 'Bring Ted to Reanna'
+    continue_until_unpaused
+
+    go_to_room 'Willsons\' house'
+    go_direction 'North'
+
+    act_on_character 'Reanna Willson', 'Cast: Irresistible lust'
+    continue_until_unpaused
+
+    # Learn 'Cheating'
+    act_on_self 'Next Day'
+    continue_until_unpaused
+    act_on_self 'Learn'
     continue_until_unpaused
 
     # See Chloe's pics
@@ -1558,6 +1830,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Play Quincy at chess
+    wait_until_weekday
     go_to_room 'Pythagoras room'
     act_on_character 'Quincy Robson', 'Pass the test'
     continue_until_unpaused
@@ -1591,11 +1864,13 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Herodot room'
     act_on_room 'Examine'
     act_on_object 'Awards', 'Examine'
+    wait_until_hour 13
     act_on_character 'Helen Coombs', 'Talk'
     choose_input_action 'Could you tell me more about this award, it seems important?'
     continue_until_unpaused
 
     # Steal figurine for Coombs
+    wait_until_hour 15
     go_to_room 'Jefferson\'s house'
     act_on_room 'Burglary: Go to Layla\'s bedroom'
     act_on_object 'Glass case', 'Examine'
@@ -1769,6 +2044,10 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Get Rubi and Angela to bang
+    go_direction 'SouthWest'
+    act_on_character 'Angela Colbert', 'Cast: Read sins'
+    continue_until_unpaused
+    go_direction 'NorthEast'
     act_on_character 'Rubi Patterson', 'Cast: Irresistible lust'
     choose_input_action 'Rubi'
     continue_until_unpaused
@@ -1964,8 +2243,14 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
 
     # Eve Rock 1
-    go_to_room 'Seafront'
+    go_to_room 'Mid-Eastern Crossroad'
     wait_until_hour 20
+    go_to_room 'Seafront'
+    continue_until_unpaused
+
+    go_direction 'NorthWest'
+    go_direction 'SouthEast'
+    continue_until_unpaused
     act_on_character 'Eve Rock', 'Talk'
     choose_input_action 'Why did you decide to work as a prostitute?'
     act_on_character 'Eve Rock', 'Talk'
@@ -2195,7 +2480,7 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Jefferson\'s house'
     act_on_room 'Burglary: Go to Layla\'s bedroom'
     act_on_object 'Wardrobe', 'Open'
-    act_on_object 'Dildo', 'Take'
+    act_on_object 'Dildo', 'Take', room_or_inventory: :room
     go_direction 'SouthEast'
 
     # Abigail 7
@@ -2382,15 +2667,6 @@ describe 'the sinner', type: :feature, js: true do
     go_to_room 'Barn'
     act_on_character 'Mary Stone', 'Talk'
     choose_input_action 'Tell Mary about Abigail'
-
-    # Reanna's panties for Mary
-    go_to_room 'In front of Willson\'s house'
-    wait_until_hour 10
-    act_on_room 'Burglary'
-    go_to_room 'Willsons\' house. Bedroom'
-    act_on_object 'wardrobe', 'Open'
-    act_on_object 'Panties of Reanna', 'Take'
-    go_to_room 'Barn'
     act_on_object 'Panties of Reanna', 'Give'
     choose_input_action 'Mary Stone'
 
@@ -2425,14 +2701,6 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     act_on_character 'Father Becker', 'Listen'
     continue_until_unpaused
-
-    # Get a Drone
-    go_to_room 'Beach'
-    act_on_character 'Guy on the beach', 'Talk'
-    choose_input_action 'Can I play with your drone?'
-    choose_input_action 'Punch him in solar plexus'
-    continue_until_unpaused
-    act_on_object 'DildoDrone', 'Examine'
 
     # Prank father
     go_to_room 'University Entrance'
@@ -2633,23 +2901,6 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Summarise the findings'
     continue_until_unpaused
 
-    # Dildo hunt
-    go_to_room 'In front of Willson\'s house'
-    wait_until_hour 10
-    act_on_room 'Burglary'
-    go_direction 'North'
-    act_on_object 'BigDildo', 'Take'
-    go_direction 'South'
-
-    go_to_room 'In front of Bolder\'s house'
-    wait_until_hour 12
-    act_on_room 'Burglary'
-    go_direction 'NorthWest'
-    act_on_object 'Wardrobe_Bolders', 'Open'
-    act_on_object 'Small vibrator', 'Take'
-    go_direction 'SouthEast'
-    go_direction 'Out'
-
     act_on_self 'Next Day'
     continue_until_unpaused
 
@@ -2808,38 +3059,8 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Abigail and Mary'
     continue_until_unpaused
 
-    # Meet Gina
-    go_to_room "Biker's camp"
-    act_on_character 'Girl', 'Examine'
-    while evaluate_script('Globals.currentImage') != "GinaNorm.jpg"
-      go_direction 'Out'
-      go_direction 'In'
-      act_on_character 'Girl', 'Examine'
-    end
-
-    act_on_character 'Girl', 'Talk'
-    choose_input_action 'Introduce yourself'
-    choose_input_action 'Compliment the bike'
-
-    act_on_character 'Gina Blaze', 'Talk'
-    choose_input_action 'Egg on'
-    choose_input_action 'You are not like other girls here'
-    continue_until_unpaused
-    act_on_character 'Gina Blaze', 'Talk'
-    choose_input_action 'Tell me about the camp'
-    continue_until_unpaused
-    act_on_character 'Gina Blaze', 'Talk'
-    choose_input_action 'Which gang is yours?'
-    act_on_character 'Gina Blaze', 'Talk'
-    choose_input_action 'How do you plan to join the gang?'
-    act_on_character 'Black Jack', 'Talk'
-    choose_input_action 'Race'
-
-    go_to_room 'Dragon rider\'s camp'
-    act_on_character 'Nessa', 'Talk'
-    choose_input_action 'Introduce yourself'
-    choose_input_action 'when you shut up and stop playing a bitch'
-    act_on_object 'Nessa\'s bike', 'Steal: Cut the wire'
+    # More Gina / Nessa
+    act_on_self 'Next Day'
     continue_until_unpaused
 
     go_to_room 'Biker\'s camp'
@@ -2853,9 +3074,6 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     act_on_object 'camera', 'Shoot'
     choose_input_action 'Gina Blaze'
-
-    act_on_self 'Next Day'
-    continue_until_unpaused
 
     go_to_room 'University Entrance'
     go_direction 'NorthWest'
@@ -2886,18 +3104,8 @@ describe 'the sinner', type: :feature, js: true do
     act_on_character 'Gina Blaze', 'Talk'
     choose_input_action 'Ask about her father'
     continue_until_unpaused
-
-    go_direction 'East'
-    choose_input_action 'Try to pass'
-    continue_until_unpaused
-
-    go_to_room 'Biker\'s camp'
     act_on_character 'Gina Blaze', 'Talk'
     choose_input_action 'What will you do now?'
-
-    go_to_room 'Dragon rider\'s camp'
-    act_on_character 'Nessa', 'Talk'
-    choose_input_action 'What would you say about Gina Blaze?'
 
     go_to_room 'Biker\'s camp'
     act_on_character 'Black Jack', 'Talk'
@@ -2918,181 +3126,6 @@ describe 'the sinner', type: :feature, js: true do
 
     go_to_room 'In front of the bikers\' camp'
     go_direction 'In'
-    continue_until_unpaused
-
-    # Reanna quest
-    go_to_room "In front of Willson's house"
-    wait_until_hour 20
-    go_to_room 'Willsons\' house'
-    act_on_character 'Reanna Willson', 'Examine'
-    act_on_character 'Reanna Willson', 'Talk'
-    choose_input_action 'I would like to apologise'
-    continue_until_unpaused
-
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    wait_until_hour 17
-    act_on_room 'Peep'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'Willsons\' house. Bedroom'
-
-    act_on_character 'Reanna Willson', 'Talk'
-    choose_input_action 'Egg on'
-    choose_input_action 'Would you like to go out for a drink with me?'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    wait_until_hour 21
-    go_to_room 'Willsons\' house'
-    act_on_character 'Reanna Willson', 'Go to the bar'
-    continue_until_unpaused
-    choose_input_action 'Ask how he met Reanna'
-    continue_until_unpaused
-    choose_input_action 'Lick-Drink-Shake-Lick-Drink-Shake-Lick-Suck'
-    choose_input_action 'Lick-Drink-Shake-Lick-Drink-Shake-Lick-Suck'
-    choose_input_action 'Lick-Drink-Shake-Lick-Drink-Shake-Lick-Suck'
-    continue_until_unpaused
-    fill_in_text_input 'yellow submarine'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    wait_until_hour 21
-    go_to_room 'Willsons\' house'
-    act_on_character 'Ted Willson', 'Examine'
-    act_on_character 'Ted Willson', 'Talk'
-    choose_input_action 'Chat'
-    act_on_object 'Photos of Reanna', 'Give'
-    choose_input_action 'Ted Willson'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    act_on_room 'Burglary'
-    act_on_room 'Burgle: go upstairs'
-    act_on_character 'Reanna Willson', 'Examine'
-    act_on_character 'Reanna Willson', 'Cast: Read sins'
-    continue_until_unpaused
-    act_on_object 'Reanna\'s clothes', 'Steal: search through'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    act_on_self 'Wait an hour'
-    act_on_self 'Wait an hour'
-    act_on_room 'Burglary'
-    go_direction 'North'
-    act_on_object 'wardrobe', 'Open'
-    act_on_object 'box', 'Examine'
-    act_on_object 'box', 'Open'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    act_on_room 'Burglary'
-    act_on_room 'Burgle: go upstairs'
-    go_to_room 'Willsons\' house. Bedroom'
-    act_on_character 'Reanna Willson', 'Kidnap Reanna'
-    continue_until_unpaused
-
-    act_on_character 'Reanna Willson', 'Examine'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    # Question1 fuck pics
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Fuck'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Tease'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    # Question2 fuck pics (requires 1 tease buildup)
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Fuck'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Tease'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Tease'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    continue_until_unpaused
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    # Question3 fuck pics (requires 2 tease buildup)
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Fuck'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Tease'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Tease'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    act_on_self 'Next Day'
-    continue_until_unpaused
-
-    go_to_room 'ME Abandoned house'
-    act_on_character 'Reanna Willson', 'Question Reanna'
-    choose_input_action 'Tease'
-    continue_until_unpaused
-    choose_input_action 'Leave'
-    continue_until_unpaused
-
-    go_to_room "In front of Willson's house"
-    wait_until_hour 21
-    go_to_room 'Willsons\' house'
-    act_on_character 'Ted Willson', 'Bring Ted to Reanna'
-    continue_until_unpaused
-
-    go_to_room 'Willsons\' house'
-    go_direction 'North'
-
-    act_on_character 'Reanna Willson', 'Cast: Irresistible lust'
     continue_until_unpaused
 
     act_on_self 'Next Day'
@@ -3248,7 +3281,17 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Seduce Creig'
     continue_until_unpaused
 
-    wait_until_day("Monday")
+    # Nessa start
+    go_to_room 'Beach'
+    wait_until_hour 18
+    act_on_room 'Swim'
+    choose_input_action 'Yes'
+    choose_input_action 'Lie: pretend drowning'
+    continue_until_unpaused
+
+    # Tessa draughts
+    act_on_self 'Next Day'
+    continue_until_unpaused
     go_to_room 'Linnaeus room'
     wait_until_hour 10
     act_on_character 'Tessa Clayton', 'Talk'
@@ -3295,8 +3338,6 @@ describe 'the sinner', type: :feature, js: true do
     go_direction 'In'
     act_on_self 'Learn'
     continue_until_unpaused
-
-    #quickstart 'tmp/learned_forgery_save_2020-10-10-23-23-24.json'
 
     # Maryam 1
     go_to_room 'Biker gym'
@@ -3357,23 +3398,6 @@ describe 'the sinner', type: :feature, js: true do
 
     # Bonnie 1
     go_to_room 'Bonnie_tent'
-    act_on_character 'Bonnie Sly', 'Examine'
-    act_on_character 'Bonnie Sly', 'Talk'
-    choose_input_action 'What do you need from me?'
-    continue_until_unpaused
-
-    go_to_room 'Biker\'s camp'
-    act_on_character 'Troublemakers', 'Talk'
-    choose_input_action 'Warning: You guys cause too many troubles here!'
-    continue_until_unpaused
-    choose_input_action 'Play along: So, others are not REAL bikers?'
-    continue_until_unpaused
-    choose_input_action 'Silence: Say nothing'
-    continue_until_unpaused
-    choose_input_action 'Attack: Strike first'
-    continue_until_unpaused
-
-    go_to_room 'Bonnie_tent'
     act_on_character 'Bonnie Sly', 'Talk'
     choose_input_action 'About a job'
     continue_until_unpaused
@@ -3383,7 +3407,8 @@ describe 'the sinner', type: :feature, js: true do
     choose_input_action 'Ask about Gina'
     continue_until_unpaused
 
-    go_to_room 'Biker\'s camp'
+    go_to_room 'Immortals\' camp'
+    wait_until_hour 13
     act_on_character 'Maryam', 'Talk'
     choose_input_action 'Tell Maryam that Gina is a lesbian'
     continue_until_unpaused
@@ -3413,13 +3438,13 @@ describe 'the sinner', type: :feature, js: true do
     act_on_self 'Next Day'
     continue_until_unpaused
     go_to_room 'Biker gym'
-    act_on_character 'Maryam', 'Cast Induce to sin'
+    act_on_character 'Maryam', 'Cast: Induce to sin'
     choose_input_action 'Anger'
     continue_until_unpaused
-    act_on_character 'Maryam', 'Cast Induce to sin'
+    act_on_character 'Maryam', 'Cast: Induce to sin'
     choose_input_action 'Pride'
     continue_until_unpaused
-    act_on_character 'Maryam', 'Cast Induce to sin'
+    act_on_character 'Maryam', 'Cast: Induce to sin'
     choose_input_action 'Lust'
     continue_until_unpaused
 
@@ -3601,7 +3626,7 @@ describe 'the sinner', type: :feature, js: true do
     continue_until_unpaused
     go_to_room 'Cells'
     continue_until_unpaused
-    act_on_character 'Maryam', 'Cast Induce to sin'
+    act_on_character 'Maryam', 'Cast: Induce to sin'
     choose_input_action 'Anger'
     continue_until_unpaused
 

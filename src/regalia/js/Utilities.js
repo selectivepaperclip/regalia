@@ -784,8 +784,8 @@ function SetRagsObjectsFromJavascript(resultval) {
 function CheckNumericLimits(tempvar, thevalue) {
     //check min/max limits...
     if (tempvar.bEnforceRestrictions) {
-        var themin = parseFloat(TheGame.PerformTextReplacements(tempvar.dMin, null));
-        var themax = parseFloat(TheGame.PerformTextReplacements(tempvar.dMax, null));
+        var themin = parseFloat(PerformTextReplacements(tempvar.dMin, null));
+        var themax = parseFloat(PerformTextReplacements(tempvar.dMax, null));
         if (parseFloat(thevalue) < themin)
             return themin;
         if (parseFloat(thevalue) > themax)
